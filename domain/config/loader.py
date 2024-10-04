@@ -10,7 +10,7 @@ class AbstractTaskLoader(ABC):
     name: str
 
     @abstractmethod
-    def load_task(self, task_name: str, task_config: dict) -> Task:
+    def load_task(self, context_factory, task_name: str, task_config: dict) -> Task:
         raise NotImplementedError
 
 

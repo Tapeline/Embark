@@ -12,6 +12,10 @@ class AbstractPlaybookExecutionContext(ABC):
     def ask_should_proceed(self, text: str) -> bool:
         raise NotImplementedError
 
+    @abstractmethod
+    def file_path(self, path) -> str:
+        raise NotImplementedError
+
 
 class TaskExecutionContext:
     """
@@ -36,7 +40,7 @@ class AbstractContextFactory(ABC):
 
 class Nameable(Interface):
     @abstractmethod
-    def get_display_name(self):
+    def get_display_name(self) -> str:
         raise NotImplementedError
 
 
@@ -51,6 +55,14 @@ class AbstractExecutionCriteria(Nameable, ABC):
         raise NotImplementedError
 
 
+class NoExecutionCriteria(AbstractExecutionCriteria):
+    def should_execute(self, context: TaskExecutionContext) -> bool:
+        return True
+
+    def get_display_name(self) -> str:
+        return "No criteria"
+
+
 class AbstractExecutionRequirement(Nameable, ABC):
     """
     Represents a requirement which
@@ -58,7 +70,7 @@ class AbstractExecutionRequirement(Nameable, ABC):
     Throws RequirementCannotBeMetException if requirement cannot be met
     """
     @abstractmethod
-    def ensure_requirement_met(self, context: TaskExecutionContext):
+    def ensure_requirement_met(self, context: TaskExecutionContext) -> None:
         """Check if requirement is met and if not - request user action"""
         raise NotImplementedError
 
@@ -79,13 +91,13 @@ class Task(Nameable):
     def __init__(self,
                  context_factory: AbstractContextFactory,
                  name: str,
-                 criteria: AbstractExecutionCriteria,
+                 criteria: AbstractExecutionCriteria | None,
                  requirements: list[AbstractExecutionRequirement],
                  target: AbstractExecutionTarget):
         self.logger = logging.Logger(f"Task({name})")
         self.context_factory = context_factory
         self.name = name
-        self.criteria = criteria
+        self.criteria = criteria or NoExecutionCriteria()
         self.requirements = requirements
         self.target = target
 
