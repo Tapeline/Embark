@@ -12,7 +12,7 @@ class Playbook:
                  context_factory: AbstractContextFactory,
                  name: str,
                  tasks: list[Task]):
-        self.logger = logging.Logger(f"Playbook({name})")
+        self.logger = logging.getLogger(name)
         self.tasks = tasks
         self.context_factory = context_factory
         self.context = context_factory.create_playbook_context(self)

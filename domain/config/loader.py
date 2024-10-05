@@ -28,5 +28,5 @@ def load_playbook_from_config(context_factory: AbstractContextFactory,
         loader = loader_repo.get_task_loader(task.target_type)
         if loader is None:
             raise LoaderNotFoundException(task.target_type)
-        tasks.append(loader.load_task(task.task_name, task.target_data))
+        tasks.append(loader.load_task(context_factory, task.task_name, task.target_data))
     return Playbook(context_factory, playbook_config.name, tasks)

@@ -1,0 +1,6 @@
+name: Test playbook
+tasks:
+  - name: Copy test file
+    std.copy:
+      src: test_file.txt
+      dst: "C:/Users/Tapeline/Desktop/test_file.txt"

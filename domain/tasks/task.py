@@ -94,7 +94,7 @@ class Task(Nameable):
                  criteria: AbstractExecutionCriteria | None,
                  requirements: list[AbstractExecutionRequirement],
                  target: AbstractExecutionTarget):
-        self.logger = logging.Logger(f"Task({name})")
+        self.logger = logging.getLogger(name)
         self.context_factory = context_factory
         self.name = name
         self.criteria = criteria or NoExecutionCriteria()
@@ -110,6 +110,7 @@ class Task(Nameable):
         if not should_execute:
             self.logger.info("Skipping task")
             return
+        self.logger.info("Executing task")
         from domain.tasks.exception import RequirementCannotBeMetException
         try:
             for requirement in self.requirements:

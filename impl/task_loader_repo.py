@@ -1,4 +1,5 @@
 from domain.config.loader import AbstractTaskLoaderRepository, AbstractTaskLoader
+from std.loader.file.copy_file import CopyFileTaskLoader
 
 
 class TaskLoaderRepository(AbstractTaskLoaderRepository):
@@ -9,3 +10,6 @@ class TaskLoaderRepository(AbstractTaskLoaderRepository):
             if loader.name == loader_name:
                 return loader
         return None
+
+
+TaskLoaderRepository.LOADERS.append(CopyFileTaskLoader())
