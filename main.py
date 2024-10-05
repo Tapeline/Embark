@@ -1,5 +1,6 @@
 import logging
 import argparse
+import time
 
 logging.basicConfig(level=logging.INFO)
 ch = logging.StreamHandler()
@@ -44,3 +45,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+    time.sleep(0.5)
+    input("Press [ENTER] to close")
