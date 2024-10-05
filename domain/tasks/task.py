@@ -128,7 +128,16 @@ class Task(Nameable):
                 raise e
         from domain.tasks.exception import TaskExecutionException
         try:
-            self.target.execute(task_context)
+            success = self.target.execute(task_context)
+            if not success:
+                self.logger.error("Task was not executed successfully")
+                should_proceed = context.ask_should_proceed("Proceed playbook or abort?")
+                if should_proceed:
+                    self.logger.warning("Cancelled, playbook continues")
+                    return
+                else:
+                    self.logger.error("Cannot proceed. Playbook cancelled")
+                    raise TaskExecutionException(task_context, "Fail")
         except TaskExecutionException as e:
             self.logger.exception("Unknown exception occurred: %s", str(e))
             should_proceed = context.ask_should_proceed(
@@ -140,3 +149,4 @@ class Task(Nameable):
             else:
                 self.logger.error("Cannot proceed. Playbook cancelled")
                 raise e
+        self.logger.info("Task successful")

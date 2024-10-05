@@ -16,11 +16,18 @@ logging.getLogger().addHandler(ch)
 
 def _configure_arg_parser():
     parser = argparse.ArgumentParser(
-        prog="Embark CLI",
+        prog="embark",
         description="Embark playbook executor"
     )
-    parser.add_argument("filename")
-    parser.add_argument("--encoding", default=None)
+    parser.add_argument(
+        "filename",
+        help="Playbook config"
+    )
+    parser.add_argument(
+        "--encoding",
+        default=None,
+        help="Config file encoding"
+    )
     return parser
 
 

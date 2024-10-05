@@ -1,3 +1,5 @@
+import time
+
 from domain.tasks.task import AbstractContextFactory, TaskExecutionContext, AbstractPlaybookExecutionContext
 
 
@@ -6,6 +8,7 @@ class PlaybookExecutionContext(AbstractPlaybookExecutionContext):
         self.playbook = playbook
 
     def ask_should_proceed(self, text: str) -> bool:
+        time.sleep(0.2)
         print(text)
         answer = input("y/n> ")
         return answer.lower() == "y"

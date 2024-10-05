@@ -17,9 +17,6 @@ def _is_admin():
 
 class AdminPrivilegesRequirement(AbstractExecutionRequirement):
     def ensure_requirement_met(self, context: TaskExecutionContext) -> None:
-        if _is_admin():
-            return
-        elevate(show_console=False)
         if not _is_admin():
             raise RequirementCannotBeMetException(self, context)
 

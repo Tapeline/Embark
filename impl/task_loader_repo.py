@@ -1,5 +1,6 @@
 from domain.config.loader import AbstractTaskLoaderRepository, AbstractTaskLoader
 from std.loader.file.copy_file import CopyFileTaskLoader
+from std.loader.install.install import InstallTaskLoader
 
 
 class TaskLoaderRepository(AbstractTaskLoaderRepository):
@@ -13,3 +14,4 @@ class TaskLoaderRepository(AbstractTaskLoaderRepository):
 
 
 TaskLoaderRepository.LOADERS.append(CopyFileTaskLoader())
+TaskLoaderRepository.LOADERS.append(InstallTaskLoader())

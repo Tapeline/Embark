@@ -1,3 +1,5 @@
+import os
+
 from domain import action
 from impl.context_factory import ContextFactory
 from impl.task_loader_repo import TaskLoaderRepository
@@ -11,6 +13,7 @@ class Application:
         self.file_encoding = file_encoding
 
     def run(self) -> int:
+        os.chdir(os.path.dirname(os.path.abspath(self.config_file)))
         is_successful = action.execute_playbook_file(
             self.context_factory, self.loader_repo,
             self.config_file, self.file_encoding

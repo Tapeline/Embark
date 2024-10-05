@@ -1,4 +1,6 @@
+import io
 import logging
+import traceback
 
 from domain.tasks.exception import TaskExecutionException
 from domain.tasks.task import Task, AbstractContextFactory
@@ -28,6 +30,10 @@ class Playbook:
             self.run_tasks()
             return True
         except TaskExecutionException as e:
-            self.logger.exception("Playbook failed: %s", str(e))
+            str_ex = io.StringIO()
+            traceback.print_exception(e, limit=0, file=str_ex)
+            content = str_ex.getvalue()
+            str_ex.close()
+            self.logger.error("Playbook failed: \n%s", content)
             self.logger.error("Playbook exited with error")
             return False

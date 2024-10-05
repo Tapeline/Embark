@@ -4,3 +4,9 @@ tasks:
     std.copy:
       src: test_file.txt
       dst: "C:/Users/Tapeline/Desktop/test_file.txt"
+  - name: Install VLC
+    std.install:
+      name: VLC media player
+      publisher: VideoLAN
+      version: "3.0.21"
+      installer: vlc-3.0.21-win64.exe
