@@ -1,3 +1,9 @@
+# pylint: disable=too-few-public-methods
+"""
+Provides DTOs and function for loading config from
+dict which was loaded from a yaml file
+"""
+
 import pydantic
 from pydantic import BaseModel
 
@@ -5,11 +11,13 @@ from domain.config.exceptions import InvalidConfigException
 
 
 class PlaybookModel(BaseModel):
+    """Pydantic model for playbook"""
     name: str
     tasks: list[dict]
 
 
 class TaskConfig:
+    """Task DTO"""
     def __init__(self, task_name: str, target_type: str, target_data: dict):
         self.task_name = task_name
         self.target_type = target_type
@@ -17,12 +25,14 @@ class TaskConfig:
 
 
 class PlaybookConfig:
+    """Playbook DTO"""
     def __init__(self, name: str, tasks: list[TaskConfig]):
         self.name = name
         self.tasks: list[TaskConfig] = tasks
 
 
 def get_task_from_dict(task_dict: dict) -> TaskConfig:
+    """Create task DTO from dict and also perform validation"""
     if not isinstance(task_dict.get("name"), str):
         raise InvalidConfigException("Name field in task not found")
     if len(task_dict) != 2:
@@ -36,6 +46,7 @@ def get_task_from_dict(task_dict: dict) -> TaskConfig:
 
 
 def load_playbook_config(playbook_obj) -> PlaybookConfig:
+    """Load playbook DTO from dict and also perform validation"""
     if not isinstance(playbook_obj, dict):
         raise InvalidConfigException("Playbook must be an object")
     playbook_model = None

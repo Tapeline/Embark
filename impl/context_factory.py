@@ -1,9 +1,16 @@
+"""
+Implementation of contexts
+"""
+
 import time
 
-from domain.tasks.task import AbstractContextFactory, TaskExecutionContext, AbstractPlaybookExecutionContext
+from domain.tasks.task import (AbstractContextFactory,
+                               TaskExecutionContext,
+                               AbstractPlaybookExecutionContext)
 
 
 class PlaybookExecutionContext(AbstractPlaybookExecutionContext):
+    """Implementation of playbook execution context"""
     def __init__(self, playbook):
         self.playbook = playbook
 
@@ -18,6 +25,7 @@ class PlaybookExecutionContext(AbstractPlaybookExecutionContext):
 
 
 class ContextFactory(AbstractContextFactory):
+    """Implementation of context factory"""
     def create_playbook_context(self, playbook) -> AbstractPlaybookExecutionContext:
         return PlaybookExecutionContext(playbook)
 

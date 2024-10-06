@@ -1,11 +1,22 @@
+# pylint: disable=too-few-public-methods
+# pylint: disable=too-many-arguments
+# pylint: disable=too-many-positional-arguments
+"""
+Provides targets and tools for installation management
+"""
+
 import subprocess
 
 from domain.tasks.task import AbstractExecutionTarget, TaskExecutionContext
-from std.target.install.installs_repo import WindowsInstallsRepository, CannotUninstallQuietlyException, \
-    CannotUninstallException, CannotInstallQuietlyException, CannotInstallException
+from std.target.install.installs_repo import (WindowsInstallsRepository,
+                                              CannotUninstallQuietlyException,
+                                              CannotUninstallException,
+                                              CannotInstallQuietlyException,
+                                              CannotInstallException)
 
 
 class InstallTarget(AbstractExecutionTarget):
+    """Target for installing"""
     def __init__(self,
                  name: str,
                  version: str,
@@ -25,7 +36,7 @@ class InstallTarget(AbstractExecutionTarget):
     def execute(self, context: TaskExecutionContext) -> bool:
         logger = context.task.logger
         repo = WindowsInstallsRepository()
-        old_installation = self._get_existing_installation(repo, logger)
+        old_installation = self._get_existing_installation(repo)
         if old_installation is not None:
             logger.info("Found old installation, removing")
             success = self._uninstall(repo, logger, old_installation)
@@ -37,6 +48,7 @@ class InstallTarget(AbstractExecutionTarget):
         return True
 
     def _install(self, repo, logger):
+        """Install program"""
         logger.info("Installing %s", self.version)
         success = False
         if self.cmd_install is not None:
@@ -57,13 +69,15 @@ class InstallTarget(AbstractExecutionTarget):
             return False
         return True
 
-    def _get_existing_installation(self, repo, logger):
+    def _get_existing_installation(self, repo):
+        """Seek for existing installations of any version"""
         for install in repo.get_all_installs():
             if install.name == self.name and install.publisher == self.publisher:
                 return install
         return None
 
     def _uninstall(self, repo, logger, old_installation):
+        """Uninstall old installation"""
         logger.info("Uninstalling %s", old_installation)
         success = False
         if self.cmd_uninstall is not None:

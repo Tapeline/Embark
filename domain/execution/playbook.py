@@ -1,3 +1,7 @@
+"""
+Provides objects for executing playbook
+"""
+
 import io
 import logging
 import traceback
@@ -10,6 +14,9 @@ IsSuccessful = bool
 
 
 class Playbook:
+    """
+    Playbook object which can be executed
+    """
     def __init__(self,
                  context_factory: AbstractContextFactory,
                  name: str,
@@ -20,12 +27,14 @@ class Playbook:
         self.context = context_factory.create_playbook_context(self)
 
     def run_tasks(self):
+        """Run all tasks sequentially"""
         self.logger.info("Starting playbook")
         for task in self.tasks:
             task.execute(self.context)
         self.logger.info("Playbook successfully ended")
 
     def run(self) -> IsSuccessful:
+        """Run all tasks and catch exceptions"""
         try:
             self.run_tasks()
             return True

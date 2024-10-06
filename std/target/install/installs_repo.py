@@ -1,13 +1,22 @@
-import os.path
+# pylint: disable=too-few-public-methods
+# pylint: disable=too-many-arguments
+# pylint: disable=too-many-positional-arguments
+"""
+Provides tools for managing installations
+"""
+
 import subprocess
 import winreg
 from abc import ABC, abstractmethod
-from typing import Any
-
-import peid
+from typing import Sequence
 
 
 class AbstractInstallation(ABC):
+    """
+    ABC for installation.
+    Maybe other OSes apart from Windows will be supported in future
+    """
+
     def __init__(
             self,
             *,
@@ -25,45 +34,60 @@ class AbstractInstallation(ABC):
 
 
 class CannotUninstallException(Exception):
-    pass
+    """Thrown when uninstall cannot be performed"""
 
 
 class CannotUninstallQuietlyException(CannotUninstallException):
-    pass
+    """Thrown when silent uninstall cannot be performed"""
 
 
 class CannotInstallException(Exception):
-    pass
+    """Thrown when install cannot be performed"""
 
 
 class CannotInstallQuietlyException(CannotInstallException):
-    pass
+    """Thrown when silent install cannot be performed"""
 
 
 class AbstractInstallsRepository(ABC):
+    """
+    ABC for installs repo.
+    Maybe other OSes apart from Windows will be supported in future
+    """
+
     @abstractmethod
-    def get_all_installs(self) -> list[AbstractInstallation]:
+    def get_all_installs(self) -> Sequence[AbstractInstallation]:
+        """List all installations"""
         raise NotImplementedError
 
     @abstractmethod
     def uninstall_quietly(self, installation: AbstractInstallation) -> bool:
+        """Try to uninstall existing installation quietly"""
         raise NotImplementedError
 
     @abstractmethod
     def uninstall(self, installation: AbstractInstallation) -> bool:
+        """Try to uninstall existing installation"""
         raise NotImplementedError
 
     @abstractmethod
     def install_quietly(self, installer_path: str, admin: bool = False) -> bool:
+        """Try to install quietly"""
         raise NotImplementedError
 
     @abstractmethod
     def install(self, installer_path: str, admin: bool = False) -> bool:
+        """Try to install"""
         raise NotImplementedError
 
 
 def determine_quiet_uninstall_command(uninstall: str,
                                       quiet_uninstall: str | None) -> str | None:
+    """
+    Tries to determine quiet uninstallation command
+    from regular uninstallation command.
+    At the moment supports MSI, NSIS and Inno Setup uninstallers
+    """
     if quiet_uninstall is not None:
         return quiet_uninstall
     if "msiexec" in uninstall.lower():
@@ -73,6 +97,7 @@ def determine_quiet_uninstall_command(uninstall: str,
         # quiet_uninstall = uninstall[:index] + "/qn " + uninstall[index:]
         quiet_uninstall = uninstall + " /qn"
         return quiet_uninstall
+    # pylint: disable=broad-exception-caught
     try:
         uninstall_path = uninstall
         if uninstall.startswith('"'):
@@ -81,24 +106,37 @@ def determine_quiet_uninstall_command(uninstall: str,
             return f"{uninstall} /VERYSILENT /SUPPRESSMSGBOXES /NORESTART"
         if _is_nullsoft_installer(uninstall_path):
             return f"{uninstall} /S"
-    except:
+    except Exception:
         return quiet_uninstall
     return quiet_uninstall
 
 
 def _is_inno_setup(installer: str) -> bool:
+    """
+    Check if exe was packed with Inno Setup by looking
+    for "Inno Setup" string marker in exe
+    """
     with open(installer, "rb") as f:
         data = f.read()
         return b"Inno Setup" in data
 
 
 def _is_nullsoft_installer(installer: str) -> bool:
+    """
+    Check if exe was packed with NSIS by looking
+    for "Nullsoft Install System" string marker in exe
+    """
     with open(installer, "rb") as f:
         data = f.read()
         return b"Nullsoft Install System" in data
 
 
 def determine_quiet_install_command(installer: str, admin: bool = False) -> str | None:
+    """
+    Tries to determine quiet installation command
+    from regular installation command.
+    At the moment supports MSI, NSIS and Inno Setup uninstallers
+    """
     if installer.endswith(".msi"):
         return f"msiexec {('/a' if admin else '/i')} {installer} /qn"
     if _is_inno_setup(installer):
@@ -108,7 +146,9 @@ def determine_quiet_install_command(installer: str, admin: bool = False) -> str 
     return None
 
 
-def _get_reg_value_or_none(key, name) -> Any | None:
+def _get_reg_value_or_none(key, name):
+    """Wrapper for winreg function"""
+    # pylint: disable=broad-exception-caught
     try:
         return winreg.QueryValueEx(key, name)[0]
     except Exception:
@@ -116,8 +156,11 @@ def _get_reg_value_or_none(key, name) -> Any | None:
 
 
 class WindowsInstallation(AbstractInstallation):
+    """Impl of installation on Windows"""
+
     @staticmethod
     def from_registry_path(reg_path: str):
+        """Create from registry entry"""
         reg = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
         software_key = winreg.OpenKey(reg, reg_path)
         software_name: str = _get_reg_value_or_none(
@@ -154,7 +197,10 @@ class WindowsInstallation(AbstractInstallation):
                 i += 1
             except OSError:
                 break
-        # TODO: expand env string here
+        if software_uninstall is not None:
+            software_uninstall = winreg.ExpandEnvironmentStrings(software_uninstall)
+        if software_quiet_uninstall is not None:
+            software_quiet_uninstall = winreg.ExpandEnvironmentStrings(software_quiet_uninstall)
         if software_quiet_uninstall is None and software_uninstall is not None:
             software_quiet_uninstall = determine_quiet_uninstall_command(
                 software_uninstall, software_quiet_uninstall
@@ -192,7 +238,10 @@ class WindowsInstallation(AbstractInstallation):
 
 
 class WindowsInstallsRepository(AbstractInstallsRepository):
+    """Impl of installation repo on Windows"""
+
     def _get_all_installs_on_path(self, path) -> list[WindowsInstallation]:
+        """Gets all installs in registry folder"""
         reg = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
         key = winreg.OpenKey(reg, path)
         installs = []
@@ -204,20 +253,32 @@ class WindowsInstallsRepository(AbstractInstallsRepository):
             installs.append(install)
         return installs
 
-    def get_all_installs(self) -> list[AbstractInstallation]:
+    def get_all_installs(self) -> Sequence[AbstractInstallation]:
+        """
+        Get all existing installations.
+        Windows installations are located under two different paths:
+        - SOFTWARE/WOW6432Node/Microsoft/Windows/CurrentVersion/Uninstall
+        - SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall
+        """
         return self._get_all_installs_on_path(
             r"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
         ) + self._get_all_installs_on_path(
             r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
         )
 
-    def uninstall_quietly(self, installation: WindowsInstallation) -> bool:
+    def uninstall_quietly(
+            self,
+            installation: WindowsInstallation  # type: ignore[override]
+    ) -> bool:
         if installation.quiet_uninstaller is None:
             raise CannotUninstallQuietlyException
         ret_code = subprocess.call(installation.quiet_uninstaller)
         return ret_code == 0
 
-    def uninstall(self, installation: WindowsInstallation) -> bool:
+    def uninstall(
+            self,
+            installation: WindowsInstallation  # type: ignore[override]
+    ) -> bool:
         if installation.uninstaller is None:
             raise CannotUninstallException
         ret_code = subprocess.call(installation.uninstaller)

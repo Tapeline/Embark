@@ -1,17 +1,21 @@
+# pylint: disable=too-few-public-methods
+"""
+Provides loader and tools for `std.install`
+"""
+
 from typing import Optional
 
 from pydantic import BaseModel
 
 from domain.config.loader import AbstractTaskLoader
 from domain.tasks.task import Task
-from std.criteria.file_criteria import FileDoesNotExistCriteria
 from std.criteria.install_criteria import ProgramNotInstalledCriteria
 from std.requirement.privileges import AdminPrivilegesRequirement
-from std.target.file_tasks import CopyFileTarget
 from std.target.install.install_tasks import InstallTarget
 
 
 class TaskModel(BaseModel):
+    """Pydantic model for task config"""
     name: str
     publisher: str
     version: str
@@ -22,6 +26,7 @@ class TaskModel(BaseModel):
 
 
 class InstallTaskLoader(AbstractTaskLoader):
+    """Task loader impl for `std.install`"""
     name = "std.install"
 
     def load_task(self, context_factory, task_name: str, task_config: dict) -> Task:

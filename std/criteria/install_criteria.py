@@ -1,8 +1,13 @@
+"""
+Provides criteria which account installed programs
+"""
+
 from domain.tasks.task import AbstractExecutionCriteria, TaskExecutionContext
 from std.target.install.installs_repo import WindowsInstallsRepository
 
 
 class ProgramNotInstalledCriteria(AbstractExecutionCriteria):
+    """Execute if specific version of specific program is not installed"""
     def __init__(self, name: str, version: str, publisher: str):
         self.name = name
         self.version = version

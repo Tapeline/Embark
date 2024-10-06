@@ -1,3 +1,5 @@
+"""Main file"""
+
 import logging
 import argparse
 import time
@@ -33,10 +35,13 @@ def _configure_arg_parser():
 
 
 def _get_args():
+    """Get arguments from argparse"""
     return _configure_arg_parser().parse_args()
 
 
 def main():
+    """Main function"""
+    # pylint: disable=import-outside-toplevel
     from application import Application
     args = _get_args()
     app = Application(args.filename, file_encoding=args.encoding)

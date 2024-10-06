@@ -1,3 +1,8 @@
+# pylint: disable=too-few-public-methods
+"""
+Provides loader and tools for `std.copy`
+"""
+
 from pydantic import BaseModel
 
 from domain.config.loader import AbstractTaskLoader
@@ -8,6 +13,7 @@ from std.target.file_tasks import CopyFileTarget
 
 
 class TaskModel(BaseModel):
+    """Pydantic model of task config"""
     admin: bool = False
     overwrite: bool = False
     src: str
@@ -15,6 +21,7 @@ class TaskModel(BaseModel):
 
 
 class CopyFileTaskLoader(AbstractTaskLoader):
+    """Task loader impl for `std.copy`"""
     name = "std.copy"
 
     def load_task(self, context_factory, task_name: str, task_config: dict) -> Task:
