@@ -9,7 +9,7 @@ from std.target.install.installs_repo import WindowsInstallsRepository
 
 class ProgramNotInstalledCriteria(AbstractExecutionCriteria):
     """Execute if specific version of specific program is not installed"""
-    def __init__(self, name: str, version: str, publisher: str,
+    def __init__(self, name: str, version: str | None, publisher: str | None,
                  ignore_version: bool = False):
         self.name = name
         self.version = version

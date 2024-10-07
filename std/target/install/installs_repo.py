@@ -6,8 +6,6 @@ Provides tools for managing installations
 """
 
 import subprocess
-import sys
-import time
 import winreg
 from abc import ABC, abstractmethod
 from typing import Sequence
@@ -168,18 +166,18 @@ class WindowsInstallation(AbstractInstallation):
             software_key, "DisplayName")
         software_publisher: str = _get_reg_value_or_none(
             software_key, "Publisher")
-        software_version: str = _get_reg_value_or_none(
+        software_version = _get_reg_value_or_none(
             software_key, "Version")
         if software_version is None:
             software_version = _get_reg_value_or_none(
                 software_key, "DisplayVersion")
-        software_major_version: int = _get_reg_value_or_none(
+        software_major_version: int | None = _get_reg_value_or_none(
             software_key, "VersionMajor")
-        software_minor_version: int = _get_reg_value_or_none(
+        software_minor_version: int | None = _get_reg_value_or_none(
             software_key, "VersionMinor")
-        software_uninstall: str = _get_reg_value_or_none(
+        software_uninstall: str | None = _get_reg_value_or_none(
             software_key, "UninstallString")
-        software_quiet_uninstall: str = _get_reg_value_or_none(
+        software_quiet_uninstall: str | None = _get_reg_value_or_none(
             software_key, "QuietUninstallString")
         i = 0
         while True:
@@ -208,7 +206,7 @@ class WindowsInstallation(AbstractInstallation):
             )
         return WindowsInstallation(
             name=software_name,
-            version=software_version,
+            version=str(software_version),
             major_version=software_major_version,
             minor_version=software_minor_version,
             publisher=software_publisher,
@@ -264,12 +262,14 @@ class WindowsInstallsRepository(AbstractInstallsRepository):
             installs = []
             for i in range(winreg.QueryInfoKey(key)[0]):
                 software_key_name = winreg.EnumKey(key, i)
-                install = WindowsInstallation.from_registry_path(f"{path}\\{software_key_name}", base)
+                install = WindowsInstallation.from_registry_path(
+                    f"{path}\\{software_key_name}", base
+                )
                 if install.name is None:
                     continue
                 installs.append(install)
             return installs
-        except FileNotFoundError as exc:
+        except FileNotFoundError:
             return []
 
     def get_all_installs(self) -> Sequence[AbstractInstallation]:
@@ -295,7 +295,7 @@ class WindowsInstallsRepository(AbstractInstallsRepository):
     ) -> bool:
         if installation.quiet_uninstaller is None:
             raise CannotUninstallQuietlyException
-        ret_code = subprocess.call(installation.quiet_uninstaller, stdout=sys.stdout, stderr=sys.stderr)
+        ret_code = subprocess.call(installation.quiet_uninstaller)
         return ret_code == 0
 
     def uninstall(

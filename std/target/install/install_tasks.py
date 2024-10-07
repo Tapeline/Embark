@@ -19,6 +19,7 @@ from std.target.install.installs_repo import (WindowsInstallsRepository,
 
 class InstallTarget(AbstractExecutionTarget):
     """Target for installing"""
+    # pylint: disable=too-many-instance-attributes
     def __init__(self,
                  name: str,
                  version: str | None,
@@ -43,8 +44,8 @@ class InstallTarget(AbstractExecutionTarget):
         logger = context.task.logger
         repo = WindowsInstallsRepository()
         if not self.no_remove:
-            should_exit = self._remove_existing_if_present(repo, logger)
-            if should_exit:
+            success = self._remove_existing_if_present(repo, logger)
+            if not success:
                 return False
         return self._install(repo, logger)
 
@@ -88,6 +89,7 @@ class InstallTarget(AbstractExecutionTarget):
                 return False
         else:
             logger.info("Old installation not found")
+        return True
 
     def _install(self, repo, logger):
         """Install program"""
@@ -126,8 +128,8 @@ class InstallTarget(AbstractExecutionTarget):
         logger.info("Uninstalling %s", old_installation)
         success = False
         if self.cmd_uninstall is not None:
-            cmd_uninstall = self.cmd_install.replace("$$uninstaller$$",
-                                                     old_installation.uninstaller)
+            cmd_uninstall = self.cmd_uninstall.replace("$$uninstaller$$",
+                                                     old_installation.uninstaller or "")
             success = subprocess.call(cmd_uninstall) == 0
         else:
             try:

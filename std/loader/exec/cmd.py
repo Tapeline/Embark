@@ -7,10 +7,8 @@ from pydantic import BaseModel
 
 from domain.config.loader import AbstractTaskLoader
 from domain.tasks.task import Task
-from std.criteria.file_criteria import FileDoesNotExistCriteria
 from std.requirement.privileges import AdminPrivilegesRequirement
 from std.target.exec_tasks import RunCommandTarget
-from std.target.file_tasks import CopyFileTarget
 
 
 class TaskModel(BaseModel):
