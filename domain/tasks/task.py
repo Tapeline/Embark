@@ -138,7 +138,7 @@ class Task(Nameable):
         except RequirementCannotBeMetException as e:
             self.logger.error("Cannot execute task, because requirements cannot be met")
             should_proceed = context.ask_should_proceed(
-                "Task failed to execute. Proceed playbook or abort?"
+                "Task failed to execute. Proceed playbook?"
             )
             if should_proceed:
                 self.logger.warning("Cancelled, playbook continues")
@@ -146,24 +146,27 @@ class Task(Nameable):
             self.logger.error("Cannot proceed. Playbook cancelled")
             raise e
         from domain.tasks.exception import TaskExecutionException
+        cancel = False
         try:
             success = self.target.execute(task_context)
             if not success:
                 self.logger.error("Task was not executed successfully")
-                should_proceed = context.ask_should_proceed("Proceed playbook or abort?")
+                should_proceed = context.ask_should_proceed("Proceed playbook?")
                 if should_proceed:
                     self.logger.warning("Cancelled, playbook continues")
                     return
                 self.logger.error("Cannot proceed. Playbook cancelled")
-                raise TaskExecutionException(task_context, "Fail")
+                cancel = True
         except TaskExecutionException as e:
             self.logger.exception("Unknown exception occurred: %s", str(e))
             should_proceed = context.ask_should_proceed(
-                f"Task failed to execute:\n{str(e)}.\nProceed playbook or abort?"
+                f"Task failed to execute:\n{str(e)}.\nProceed playbook?"
             )
             if should_proceed:
                 self.logger.warning("Cancelled, playbook continues")
                 return
             self.logger.error("Cannot proceed. Playbook cancelled")
             raise e
+        if cancel:
+            raise TaskExecutionException(task_context, "Cancel")
         self.logger.info("Task successful")

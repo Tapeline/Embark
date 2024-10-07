@@ -6,6 +6,7 @@ Implementation of task loader repo
 from domain.config.loader import AbstractTaskLoaderRepository, AbstractTaskLoader
 from std.loader.file.copy_file import CopyFileTaskLoader
 from std.loader.install.install import InstallTaskLoader
+from std.loader.exec.cmd import CmdTaskLoader
 
 
 class TaskLoaderRepository(AbstractTaskLoaderRepository):
@@ -21,3 +22,4 @@ class TaskLoaderRepository(AbstractTaskLoaderRepository):
 
 TaskLoaderRepository.LOADERS.append(CopyFileTaskLoader())
 TaskLoaderRepository.LOADERS.append(InstallTaskLoader())
+TaskLoaderRepository.LOADERS.append(CmdTaskLoader())

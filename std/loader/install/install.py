@@ -7,6 +7,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+from domain.config.exceptions import InvalidConfigException
 from domain.config.loader import AbstractTaskLoader
 from domain.tasks.task import Task
 from std.criteria.install_criteria import ProgramNotInstalledCriteria
@@ -17,12 +18,15 @@ from std.target.install.install_tasks import InstallTarget
 class TaskModel(BaseModel):
     """Pydantic model for task config"""
     name: str
-    publisher: str
-    version: str
+    publisher: Optional[str] = None
+    version: Optional[str] = None
     installer: str
     msi_admin: bool = False
     cmd_install: Optional[str] = None
     cmd_uninstall: Optional[str] = None
+    lookup_paths: Optional[list[str]] = None
+    no_remove: bool = False
+    ignore_version: bool = False
 
 
 class InstallTaskLoader(AbstractTaskLoader):
@@ -31,8 +35,15 @@ class InstallTaskLoader(AbstractTaskLoader):
 
     def load_task(self, context_factory, task_name: str, task_config: dict) -> Task:
         model = TaskModel(**task_config)
+        if (model.publisher is None or model.version is None) and model.lookup_paths is None:
+            raise InvalidConfigException(
+                "Either publisher and version should be provided or lookup_paths"
+            )
 
-        criteria = ProgramNotInstalledCriteria(model.name, model.version, model.publisher)
+        criteria = ProgramNotInstalledCriteria(
+            model.name, model.version, model.publisher,
+            ignore_version=model.ignore_version
+        )
 
         requirements = [AdminPrivilegesRequirement()]
 
@@ -43,7 +54,9 @@ class InstallTaskLoader(AbstractTaskLoader):
             model.installer,
             model.msi_admin,
             model.cmd_install,
-            model.cmd_uninstall
+            model.cmd_uninstall,
+            model.lookup_paths,
+            model.no_remove
         )
 
         return Task(context_factory, task_name, criteria, requirements, target)

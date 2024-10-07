@@ -6,6 +6,8 @@ Provides tools for managing installations
 """
 
 import subprocess
+import sys
+import time
 import winreg
 from abc import ABC, abstractmethod
 from typing import Sequence
@@ -88,14 +90,13 @@ def determine_quiet_uninstall_command(uninstall: str,
     from regular uninstallation command.
     At the moment supports MSI, NSIS and Inno Setup uninstallers
     """
-    if quiet_uninstall is not None:
+    if quiet_uninstall is not None and "msiexec" not in uninstall.lower():
         return quiet_uninstall
     if "msiexec" in uninstall.lower():
-        # index = uninstall.lower().find("msiexec.exe ") + len("msiexec.exe ")
-        # if index == -1:
-        #     index = uninstall.lower().find("msiexec ") + len("msiexec ")
-        # quiet_uninstall = uninstall[:index] + "/qn " + uninstall[index:]
-        quiet_uninstall = uninstall + " /qn"
+        if "/x" not in uninstall.lower():
+            index = uninstall.lower().find("/i")
+            uninstall = uninstall[:index] + "/X" + uninstall[index+2:]
+        quiet_uninstall = uninstall + " /passive /norestart"
         return quiet_uninstall
     # pylint: disable=broad-exception-caught
     try:
@@ -138,7 +139,7 @@ def determine_quiet_install_command(installer: str, admin: bool = False) -> str 
     At the moment supports MSI, NSIS and Inno Setup uninstallers
     """
     if installer.endswith(".msi"):
-        return f"msiexec {('/a' if admin else '/i')} {installer} /qn"
+        return f"msiexec {('/A' if admin else '/I')} \"{installer}\" /passive /norestart"
     if _is_inno_setup(installer):
         return f"{installer} /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-"
     if _is_nullsoft_installer(installer):
@@ -201,7 +202,7 @@ class WindowsInstallation(AbstractInstallation):
             software_uninstall = winreg.ExpandEnvironmentStrings(software_uninstall)
         if software_quiet_uninstall is not None:
             software_quiet_uninstall = winreg.ExpandEnvironmentStrings(software_quiet_uninstall)
-        if software_quiet_uninstall is None and software_uninstall is not None:
+        if software_uninstall is not None:
             software_quiet_uninstall = determine_quiet_uninstall_command(
                 software_uninstall, software_quiet_uninstall
             )
@@ -236,34 +237,56 @@ class WindowsInstallation(AbstractInstallation):
         self.quiet_uninstaller = quiet_uninstaller
         self.uninstaller = uninstaller
 
+    def __repr__(self):
+        return f"{self.name} {self.version}"
+
+
+def _get_current_sid():
+    sid = [
+        c
+        for c in subprocess.check_output('whoami /User')
+        .decode(errors="ignore").split('\r\n')
+        if "S-1-5-" in c
+    ][0]
+    sid = sid[sid.index("S-1-5-"):]
+    return sid
+
 
 class WindowsInstallsRepository(AbstractInstallsRepository):
     """Impl of installation repo on Windows"""
 
-    def _get_all_installs_on_path(self, path) -> list[WindowsInstallation]:
+    def _get_all_installs_on_path(self, path,
+                                  base=winreg.HKEY_LOCAL_MACHINE) -> list[WindowsInstallation]:
         """Gets all installs in registry folder"""
-        reg = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
-        key = winreg.OpenKey(reg, path)
-        installs = []
-        for i in range(winreg.QueryInfoKey(key)[0]):
-            software_key_name = winreg.EnumKey(key, i)
-            install = WindowsInstallation.from_registry_path(f"{path}\\{software_key_name}")
-            if install.name is None or install.version is None:
-                continue
-            installs.append(install)
-        return installs
+        try:
+            reg = winreg.ConnectRegistry(None, base)
+            key = winreg.OpenKey(reg, path)
+            installs = []
+            for i in range(winreg.QueryInfoKey(key)[0]):
+                software_key_name = winreg.EnumKey(key, i)
+                install = WindowsInstallation.from_registry_path(f"{path}\\{software_key_name}")
+                if install.name is None:
+                    continue
+                installs.append(install)
+            return installs
+        except FileNotFoundError:
+            return []
 
     def get_all_installs(self) -> Sequence[AbstractInstallation]:
         """
         Get all existing installations.
-        Windows installations are located under two different paths:
-        - SOFTWARE/WOW6432Node/Microsoft/Windows/CurrentVersion/Uninstall
-        - SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall
+        Windows installations are located under different paths:
+        - HKLM/SOFTWARE/WOW6432Node/Microsoft/Windows/CurrentVersion/Uninstall
+        - HKLM/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall
+        - HKCU/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall
         """
         return self._get_all_installs_on_path(
             r"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
         ) + self._get_all_installs_on_path(
             r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
+        ) + self._get_all_installs_on_path(
+            r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall",
+            base=winreg.HKEY_CURRENT_USER
         )
 
     def uninstall_quietly(
@@ -272,7 +295,7 @@ class WindowsInstallsRepository(AbstractInstallsRepository):
     ) -> bool:
         if installation.quiet_uninstaller is None:
             raise CannotUninstallQuietlyException
-        ret_code = subprocess.call(installation.quiet_uninstaller)
+        ret_code = subprocess.call(installation.quiet_uninstaller, stdout=sys.stdout, stderr=sys.stderr)
         return ret_code == 0
 
     def uninstall(
