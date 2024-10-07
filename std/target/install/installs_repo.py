@@ -160,9 +160,9 @@ class WindowsInstallation(AbstractInstallation):
     """Impl of installation on Windows"""
 
     @staticmethod
-    def from_registry_path(reg_path: str):
+    def from_registry_path(reg_path: str, reg_base: int):
         """Create from registry entry"""
-        reg = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
+        reg = winreg.ConnectRegistry(None, reg_base)
         software_key = winreg.OpenKey(reg, reg_path)
         software_name: str = _get_reg_value_or_none(
             software_key, "DisplayName")
@@ -264,12 +264,12 @@ class WindowsInstallsRepository(AbstractInstallsRepository):
             installs = []
             for i in range(winreg.QueryInfoKey(key)[0]):
                 software_key_name = winreg.EnumKey(key, i)
-                install = WindowsInstallation.from_registry_path(f"{path}\\{software_key_name}")
+                install = WindowsInstallation.from_registry_path(f"{path}\\{software_key_name}", base)
                 if install.name is None:
                     continue
                 installs.append(install)
             return installs
-        except FileNotFoundError:
+        except FileNotFoundError as exc:
             return []
 
     def get_all_installs(self) -> Sequence[AbstractInstallation]:
