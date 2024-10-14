@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "embark"
+version = "0.1-alpha"
+description = "Embark playbook executor and development kit"
+authors = ["Tapeline"]
+license = "GNU GPL 3.0"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pydantic = "^2.9.2"
+PyYAML = "^6.0.2"
+
+[tool.poetry.dev-dependencies]
+pylint = "^3.3.1"
+mypy = "^1.11.2"
+
+[tool.poetry.scripts]
+build-clean = "project_scripts:clean-build"
+build = "project_scripts:build"
+check = "project_scripts:check_all"
+check-types = "project_scripts:check_mypy"
+check-pylint = "project_scripts:check_pylint"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
