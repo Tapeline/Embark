@@ -17,7 +17,7 @@ logging.getLogger().addHandler(ch)
 
 # cannot put imports before logging config
 # pylint: disable=wrong-import-position
-from .commands import cmd_run, cmd_dev_list_installs, cmd_dev_query_install
+from embark.commands import cmd_run, cmd_dev_list_installs, cmd_dev_query_install
 
 
 def _configure_arg_parser():
