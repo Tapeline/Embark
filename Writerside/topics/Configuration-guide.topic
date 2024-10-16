@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       title="Configuration guide" id="Configuration-guide">
+
+    <chapter title="Schemas" id="schemas">
+        <p>
+            From here onwards following syntax will be used for
+            defining YAML schema
+        </p>
+        <code-block lang="python">
+            name: type
+            name: type = default value
+        </code-block>
+        <p>
+            This is very close to syntax that Pydantic uses.
+            Here are some examples of types and field
+            declarations
+        </p>
+        <table>
+            <tr>
+                <td>Type</td>
+                <td>Description</td>
+                <td>Example</td>
+            </tr>
+            <tr>
+                <td><code>int</code></td>
+                <td>Integer (whole number)</td>
+                <td><code>3</code></td>
+            </tr>
+            <tr>
+                <td><code>str</code></td>
+                <td>String (text)</td>
+                <td><code>"my text"</code></td>
+            </tr>
+            <tr>
+                <td><code>list[T]</code></td>
+                <td>List of elements that are T type.
+                E.g. list[int] - list of integers,
+                list[list[int]] - list of lists of
+                integers</td>
+                <td>
+                    <p>
+                        list[int]: <code>[1, 2, 3]</code>
+                    </p>
+                    <code-block lang="yaml">
+                        my_int_list:
+                            - 1
+                            - 2
+                            - 3
+                    </code-block>
+                </td>
+            </tr>
+            <tr>
+                <td><code>object</code></td>
+                <td>A YAML object (key-value pairs)</td>
+                <td>
+                    <code-block lang="yaml">
+                        a: 1
+                        b: "abc"
+                        c: []
+                    </code-block>
+                </td>
+            </tr>
+            <tr>
+                <td><code>Optional[T]</code></td>
+                <td>Denotes that this field is optional -
+                is T type or is not set at all</td>
+                <td>
+                    <p>
+                        Optional[list[int]]: <code>[1, 2, 3]</code>
+                    </p>
+                    <p>
+                        Optional[list[int]]: or we can leave this field
+                        blank or even not mentioned
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td><code>None</code></td>
+                <td>Denotes "empty" value</td>
+                <td> </td>
+            </tr>
+        </table>
+        <p>Example 1:</p>
+        <code-block lang="python">
+            schema Message:
+                text: str
+                author: str
+                reply_to: Optional[int] = None
+        </code-block>
+        <code-block lang="yaml">
+            text: "Hello, World!"
+            author: "L. Torvalds"
+            reply_to: 13650003443
+        </code-block>
+        <code-block lang="yaml">
+            # also valid
+            text: "Hello, World!"
+            author: "L. Torvalds"
+        </code-block>
+        <p>Example 2 (considering Message from example 1):</p>
+        <code-block lang="python">
+            schema Chat:
+                name: str
+                messages: list[Message]
+        </code-block>
+        <code-block lang="yaml">
+            name: "My cozy IRC"
+            messages:
+                - text: "Hello, World!"
+                  author: "L. Torvalds"
+                - text: "Hello, Linus!"
+                  author: "R. Stallman"
+        </code-block>
+    </chapter>
+
+    <chapter title="Embark entities" id="embark_entities">
+        <chapter title="Playbook" id="playbook">
+            <code-block lang="python">
+                name: str
+                tasks: list[Task]
+            </code-block>
+            <p>Example:</p>
+            <code-block lang="yaml">
+                name: "Test playbook"
+                tasks:
+                    - name: My task
+                      std.cmd:
+                        cmd: ""
+            </code-block>
+        </chapter>
+        <chapter title="Task" id="task">
+            <code-block lang="python">
+                name: str
+                _: object
+            </code-block>
+            <p>
+                Here, <code>_</code> is used for denoting
+                any key. Learn more about it:
+                <a href="Execution-flow.topic"/>
+            </p>
+            <p>Example:</p>
+            <code-block lang="yaml">
+                name: My task
+                std.cmd:
+                    cmd: ""
+            </code-block>
+        </chapter>
+
+        <p>
+            You can find valid examples of playbook configuration
+            on <a href="Quickstart.topic"/>
+        </p>
+    </chapter>
+
+</topic>

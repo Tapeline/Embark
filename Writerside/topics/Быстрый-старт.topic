@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       title="Быстрый старт" id="Быстрый-старт">
+
+    <chapter title="Установка Embark"
+             id="installing-embark">
+        <p>
+           Нет необходимости устанавливать Embark, т.к. он portable.
+           Просто скачайте его со страницы Releases
+        </p>
+    </chapter>
+
+    <chapter title="Создание плейбука"
+             id="configuring-your-first-playbook">
+        <p>
+           Плейбук - это последовательность шагов исполнения,
+           определенная в формате YAML. Пример пустого плейбука:
+        </p>
+        <code-block lang="yaml">
+            name: My test playbook
+            tasks: []
+        </code-block>
+        <p>
+            Задачи определяются двумя объектами: именем задачи и
+            данными задачи. Тип задачи определяется с помощью
+            ключа, под которым лежат вышеупомянутые данные задачи.
+            Примеры:
+        </p>
+        <code-block lang="yaml" ignore-vars="true">
+            name: My test playbook
+            tasks:
+                - name: Copy file
+                  std.copy:
+                    src: "assets\\myfile.txt"
+                    dst: "%UserProfile%\\Desktop\\myfile.txt"
+        </code-block>
+        <code-block lang="yaml" ignore-vars="true">
+            name: My test playbook
+            tasks:
+                - name: Remove old files
+                  std.cmd:
+                    cmd: "rm %UserProfile%\\Desktop\\myfile.txt"
+
+                - name: Copy file
+                  std.copy:
+                    src: "assets\\myfile.txt"
+                    dst: "%UserProfile%\\Desktop\\myfile.txt"
+        </code-block>
+        <p>
+            Найдите больше примеров тут:
+        </p>
+    </chapter>
+
+</topic>

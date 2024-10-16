@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       title="std.copy" id="std-copy">
+
+    <chapter title="Схема" id="schema">
+        <code-block lang="python">
+                src: str  # source
+                dst: str  # destination
+                overwrite: bool = False  # overwrite existing file
+        </code-block>
+    </chapter>
+
+    <chapter title="Действие" id="action">
+        <procedure title="Критерий исполнения" id="criteria">
+            <step>Исполнится тогда, когда файл назначения
+                не будет существовать и флаг перезаписи
+                не будет указан как true.</step>
+        </procedure>
+        <procedure title="Требования исполнения" id="requirements">
+            <step>Отсутствует</step>
+        </procedure>
+        <procedure title="Целевое действие" id="target">
+            <step>Скопировать файл/директорию</step>
+        </procedure>
+    </chapter>
+
+    <chapter title="Примеры" id="examples">
+        <code-block lang="yaml" ignore-vars="true">
+            name: Copy instructions
+            std.copy:
+                src: instructions.pdf
+                dst: "%UserProfile%\\Desktop\\instructions.pdf"
+        </code-block>
+    </chapter>
+
+</topic>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       title="std.cmd" id="std-cmd-ru">
+
+    <chapter title="Схема" id="schema">
+        <code-block lang="python">
+                cmd: str  # target command
+        </code-block>
+    </chapter>
+
+    <chapter title="Действие" id="action">
+        <procedure title="Критерий исполнения" id="criteria">
+            <step>Отсутствует</step>
+        </procedure>
+        <procedure title="Требования исполнения" id="requirements">
+            <step>Отсутствует</step>
+        </procedure>
+        <procedure title="Целевое действие" id="target">
+            <step>Исполнить указанную команду</step>
+        </procedure>
+    </chapter>
+
+    <chapter title="Примеры" id="examples">
+        <code-block lang="yaml">
+            name: Remove old files
+            std.cmd:
+                cmd: rm -r data
+        </code-block>
+    </chapter>
+
+</topic>

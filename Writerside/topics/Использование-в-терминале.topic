@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       title="Использование в терминале" id="Использование-в-терминале">
+
+    <chapter title="Пользовательские команды" id="user_commands">
+        <deflist>
+            <def title="embark run <playbook-file> [--encoding]">
+                <p>
+                    Выполнить плейбук. Примеры:
+                </p>
+                <list>
+                    <li><code>embark run playbook.yml</code></li>
+                    <li><code>embark run playbook.yml --encoding UTF-8</code></li>
+                </list>
+            </def>
+        </deflist>
+    </chapter>
+
+    <chapter title="Команды для разработчиков" id="dev_commands">
+        <deflist>
+            <def title="embark dev_list_installs">
+                <p>
+                    Alias: <code>embark dli</code>
+                </p>
+                <p>
+                    Список всего установленного ПО
+                </p>
+            </def>
+            <def title="embark dev_query_install <name> --publisher <publisher> [--version] [--ignore-version]">
+                <p>
+                    Alias: <code>embark dqi</code>
+                </p>
+                <p>
+                    Попытаться получить определенное ПО из вышеупомянутого списка
+                </p>
+                <list>
+                    <li><code>embark dqi "LibreOffice .*" --publisher "The Document Foundation" --ignore-version</code></li>
+                </list>
+            </def>
+        </deflist>
+    </chapter>
+</topic>

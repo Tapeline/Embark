@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE instance-profile
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/product-profile.dtd">
+
+<instance-profile id="docs"
+                 name="Embark (EN)"
+                 start-page="Quickstart.topic">
+
+    <toc-element topic="Quickstart.topic"/>
+    <toc-element topic="Execution-flow.topic"/>
+    <toc-element topic="Configuration-guide.topic"/>
+    <toc-element topic="Command-line-usage.topic"/>
+    <toc-element topic="Builtin-tasks.topic">
+        <toc-element topic="std-install.topic"/>
+        <toc-element topic="std-copy.topic"/>
+        <toc-element topic="std-cmd.topic"/>
+    </toc-element>
+</instance-profile>
