@@ -30,8 +30,10 @@ def check_all():
 
 
 def clean_build():
-    shutil.rmtree("build")
-    shutil.rmtree("dist")
+    if os.path.exists("build"):
+        shutil.rmtree("build")
+    if os.path.exists("dist"):
+        shutil.rmtree("dist")
     build()
 
 
