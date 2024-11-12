@@ -13,6 +13,7 @@
     <toc-element topic="Builtin-tasks.topic">
         <toc-element topic="std-install.topic"/>
         <toc-element topic="std-copy.topic"/>
+        <toc-element topic="std-download.topic"/>
         <toc-element topic="std-cmd.topic"/>
     </toc-element>
 </instance-profile>

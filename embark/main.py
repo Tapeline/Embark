@@ -3,17 +3,10 @@
 import logging
 import argparse
 
+from embark import log_config
+
 logging.basicConfig(level=logging.INFO)
-ch = logging.StreamHandler()
-ch.setLevel(logging.INFO)
-formatter = logging.Formatter(
-    "%(asctime)s %(name)-30s %(levelname)-8s %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S"
-)
-ch.setFormatter(formatter)
-for handler in logging.getLogger().handlers:
-    logging.getLogger().removeHandler(handler)
-logging.getLogger().addHandler(ch)
+log_config.setup_default_handlers(logging.getLogger())
 
 # cannot put imports before logging config
 # pylint: disable=wrong-import-position

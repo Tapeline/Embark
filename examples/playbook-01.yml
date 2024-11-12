@@ -1,0 +1,15 @@
+name: Test playbook
+variables:
+  urls.vlc: https://get.videolan.org/vlc/3.0.21/win64/vlc-3.0.21-win64.exe
+  versions.vlc: "3.0.21"
+tasks:
+  - name: Download VLC
+    std.download:
+      url: "{{urls.vlc}}"
+      dst: vlc.exe
+  - name: Install VLC
+    std.install:
+      name: VLC media player
+      publisher: VideoLAN
+      version: "{{versions.vlc}}"
+      installer: vlc.exe

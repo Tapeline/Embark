@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       title="std.download" id="std-download">
+
+    <chapter title="Schema" id="schema">
+        <code-block lang="python">
+                url: str  # source
+                dst: str  # destination
+                overwrite: bool = False  # overwrite existing file
+                timeout_s: int = 10  # network request timeout in seconds
+        </code-block>
+    </chapter>
+
+    <chapter title="Action" id="action">
+        <procedure title="Execution criteria" id="criteria">
+            <step>Task is executed if such destination file does
+            not exist or overwrite flag set to true.</step>
+        </procedure>
+        <procedure title="Execution requirements" id="requirements">
+            <step>No requirements</step>
+        </procedure>
+        <procedure title="Target action" id="target">
+            <step>Download file from url to dst</step>
+        </procedure>
+    </chapter>
+
+    <chapter title="Examples" id="examples">
+        <code-block lang="yaml" ignore-vars="true">
+            name: Download VLC
+            std.download:
+                url: https://get.videolan.org/vlc/3.0.21/win64/vlc-3.0.21-win64.exe
+                dst: vlc.exe
+        </code-block>
+    </chapter>
+
+</topic>

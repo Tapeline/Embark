@@ -6,6 +6,7 @@ import io
 import logging
 import traceback
 
+from embark import log_config
 from embark.domain.tasks.exception import TaskExecutionException
 from embark.domain.tasks.task import Task, AbstractContextFactory
 
@@ -22,6 +23,7 @@ class Playbook:
                  name: str,
                  tasks: list[Task]):
         self.logger = logging.getLogger(name)
+        log_config.setup_default_handlers(self.logger)
         self.tasks = tasks
         self.context_factory = context_factory
         self.context = context_factory.create_playbook_context(self)

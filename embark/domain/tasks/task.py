@@ -9,6 +9,7 @@ import logging
 from abc import ABC, abstractmethod
 from typing import Sequence
 
+from embark import log_config
 from embark.domain.utils import Interface
 
 
@@ -113,6 +114,7 @@ class Task(Nameable):
                  requirements: Sequence[AbstractExecutionRequirement],
                  target: AbstractExecutionTarget):
         self.logger = logging.getLogger(name)
+        log_config.setup_default_handlers(self.logger)
         self.context_factory = context_factory
         self.name = name
         self.criteria = criteria or NoExecutionCriteria()

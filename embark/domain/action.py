@@ -9,6 +9,7 @@ from pydantic import ValidationError
 from yaml import YAMLError
 
 from embark.domain.config import config
+from embark.domain.config.exceptions import ConfigLoadingException
 from embark.domain.config.loader import AbstractTaskLoaderRepository
 from embark.domain.tasks.task import AbstractContextFactory
 
@@ -27,6 +28,9 @@ def execute_playbook_file(context_factory: AbstractContextFactory,
         playbook = config.load_playbook_from_file(context_factory, loader_repo,
                                                   path, encoding=file_encoding)
     except ValidationError as e:
+        logging.getLogger("Config loader").error(str(e))
+        return False
+    except ConfigLoadingException as e:
         logging.getLogger("Config loader").error(str(e))
         return False
     except YAMLError as e:

@@ -13,6 +13,7 @@
     <toc-element topic="Встроенные-задачи.topic">
         <toc-element topic="std-install-ru.topic"/>
         <toc-element topic="std-copy-ru.topic"/>
+        <toc-element topic="std-download-ru.topic"/>
         <toc-element topic="std-cmd-ru.topic"/>
     </toc-element>
 </instance-profile>

@@ -13,6 +13,7 @@ from embark.domain.config.exceptions import InvalidConfigException
 class PlaybookModel(BaseModel):
     """Pydantic model for playbook"""
     name: str
+    variables: dict = {}
     tasks: list[dict]
 
 
@@ -26,8 +27,9 @@ class TaskConfig:
 
 class PlaybookConfig:
     """Playbook DTO"""
-    def __init__(self, name: str, tasks: list[TaskConfig]):
+    def __init__(self, name: str, variables: dict, tasks: list[TaskConfig]):
         self.name = name
+        self.variables = variables
         self.tasks: list[TaskConfig] = tasks
 
 
@@ -55,4 +57,4 @@ def load_playbook_config(playbook_obj) -> PlaybookConfig:
     except pydantic.ValidationError as e:
         raise InvalidConfigException("Invalid playbook configuration") from e
     tasks = list(map(get_task_from_dict, playbook_model.tasks))
-    return PlaybookConfig(playbook_model.name, tasks)
+    return PlaybookConfig(playbook_model.name, playbook_model.variables, tasks)

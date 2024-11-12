@@ -50,35 +50,15 @@ class InstallTarget(AbstractExecutionTarget):
         return self._install(repo, logger)
 
     def _remove_existing_if_present(self, repo, logger) -> bool:
+        # pylint: disable=missing-function-docstring
         old_installation = None
         if self.lookup_paths is not None:
             logger.info("Preferring path lookup")
-            matched_path = None
-            for path in self.lookup_paths:
-                for name in os.listdir(path):
-                    if re.match(self.name, name) is not None:
-                        matched_path = os.path.join(path, name)
-                        break
-                if matched_path is not None:
-                    break
+            matched_path = self._try_to_match_lookup_path()
             if matched_path is not None:
-                logger.info("Path matched: %s", matched_path)
-                uninstaller = None
-                for name in os.listdir(matched_path):
-                    if "unins" in name:
-                        uninstaller = os.path.join(matched_path, name)
-                        break
-                if uninstaller is not None:
-                    old_installation = WindowsInstallation(
-                        name=self.name,
-                        version="",
-                        publisher="",
-                        uninstaller=uninstaller,
-                        quiet_uninstaller=determine_quiet_uninstall_command(
-                            uninstaller, None
-                        )
-                    )
-                    logger.info("Uninstaller found")
+                old_installation = self._get_installation_by_path(
+                    logger, matched_path, old_installation
+                )
         if old_installation is None:
             logger.info("Searching registry")
             old_installation = self._get_existing_installation(repo)
@@ -90,6 +70,39 @@ class InstallTarget(AbstractExecutionTarget):
         else:
             logger.info("Old installation not found")
         return True
+
+    def _try_to_match_lookup_path(self):
+        # pylint: disable=missing-function-docstring
+        matched_path = None
+        for path in self.lookup_paths:
+            for name in os.listdir(path):
+                if re.match(self.name, name) is not None:
+                    matched_path = os.path.join(path, name)
+                    break
+            if matched_path is not None:
+                break
+        return matched_path
+
+    def _get_installation_by_path(self, logger, matched_path, old_installation):
+        # pylint: disable=missing-function-docstring
+        logger.info("Path matched: %s", matched_path)
+        uninstaller = None
+        for name in os.listdir(matched_path):
+            if "unins" in name:
+                uninstaller = os.path.join(matched_path, name)
+                break
+        if uninstaller is not None:
+            old_installation = WindowsInstallation(
+                name=self.name,
+                version="",
+                publisher="",
+                uninstaller=uninstaller,
+                quiet_uninstaller=determine_quiet_uninstall_command(
+                    uninstaller, None
+                )
+            )
+            logger.info("Uninstaller found")
+        return old_installation
 
     def _install(self, repo, logger):
         """Install program"""

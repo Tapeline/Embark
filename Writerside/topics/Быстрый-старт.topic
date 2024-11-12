@@ -51,6 +51,25 @@
         </code-block>
         <p>
             Найдите больше примеров тут:
+            <a href="https://github.com/Tapeline/Embark/examples">GitHub</a>
+        </p>
+    </chapter>
+
+    <chapter title="Запуск плейбука" id="starting-the-playbook">
+        <p>
+            Для запуска плейбука выполните эту команду
+            <code>embark run playbook.yml</code>
+            или эту <code>embark run playbook.yml --encoding UTF-8</code>
+            если плейбук сохранен в кодировке, отличающейся от текущей
+            системной кодировки. Измените <i>playbook.yml</i> и <i>UTF-8</i>
+            на названия своего плейбука и кодировки соответственно
+        </p>
+        <note>
+            Обратите внимание, что настоятельно рекомендуется запускать Embark
+            с административными привилегиями
+        </note>
+        <p>
+            Узнайте больше на <a href="Использование-в-терминале.topic"/>
         </p>
     </chapter>
 

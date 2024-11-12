@@ -2,11 +2,14 @@
 """
 Provides classes for task loading and functions for config loading
 """
-
+import logging
+import os
 from abc import ABC, abstractmethod
 
+from embark import log_config
 from embark.domain.config.exceptions import LoaderNotFoundException
 from embark.domain.config.models import PlaybookConfig
+from embark.domain.config.variables import VariablesEnv
 from embark.domain.execution.playbook import Playbook
 from embark.domain.tasks.task import Task, AbstractContextFactory
 
@@ -61,10 +64,19 @@ def load_playbook_from_config(context_factory: AbstractContextFactory,
     """
     Loads playbook from config which was created from yaml file
     """
+    logger = logging.getLogger("playbook_loader")
+    log_config.setup_default_handlers(logger)
+    variables = VariablesEnv(playbook_config.variables, os.environ)
     tasks = []
     for task in playbook_config.tasks:
         loader = loader_repo.get_task_loader(task.target_type)
         if loader is None:
             raise LoaderNotFoundException(task.target_type)
-        tasks.append(loader.load_task(context_factory, task.task_name, task.target_data))
+        formatted_name = variables.format(task.task_name)
+        formatted_data = variables.format_object(task.target_data)
+        task = loader.load_task(context_factory, formatted_name, formatted_data)
+        if task is None:
+            logger.warning("Task loader %s returned None instead of Task", loader.name)
+        else:
+            tasks.append(task)
     return Playbook(context_factory, playbook_config.name, tasks)

@@ -50,7 +50,25 @@
                     dst: "%UserProfile%\\Desktop\\myfile.txt"
         </code-block>
         <p>
-            You can find more on examples page
+            You can find more on examples page:
+            <a href="https://github.com/Tapeline/Embark/examples">GitHub</a>
+        </p>
+    </chapter>
+
+    <chapter title="Starting the playbook" id="starting-the-playbook">
+        <p>
+            To start the playbook you can use this command:
+            <code>embark run playbook.yml</code>
+            or this <code>embark run playbook.yml --encoding UTF-8</code>
+            if your file is saved in encoding that differs from your
+            current system encoding. Change <i>playbook.yml</i> and <i>UTF-8</i>
+            to your actual playbook file and encoding
+        </p>
+        <note>
+            Notice that it's better to run Embark with administrative privileges
+        </note>
+        <p>
+            Find out more in <a href="Command-line-usage.topic"/>
         </p>
     </chapter>
 

@@ -156,4 +156,32 @@
         </p>
     </chapter>
 
+    <chapter title="Variables" id="variables">
+        <p>
+            You can use variables in your playbooks. To get a variable value
+            you can use <code>{{variable_name}}</code> syntax in a string
+        </p>
+        <p>
+            Variables are defined in two places: environment and optional
+            <code>variables</code> section in playbook and environment vars
+            have smaller priority.
+        </p>
+        <p>Example:</p>
+        <code-block lang="yaml">
+            name: Test playbook
+            variables:
+              urls.vlc: https://get.videolan.org/vlc/3.0.21/win64/vlc-3.0.21-win64.exe
+            tasks:
+              - name: Download VLC
+                std.download:
+                url: "{{urls.vlc}}"
+                dst: vlc.exe
+        </code-block>
+        <tip title="Where to use variables?"><p>
+            It is highly recommended to use variables with download urls
+            and versions in install and download jobs. That way it'll
+            be more convenient to update your playbook
+        </p></tip>
+    </chapter>
+
 </topic>
