@@ -15,10 +15,25 @@ def get_default_handler():
     return ch
 
 
+def get_file_handler():
+    """Default file handler config"""
+    # pylint: disable=import-outside-toplevel
+    import logging
+    ch = logging.FileHandler("embark.log")
+    ch.setLevel(logging.INFO)
+    formatter = logging.Formatter(
+        "%(asctime)s %(name)-30s %(levelname)-8s %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S"
+    )
+    ch.setFormatter(formatter)
+    return ch
+
+
 def setup_default_handlers(logger):
     """Clear old handlers and add default"""
     ch = get_default_handler()
     for handler in logger.handlers:
         logger.removeHandler(handler)
     logger.addHandler(ch)
+    logger.addHandler(get_file_handler())
     logger.parent = None

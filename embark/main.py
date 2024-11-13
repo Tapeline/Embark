@@ -2,8 +2,10 @@
 
 import logging
 import argparse
+import sys
 
 from embark import log_config
+import embark.ui.main
 
 logging.basicConfig(level=logging.INFO)
 log_config.setup_default_handlers(logging.getLogger())
@@ -71,8 +73,11 @@ def _configure_arg_parser():
 
 def main():
     """Main function"""
-    args = _configure_arg_parser().parse_args()
-    args.func(args)
+    if len(sys.argv) == 1:
+        embark.ui.main.main()
+    else:
+        args = _configure_arg_parser().parse_args()
+        args.func(args)
 
 
 if __name__ == '__main__':

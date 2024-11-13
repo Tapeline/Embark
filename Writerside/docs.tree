@@ -16,4 +16,5 @@
         <toc-element topic="std-download.topic"/>
         <toc-element topic="std-cmd.topic"/>
     </toc-element>
+    <toc-element topic="Custom-tasks.topic"/>
 </instance-profile>

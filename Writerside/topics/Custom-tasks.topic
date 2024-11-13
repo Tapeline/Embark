@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       title="Custom tasks" id="Custom-tasks">
+
+    <chapter title="Defining custom tasks" id="defining_custom_tasks">
+        <p>Since v0.2 Embark allows you to define your own tasks with Python files</p>
+        <procedure title="Setting up a custom task" id="tutorial">
+            <step>
+                <p>To create a task, first create a task loader:</p>
+                <code-block lang="python">
+                    from pydantic import BaseModel
+
+                    from embark.domain.config.loader import AbstractTaskLoader
+                    from embark.domain.tasks.task import (Task, AbstractExecutionTarget,
+                                                          TaskExecutionContext)
+
+
+                    # It's recommended to use pydantic for task config
+                    class TaskModel(BaseModel):
+                        message: str
+
+
+                    class PrintTaskLoader(AbstractTaskLoader):
+                        name = "test.test"
+
+                        def load_task(self, context_factory, task_name: str, task_config: dict) -> Task:
+                            model = TaskModel(**task_config)
+
+                            criteria = None
+                            requirements = []
+                            target = PrintMessageTarget(model.message)
+
+                            return Task(context_factory, task_name, criteria, requirements, target)
+
+
+                    __embark_loader__ = PrintTaskLoader()
+                </code-block>
+            </step>
+            <step>
+                <p>Then define needed requirements, criteria and target:</p>
+                <code-block lang="python">
+                    class PrintMessageTarget(AbstractExecutionTarget):
+                        def __init__(self, message: str):
+                            self.message = message
+
+                        def execute(self, context: TaskExecutionContext) -> bool:
+                            print(self.message)
+                            return True
+
+                        def get_display_name(self) -> str:
+                            return "Print task"
+                </code-block>
+            </step>
+            <step>
+                <p>Then save your code as a .py file</p>
+            </step>
+            <step>
+                <p>Access your task in playbook:</p>
+                <code-block lang="yaml">
+                    name: Test playbook
+                    tasks:
+                      - name: Test task
+                        test.test:
+                          message: "Hello, World!"
+                </code-block>
+                <note title="Relative location matters!">
+                    <p>Task type (test.test) should not only match
+                    defined task loader <code>name</code> field, but
+                    also the relative location to Embark executable.
+                    In this example, relative location is
+                    <code>test/test.py</code></p>
+                </note>
+            </step>
+            <step>
+                <p>
+                    If you want non-default packages to be available
+                    you can provide requirements in pip requirements
+                    file format directly next to your .py file and
+                    name it <code>your_file.py.requirements</code>.
+                    E.g. for <code>test.py</code> it will be
+                    <code>test.py.requirements</code>
+                </p>
+                <note><p>
+                    Pip should be available in your environment to do this
+                </p></note>
+            </step>
+        </procedure>
+
+
+    </chapter>
+</topic>

@@ -57,6 +57,7 @@ class AbstractInstallsRepository[T: AbstractInstallation](ABC):
     ABC for installs repo.
     Maybe other OSes apart from Windows will be supported in future
     """
+    # pylint: disable=undefined-variable
 
     @abstractmethod
     def get_all_installs(self) -> Sequence[T]:
