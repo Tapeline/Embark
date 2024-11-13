@@ -20,8 +20,8 @@ pyinstaller = "6.11.1"
 cleanbuild = "project_scripts:clean_build"
 build = "project_scripts:build"
 check = "project_scripts:check_all"
-check-types = "project_scripts:check_mypy"
-check-pylint = "project_scripts:check_pylint"
+check_types = "project_scripts:check_mypy"
+check_pylint = "project_scripts:check_pylint"
 
 [build-system]
 requires = ["poetry-core"]

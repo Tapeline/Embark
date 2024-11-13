@@ -10,6 +10,9 @@ import winreg
 from abc import ABC, abstractmethod
 from typing import Sequence
 
+from embark.std.target.install.utils import (determine_quiet_install_command,
+                                             determine_quiet_uninstall_command)
+
 
 class AbstractInstallation(ABC):
     """
@@ -49,24 +52,24 @@ class CannotInstallQuietlyException(CannotInstallException):
     """Thrown when silent install cannot be performed"""
 
 
-class AbstractInstallsRepository(ABC):
+class AbstractInstallsRepository[T: AbstractInstallation](ABC):
     """
     ABC for installs repo.
     Maybe other OSes apart from Windows will be supported in future
     """
 
     @abstractmethod
-    def get_all_installs(self) -> Sequence[AbstractInstallation]:
+    def get_all_installs(self) -> Sequence[T]:
         """List all installations"""
         raise NotImplementedError
 
     @abstractmethod
-    def uninstall_quietly(self, installation: AbstractInstallation) -> bool:
+    def uninstall_quietly(self, installation: T) -> bool:
         """Try to uninstall existing installation quietly"""
         raise NotImplementedError
 
     @abstractmethod
-    def uninstall(self, installation: AbstractInstallation) -> bool:
+    def uninstall(self, installation: T) -> bool:
         """Try to uninstall existing installation"""
         raise NotImplementedError
 
@@ -79,70 +82,6 @@ class AbstractInstallsRepository(ABC):
     def install(self, installer_path: str, admin: bool = False) -> bool:
         """Try to install"""
         raise NotImplementedError
-
-
-def determine_quiet_uninstall_command(uninstall: str,
-                                      quiet_uninstall: str | None) -> str | None:
-    """
-    Tries to determine quiet uninstallation command
-    from regular uninstallation command.
-    At the moment supports MSI, NSIS and Inno Setup uninstallers
-    """
-    if quiet_uninstall is not None and "msiexec" not in uninstall.lower():
-        return quiet_uninstall
-    if "msiexec" in uninstall.lower():
-        if "/x" not in uninstall.lower():
-            index = uninstall.lower().find("/i")
-            uninstall = uninstall[:index] + "/X" + uninstall[index+2:]
-        quiet_uninstall = uninstall + " /passive /norestart"
-        return quiet_uninstall
-    # pylint: disable=broad-exception-caught
-    try:
-        uninstall_path = uninstall
-        if uninstall.startswith('"'):
-            uninstall_path = uninstall[1:-1]
-        if _is_inno_setup(uninstall_path):
-            return f"{uninstall} /VERYSILENT /SUPPRESSMSGBOXES /NORESTART"
-        if _is_nullsoft_installer(uninstall_path):
-            return f"{uninstall} /S"
-    except Exception:
-        return quiet_uninstall
-    return quiet_uninstall
-
-
-def _is_inno_setup(installer: str) -> bool:
-    """
-    Check if exe was packed with Inno Setup by looking
-    for "Inno Setup" string marker in exe
-    """
-    with open(installer, "rb") as f:
-        data = f.read()
-        return b"Inno Setup" in data
-
-
-def _is_nullsoft_installer(installer: str) -> bool:
-    """
-    Check if exe was packed with NSIS by looking
-    for "Nullsoft Install System" string marker in exe
-    """
-    with open(installer, "rb") as f:
-        data = f.read()
-        return b"Nullsoft Install System" in data
-
-
-def determine_quiet_install_command(installer: str, admin: bool = False) -> str | None:
-    """
-    Tries to determine quiet installation command
-    from regular installation command.
-    At the moment supports MSI, NSIS and Inno Setup uninstallers
-    """
-    if installer.endswith(".msi"):
-        return f"msiexec {('/A' if admin else '/I')} \"{installer}\" /passive /norestart"
-    if _is_inno_setup(installer):
-        return f"{installer} /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-"
-    if _is_nullsoft_installer(installer):
-        return f"{installer} /S"
-    return None
 
 
 def _get_reg_value_or_none(key, name):
@@ -239,18 +178,7 @@ class WindowsInstallation(AbstractInstallation):
         return f"{self.name} {self.version}"
 
 
-def _get_current_sid():
-    sid = [
-        c
-        for c in subprocess.check_output('whoami /User')
-        .decode(errors="ignore").split('\r\n')
-        if "S-1-5-" in c
-    ][0]
-    sid = sid[sid.index("S-1-5-"):]
-    return sid
-
-
-class WindowsInstallsRepository(AbstractInstallsRepository):
+class WindowsInstallsRepository(AbstractInstallsRepository[WindowsInstallation]):
     """Impl of installation repo on Windows"""
 
     def _get_all_installs_on_path(self, path,
@@ -291,7 +219,7 @@ class WindowsInstallsRepository(AbstractInstallsRepository):
 
     def uninstall_quietly(
             self,
-            installation: WindowsInstallation  # type: ignore[override]
+            installation: WindowsInstallation
     ) -> bool:
         if installation.quiet_uninstaller is None:
             raise CannotUninstallQuietlyException
@@ -300,7 +228,7 @@ class WindowsInstallsRepository(AbstractInstallsRepository):
 
     def uninstall(
             self,
-            installation: WindowsInstallation  # type: ignore[override]
+            installation: WindowsInstallation
     ) -> bool:
         if installation.uninstaller is None:
             raise CannotUninstallException
