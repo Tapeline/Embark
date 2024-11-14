@@ -17,6 +17,7 @@ class MainFrame(Tk):
         self.title("Embark UI")
         self.geometry("450x600")
         self.resizable(False, False)
+        self.iconbitmap("icon.ico")
         utils.center(self)
         self._font = font.nametofont("TkDefaultFont").copy()
         self._font.configure(size=10, weight=font.BOLD)
