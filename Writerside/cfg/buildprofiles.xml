@@ -7,6 +7,7 @@
         <variables>
             <offline-docs>false</offline-docs>
             <noindex-content>true</noindex-content>
+            <header-logo>logo.png</header-logo>
         </variables>
     </build-profile>
 

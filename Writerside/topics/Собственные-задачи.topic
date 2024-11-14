@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       title="Собственные задачи" id="Собственные-задачи">
+
+    <chapter title="Определение собственных задач" id="defining_custom_tasks">
+        <p>Начиная с v0.2 Embark позволяет вам определять собственные задачи
+        с помощью Python файлов</p>
+        <procedure title="Создание задачи" id="tutorial">
+            <step>
+                <p>Сначала необходимо создать загрузчик задачи:</p>
+                <code-block lang="python">
+                    from pydantic import BaseModel
+
+                    from embark.domain.config.loader import AbstractTaskLoader
+                    from embark.domain.tasks.task import (Task, AbstractExecutionTarget,
+                                                          TaskExecutionContext)
+
+
+                    # Рекомендуется использовать pydantic для конфига задачи
+                    class TaskModel(BaseModel):
+                        message: str
+
+
+                    class PrintTaskLoader(AbstractTaskLoader):
+                        name = "test.test"
+
+                        def load_task(self, context_factory, task_name: str, task_config: dict) -> Task:
+                            model = TaskModel(**task_config)
+
+                            criteria = None
+                            requirements = []
+                            target = PrintMessageTarget(model.message)
+
+                            return Task(context_factory, task_name, criteria, requirements, target)
+
+
+                    __embark_loader__ = PrintTaskLoader()
+                </code-block>
+            </step>
+            <step>
+                <p>Затем определим критерий, условия и цель выполнения:</p>
+                <code-block lang="python">
+                    class PrintMessageTarget(AbstractExecutionTarget):
+                        def __init__(self, message: str):
+                            self.message = message
+
+                        def execute(self, context: TaskExecutionContext) -> bool:
+                            print(self.message)
+                            return True
+
+                        def get_display_name(self) -> str:
+                            return "Print task"
+                </code-block>
+            </step>
+            <step>
+                <p>Сохраним код как .py файл</p>
+            </step>
+            <step>
+                <p>Добавим задачу в плейбук:</p>
+                <code-block lang="yaml">
+                    name: Test playbook
+                    tasks:
+                      - name: Test task
+                        test.test:
+                          message: "Hello, World!"
+                </code-block>
+                <note title="Относительный путь важен!">
+                    <p>Тип задачи (test.test) должен не соответствовать не только
+                    определенному <code>name</code> загрузчика задачи, но и также
+                    относительному пути к исполняемому файлу Embark.
+                    В этом примере, относительный путь:
+                    <code>test/test.py</code></p>
+                </note>
+            </step>
+            <step>
+                <p>
+                    Если вам необходимы сторонние python пакеты,
+                    вы можете привести в стандартном формате
+                    pip requirements file рядом с файлом .py и
+                    назвать его <code>ваш_файл.py.requirements</code>.
+                    Т.е. для <code>test.py</code> это будет
+                    <code>test.py.requirements</code>
+                </p>
+                <note><p>
+                    Для работы requirements файлов в текущем окружении должен быть доступен pip
+                </p></note>
+            </step>
+        </procedure>
+
+
+    </chapter>
+</topic>

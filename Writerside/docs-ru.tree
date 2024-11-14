@@ -10,10 +10,12 @@
     <toc-element topic="Поток-выполнения.topic"/>
     <toc-element topic="Конфигурация.topic"/>
     <toc-element topic="Использование-в-терминале.topic"/>
+    <toc-element topic="Использование-с-графическим-интерфейсом.topic"/>
     <toc-element topic="Встроенные-задачи.topic">
         <toc-element topic="std-install-ru.topic"/>
         <toc-element topic="std-copy-ru.topic"/>
         <toc-element topic="std-download-ru.topic"/>
         <toc-element topic="std-cmd-ru.topic"/>
     </toc-element>
+    <toc-element topic="Собственные-задачи.topic"/>
 </instance-profile>

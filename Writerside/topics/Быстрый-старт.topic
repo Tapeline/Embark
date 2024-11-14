@@ -5,6 +5,8 @@
        xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
        title="Быстрый старт" id="Быстрый-старт">
 
+    <a href="Использование-с-графическим-интерфейсом.topic"/>
+
     <chapter title="Установка Embark"
              id="installing-embark">
         <p>
