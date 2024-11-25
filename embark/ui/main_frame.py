@@ -7,6 +7,7 @@ from tkinter import font, Label, Tk
 
 import yaml
 
+from embark.localization.i18n import L
 from embark.ui import utils, components
 
 
@@ -29,15 +30,15 @@ class MainFrame(Tk):
         """Create and place UI components"""
         self._label1 = Label(
             self, anchor="w",
-            text="Following playbooks were found in your location:"
+            text=L("UI.playbooks_found_title")
         )
         self._label1.config(font=self._font)
         self._label1.grid(row=0, column=0, padx=(16, 16), pady=(16, 0), sticky="w")
-        self._label2 = Label(self, text="Click on a button to load", anchor="w")
+        self._label2 = Label(self, text=L("UI.playbooks_found_subtitle"), anchor="w")
         self._label2.grid(row=1, column=0, padx=(16, 16), pady=(0, 16), sticky="w")
         playbooks = self._controller.get_playbooks()
         if len(playbooks) == 0:
-            self._404_label = Label(self, text="No playbooks found", anchor="w")
+            self._404_label = Label(self, text=L("UI.playbooks_not_found"), anchor="w")
             self._404_label.grid(row=2, column=0, padx=(16, 16), pady=(16, 16), sticky="w")
             return
         row = 2
