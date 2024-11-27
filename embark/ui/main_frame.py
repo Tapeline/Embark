@@ -8,6 +8,7 @@ from tkinter import font, Label, Tk
 import yaml
 
 from embark.localization.i18n import L
+from embark.resources import get_resource
 from embark.ui import utils, components
 
 
@@ -18,7 +19,7 @@ class MainFrame(Tk):
         self.title("Embark UI")
         self.geometry("450x600")
         self.resizable(False, False)
-        self.iconbitmap("icon.ico")
+        self.iconbitmap(get_resource("icon.ico"))
         utils.center(self)
         self._font = font.nametofont("TkDefaultFont").copy()
         self._font.configure(size=10, weight=font.BOLD)
