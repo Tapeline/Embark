@@ -1,7 +1,7 @@
 """
 Implementation of contexts
 """
-
+import os
 import time
 
 from embark.domain.tasks.task import (AbstractContextFactory,
@@ -21,7 +21,7 @@ class PlaybookExecutionContext(AbstractPlaybookExecutionContext):
         return answer.lower() == "y"
 
     def file_path(self, path) -> str:
-        return path
+        return os.path.expandvars(path)
 
 
 class ContextFactory(AbstractContextFactory):
