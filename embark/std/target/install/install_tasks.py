@@ -7,6 +7,7 @@ Provides targets and tools for installation management
 import os
 import re
 import subprocess
+from dataclasses import dataclass
 
 from embark.domain.tasks.task import AbstractExecutionTarget, TaskExecutionContext
 from embark.std.target.install.installs_repo import (WindowsInstallsRepository,
@@ -17,73 +18,77 @@ from embark.std.target.install.installs_repo import (WindowsInstallsRepository,
                                               determine_quiet_uninstall_command)
 
 
+@dataclass
+class InstallTargetParams:
+    name: str
+    version: str | None
+    publisher: str | None
+    installer: str
+    msi_admin: bool = False
+    cmd_install: str | None = None
+    cmd_uninstall: str | None = None
+    lookup_paths: list[str] | None = None
+    no_remove: bool = False
+
+
 class InstallTarget(AbstractExecutionTarget):
     """Target for installing"""
     # pylint: disable=too-many-instance-attributes
-    def __init__(self,
-                 name: str,
-                 version: str | None,
-                 publisher: str | None,
-                 installer: str,
-                 msi_admin: bool = False,
-                 cmd_install: str | None = None,
-                 cmd_uninstall: str | None = None,
-                 lookup_paths: list[str] | None = None,
-                 no_remove: bool = False):
-        self.name = name
-        self.version = version
-        self.publisher = publisher
-        self.installer = installer
-        self.msi_admin = msi_admin
-        self.cmd_install = cmd_install
-        self.cmd_uninstall = cmd_uninstall
-        self.lookup_paths = lookup_paths
-        self.no_remove = no_remove
+    def __init__(self, params: InstallTargetParams):
+        self.params = params
 
     def execute(self, context: TaskExecutionContext) -> bool:
         logger = context.task.logger
+        params = self._create_params(context)
         repo = WindowsInstallsRepository()
-        if not self.no_remove:
-            success = self._remove_existing_if_present(repo, logger)
+        if not params.no_remove:
+            success = self._remove_existing_if_present(params, repo, logger)
             if not success:
                 return False
-        return self._install(repo, logger)
+        return self._install(params, repo, logger)
 
-    def _remove_existing_if_present(self, repo, logger) -> bool:
+    def _create_params(self, context: TaskExecutionContext):
+        return InstallTargetParams(
+            **context.playbook_context.playbook.variables.format_object(
+                self.params.__dict__
+            )
+        )
+
+    def _remove_existing_if_present(self, params, repo, logger) -> bool:
         # pylint: disable=missing-function-docstring
         old_installation = None
-        if self.lookup_paths is not None:
+        if params.lookup_paths is not None:
             logger.info("Preferring path lookup")
-            matched_path = self._try_to_match_lookup_path()
+            matched_path = self._try_to_match_lookup_path(params)
             if matched_path is not None:
                 old_installation = self._get_installation_by_path(
-                    logger, matched_path, old_installation
+                    params, logger, matched_path, old_installation
                 )
         if old_installation is None:
             logger.info("Searching registry")
-            old_installation = self._get_existing_installation(repo)
+            old_installation = self._get_existing_installation(params, repo)
         if old_installation is not None:
             logger.info("Found old installation, removing")
-            success = self._uninstall(repo, logger, old_installation)
+            success = self._uninstall(params, repo, logger, old_installation)
             if not success:
                 return False
         else:
             logger.info("Old installation not found")
         return True
 
-    def _try_to_match_lookup_path(self):
+    def _try_to_match_lookup_path(self, params):
         # pylint: disable=missing-function-docstring
         matched_path = None
-        for path in self.lookup_paths:
+        for path in params.lookup_paths:
             for name in os.listdir(path):
-                if re.match(self.name, name) is not None:
+                if re.match(params.name, name) is not None:
                     matched_path = os.path.join(path, name)
                     break
             if matched_path is not None:
                 break
         return matched_path
 
-    def _get_installation_by_path(self, logger, matched_path, old_installation):
+    def _get_installation_by_path(self, params, logger, matched_path, old_installation):
         # pylint: disable=missing-function-docstring
         logger.info("Path matched: %s", matched_path)
         uninstaller = None
@@ -93,7 +98,7 @@ class InstallTarget(AbstractExecutionTarget):
                 break
         if uninstaller is not None:
             old_installation = WindowsInstallation(
-                name=self.name,
+                name=params.name,
                 version="",
                 publisher="",
                 uninstaller=uninstaller,
@@ -104,22 +109,22 @@ class InstallTarget(AbstractExecutionTarget):
             logger.info("Uninstaller found")
         return old_installation
 
-    def _install(self, repo, logger):
+    def _install(self, params, repo, logger):
         """Install program"""
-        logger.info("Installing %s", self.version)
+        logger.info("Installing %s", params.version)
         success = False
-        if self.cmd_install is not None:
-            cmd_install = self.cmd_install.replace("$$installer$$",
-                                                   self.installer)
+        if params.cmd_install is not None:
+            cmd_install = params.cmd_install.replace("$$installer$$",
+                                                     params.installer)
             success = subprocess.call(cmd_install) == 0
         else:
             try:
-                success = repo.install_quietly(self.installer, self.msi_admin)
+                success = repo.install_quietly(params.installer, params.msi_admin)
             except CannotInstallQuietlyException:
                 logger.error("Quiet install failed. Trying regular install")
                 logger.warning("User action required!")
                 try:
-                    success = repo.install(self.installer, self.msi_admin)
+                    success = repo.install(params.installer, params.msi_admin)
                 except CannotInstallException:
                     logger.error("Install failed")
                     return False
@@ -128,21 +133,21 @@ class InstallTarget(AbstractExecutionTarget):
             return False
         return True
 
-    def _get_existing_installation(self, repo):
+    def _get_existing_installation(self, params, repo):
         """Seek for existing installations of any version"""
         for install in repo.get_all_installs():
-            if (re.fullmatch(self.name, install.name) is not None
-                    and (install.publisher == self.publisher or install.publisher is None)):
+            if (re.fullmatch(params.name, install.name) is not None
+                    and (install.publisher == params.publisher or install.publisher is None)):
                 return install
         return None
 
-    def _uninstall(self, repo, logger, old_installation: WindowsInstallation):
+    def _uninstall(self, params, repo, logger, old_installation: WindowsInstallation):
         """Uninstall old installation"""
         logger.info("Uninstalling %s", old_installation)
         success = False
-        if self.cmd_uninstall is not None:
-            cmd_uninstall = self.cmd_uninstall.replace("$$uninstaller$$",
-                                                     old_installation.uninstaller or "")
+        if params.cmd_uninstall is not None:
+            cmd_uninstall = params.cmd_uninstall.replace("$$uninstaller$$",
+                                                         old_installation.uninstaller or "")
             success = subprocess.call(cmd_uninstall) == 0
         else:
             try:
@@ -161,4 +166,4 @@ class InstallTarget(AbstractExecutionTarget):
         return True
 
     def get_display_name(self) -> str:
-        return f"Install {self.name} {self.version}"
+        return f"Install {self.params.name} {self.params.version}"

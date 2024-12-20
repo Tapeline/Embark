@@ -36,6 +36,11 @@ No need to install, Embark is a standalone portable
 ## Usage
 Please refer to the [documentation](https://tapeline.github.io/Embark/docs/en)
 
+## Planned features
+- [ ] `pywinauto` support
+- [ ] UI logging (reference design: GitHub Actions)
+- [ ] Unit testing
+
 ## Tech stack
 ![Pydantic](https://img.shields.io/badge/-Pydantic-464646?logo=Pydantic)
 ![mypy](https://img.shields.io/badge/type%20checked-mypy-039dfc)

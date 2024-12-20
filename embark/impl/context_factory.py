@@ -5,14 +5,15 @@ import os
 import time
 
 from embark.domain.tasks.task import (AbstractContextFactory,
-                               TaskExecutionContext,
-                               AbstractPlaybookExecutionContext)
+                                      TaskExecutionContext,
+                                      AbstractPlaybookExecutionContext)
 
 
 class PlaybookExecutionContext(AbstractPlaybookExecutionContext):
     """Implementation of playbook execution context"""
+
     def __init__(self, playbook):
-        self.playbook = playbook
+        self._playbook = playbook
 
     def ask_should_proceed(self, text: str) -> bool:
         time.sleep(0.2)
@@ -20,12 +21,17 @@ class PlaybookExecutionContext(AbstractPlaybookExecutionContext):
         answer = input("y/n> ")
         return answer.lower() == "y"
 
+    @property
+    def playbook(self):
+        return self._playbook
+
     def file_path(self, path) -> str:
         return os.path.expandvars(path)
 
 
 class ContextFactory(AbstractContextFactory):
     """Implementation of context factory"""
+
     def create_playbook_context(self, playbook) -> AbstractPlaybookExecutionContext:
         return PlaybookExecutionContext(playbook)
 

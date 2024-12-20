@@ -7,16 +7,24 @@ Provides objects for task execution
 
 import logging
 from abc import ABC, abstractmethod
-from typing import Sequence
+from typing import Sequence, TYPE_CHECKING
 
 from embark import log_config
 from embark.domain.utils import Interface
+
+if TYPE_CHECKING:
+    from embark.domain.execution.playbook import Playbook
 
 
 class AbstractPlaybookExecutionContext(ABC):
     """
     Context of current playbook
     """
+    @property
+    @abstractmethod
+    def playbook(self) -> "Playbook":
+        raise NotImplementedError
+
     @abstractmethod
     def ask_should_proceed(self, text: str) -> bool:
         """Blocking function which prompts user if he wants to proceed"""
@@ -26,6 +34,12 @@ class AbstractPlaybookExecutionContext(ABC):
     def file_path(self, path) -> str:
         """Resolve file path (with placeholders)"""
         raise NotImplementedError
+
+    def variables[T](self, obj: T) -> T:
+        return self.playbook.variables.format_object(obj)
+
+    def set_variable(self, name: str, obj) -> None:
+        self.playbook.variables.vars[name] = obj
 
 
 class TaskExecutionContext:
@@ -124,6 +138,24 @@ class Task(Nameable):
     def get_display_name(self):
         return self.name
 
+    def _check_requirements(self, context, task_context):
+        # pylint: disable=import-outside-toplevel
+        from embark.domain.tasks.exception import RequirementCannotBeMetException
+        try:
+            for requirement in self.requirements:
+                requirement.ensure_requirement_met(task_context)
+            return True
+        except RequirementCannotBeMetException as e:
+            self.logger.error("Cannot execute task, because requirements cannot be met")
+            should_proceed = context.ask_should_proceed(
+                "Task failed to execute. Proceed playbook?"
+            )
+            if should_proceed:
+                self.logger.warning("Cancelled, playbook continues")
+                return True
+            self.logger.error("Cannot proceed. Playbook cancelled")
+            raise e
+
     def execute(self, context: AbstractPlaybookExecutionContext):
         """Execute this task"""
         task_context = self.context_factory.create_task_context(context, self)
@@ -132,21 +164,10 @@ class Task(Nameable):
             self.logger.info("Skipping task")
             return
         self.logger.info("Executing task")
+        should_proceed = self._check_requirements(context, task_context)
+        if not should_proceed:
+            return False
         # pylint: disable=import-outside-toplevel
-        from embark.domain.tasks.exception import RequirementCannotBeMetException
-        try:
-            for requirement in self.requirements:
-                requirement.ensure_requirement_met(task_context)
-        except RequirementCannotBeMetException as e:
-            self.logger.error("Cannot execute task, because requirements cannot be met")
-            should_proceed = context.ask_should_proceed(
-                "Task failed to execute. Proceed playbook?"
-            )
-            if should_proceed:
-                self.logger.warning("Cancelled, playbook continues")
-                return
-            self.logger.error("Cannot proceed. Playbook cancelled")
-            raise e
         from embark.domain.tasks.exception import TaskExecutionException
         cancel = False
         try:

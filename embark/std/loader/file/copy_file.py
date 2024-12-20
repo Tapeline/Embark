@@ -7,7 +7,8 @@ from pydantic import BaseModel
 
 from embark.domain.config.loader import AbstractTaskLoader
 from embark.domain.tasks.task import Task
-from embark.std.criteria.file_criteria import FileDoesNotExistCriteria
+from embark.std.criteria.file_criteria import FileDoesNotExistCriteria, FileExistsCriteria
+from embark.std.criteria.logic_criteria import AndCriteria
 from embark.std.requirement.privileges import AdminPrivilegesRequirement
 from embark.std.target.file_tasks import CopyFileTarget
 
@@ -18,6 +19,7 @@ class TaskModel(BaseModel):
     overwrite: bool = False
     src: str
     dst: str
+    skip_if_missing: bool = False
 
 
 class CopyFileTaskLoader(AbstractTaskLoader):
@@ -30,6 +32,8 @@ class CopyFileTaskLoader(AbstractTaskLoader):
         criteria = None
         if not model.overwrite:
             criteria = FileDoesNotExistCriteria(model.dst)
+        if model.skip_if_missing:
+            criteria = AndCriteria(FileExistsCriteria(model.src), criteria)
 
         requirements = []
         if model.admin:

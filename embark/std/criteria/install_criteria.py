@@ -17,11 +17,14 @@ class ProgramNotInstalledCriteria(AbstractExecutionCriteria):
         self.ignore_version = ignore_version
 
     def should_execute(self, context: TaskExecutionContext) -> bool:
+        name = context.playbook_context.variables(self.name)
+        version = context.playbook_context.variables(self.version)
+        publisher = context.playbook_context.variables(self.publisher)
         repo = WindowsInstallsRepository()
         for install in repo.get_all_installs():
-            if (re.fullmatch(self.name, install.name) is not None
-                    and (install.publisher == self.publisher or install.publisher is None) and
-                    (install.version == self.version or self.ignore_version)):
+            if (re.fullmatch(name, install.name) is not None
+                    and (install.publisher == publisher or install.publisher is None) and
+                    (install.version == version or self.ignore_version)):
                 return False
         return True
 

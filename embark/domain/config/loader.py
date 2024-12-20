@@ -79,4 +79,4 @@ def load_playbook_from_config(context_factory: AbstractContextFactory,
             logger.warning("Task loader %s returned None instead of Task", loader.name)
         else:
             tasks.append(task)
-    return Playbook(context_factory, playbook_config.name, tasks)
+    return Playbook(context_factory, playbook_config.name, tasks, variables=variables)

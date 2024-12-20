@@ -9,6 +9,7 @@ import os.path
 from embark import log_config
 from embark.domain.config.loader import AbstractTaskLoaderRepository, AbstractTaskLoader
 from embark.impl import pip_pkg
+from embark.std.loader.echo_loader import EchoTaskLoader
 from embark.std.loader.file.copy_file import CopyFileTaskLoader
 from embark.std.loader.install.install import InstallTaskLoader
 from embark.std.loader.exec.cmd import CmdTaskLoader
@@ -75,7 +76,9 @@ class TaskLoaderRepository(AbstractTaskLoaderRepository):
         return True
 
 
+# TODO: add on class extension
 TaskLoaderRepository.LOADERS.append(DownloadFileTaskLoader())
 TaskLoaderRepository.LOADERS.append(CopyFileTaskLoader())
 TaskLoaderRepository.LOADERS.append(InstallTaskLoader())
 TaskLoaderRepository.LOADERS.append(CmdTaskLoader())
+TaskLoaderRepository.LOADERS.append(EchoTaskLoader())

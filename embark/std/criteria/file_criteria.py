@@ -14,8 +14,9 @@ class FileCriteria(AbstractExecutionCriteria):
         self.should_exist = should_exist
 
     def should_execute(self, context: TaskExecutionContext) -> bool:
+        file_path = context.playbook_context.variables(self.file_path)
         return os.path.exists(
-            context.playbook_context.file_path(self.file_path)
+            context.playbook_context.file_path(file_path)
         ) == self.should_exist
 
     def get_display_name(self):

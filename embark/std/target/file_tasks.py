@@ -15,14 +15,16 @@ class CopyFileTarget(AbstractExecutionTarget):
         self.dst_file = dst_file
 
     def execute(self, context: TaskExecutionContext) -> bool:
-        src = context.playbook_context.file_path(self.src_file)
-        dst = context.playbook_context.file_path(self.dst_file)
+        src = context.playbook_context.playbook.variables.format(self.src_file)
+        dst = context.playbook_context.playbook.variables.format(self.dst_file)
+        src = context.playbook_context.file_path(src)
+        dst = context.playbook_context.file_path(dst)
         try:
             shutil.copy(src, dst)
         except FileNotFoundError as exc:
             context.task.logger.exception("File not found", exc)
             return False
-        return os.path.exists(self.dst_file)
+        return os.path.exists(dst)
 
     def get_display_name(self) -> str:
         return f"Copy {self.src_file} -> {self.dst_file}"

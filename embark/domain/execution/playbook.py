@@ -4,9 +4,11 @@ Provides objects for executing playbook
 
 import io
 import logging
+import os
 import traceback
 
 from embark import log_config
+from embark.domain.config.variables import VariablesEnv
 from embark.domain.tasks.exception import TaskExecutionException
 from embark.domain.tasks.task import Task, AbstractContextFactory
 
@@ -21,11 +23,13 @@ class Playbook:
     def __init__(self,
                  context_factory: AbstractContextFactory,
                  name: str,
-                 tasks: list[Task]):
+                 tasks: list[Task],
+                 variables: VariablesEnv | None = None):
         self.logger = logging.getLogger(name)
         log_config.setup_default_handlers(self.logger)
         self.tasks = tasks
         self.context_factory = context_factory
+        self.variables: VariablesEnv = variables or VariablesEnv({}, os.environ)
         self.context = context_factory.create_playbook_context(self)
 
     def run_tasks(self):

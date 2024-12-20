@@ -12,7 +12,7 @@ from embark.domain.config.loader import AbstractTaskLoader
 from embark.domain.tasks.task import Task
 from embark.std.criteria.install_criteria import ProgramNotInstalledCriteria
 from embark.std.requirement.privileges import AdminPrivilegesRequirement
-from embark.std.target.install.install_tasks import InstallTarget
+from embark.std.target.install.install_tasks import InstallTarget, InstallTargetParams
 
 
 class TaskModel(BaseModel):
@@ -48,15 +48,17 @@ class InstallTaskLoader(AbstractTaskLoader):
         requirements = [AdminPrivilegesRequirement()]
 
         target = InstallTarget(
-            model.name,
-            model.version,
-            model.publisher,
-            model.installer,
-            model.msi_admin,
-            model.cmd_install,
-            model.cmd_uninstall,
-            model.lookup_paths,
-            model.no_remove
+            InstallTargetParams(
+                model.name,
+                model.version,
+                model.publisher,
+                model.installer,
+                model.msi_admin,
+                model.cmd_install,
+                model.cmd_uninstall,
+                model.lookup_paths,
+                model.no_remove
+            )
         )
 
         return Task(context_factory, task_name, criteria, requirements, target)

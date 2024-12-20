@@ -17,9 +17,11 @@ class DownloadFileTarget(AbstractExecutionTarget):
         self.timeout_s = timeout_s
 
     def execute(self, context: TaskExecutionContext) -> bool:
-        dst = context.playbook_context.file_path(self.dst_file)
+        url = context.playbook_context.playbook.variables.format(self.url)
+        dst = context.playbook_context.playbook.variables.format(self.dst_file)
+        dst = context.playbook_context.file_path(dst)
         with open(dst, "wb") as f:
-            response = requests.get(self.url, stream=True, timeout=self.timeout_s)
+            response = requests.get(url, stream=True, timeout=self.timeout_s)
             total_length = response.headers.get('content-length')
             if total_length is None:
                 f.write(response.content)
