@@ -27,5 +27,7 @@ def _main():
 
 def main():
     playbook_path = main_frame.ask_for_playbook(DEFAULT_ENCODING)
+    if playbook_path is None:
+        return
     logger_frame = LoggerFrame(DEFAULT_ENCODING, playbook_path)
     logger_frame.run()
