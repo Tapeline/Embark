@@ -2,26 +2,25 @@
 Implementation of contexts
 """
 import os
-import time
+from tkinter import messagebox
 
 from embark.domain.playbook_logger import AbstractPlaybookLogger
 from embark.domain.tasks.task import (AbstractContextFactory,
                                       TaskExecutionContext,
                                       AbstractPlaybookExecutionContext)
-from embark.impl.cli_loggers import CLIPlaybookLogger
+from embark.localization.i18n import L
+from embark.ui.logger_frame.ui_loggers import GUIPlaybookLogger
 
 
-class CLIPlaybookExecutionContext(AbstractPlaybookExecutionContext):
+class GUIPlaybookExecutionContext(AbstractPlaybookExecutionContext):
     """Implementation of playbook execution context"""
 
-    def __init__(self, playbook):
+    def __init__(self, playbook, logger_frame):
         self._playbook = playbook
+        self._logger_frame = logger_frame
 
     def ask_should_proceed(self, text: str) -> bool:
-        time.sleep(0.2)
-        print(text)
-        answer = input("y/n> ")
-        return answer.lower() == "y"
+        return messagebox.askyesno(L("UI.ask_header"), text)
 
     @property
     def playbook(self):
@@ -31,14 +30,17 @@ class CLIPlaybookExecutionContext(AbstractPlaybookExecutionContext):
         return os.path.expandvars(path)
 
     def create_logger(self) -> AbstractPlaybookLogger:
-        return CLIPlaybookLogger(self._playbook)
+        return GUIPlaybookLogger(self._playbook, self._logger_frame)
 
 
-class CLIContextFactory(AbstractContextFactory):
+class GUIContextFactory(AbstractContextFactory):
     """Implementation of context factory"""
 
+    def __init__(self, logger_frame):
+        self._logger_frame = logger_frame
+
     def create_playbook_context(self, playbook) -> AbstractPlaybookExecutionContext:
-        return CLIPlaybookExecutionContext(playbook)
+        return GUIPlaybookExecutionContext(playbook, self._logger_frame)
 
     def create_task_context(self, playbook_context, task) -> TaskExecutionContext:
         return TaskExecutionContext(playbook_context, task)

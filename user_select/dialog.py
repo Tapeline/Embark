@@ -1,7 +1,7 @@
 import os
-import tkinter
-from tkinter import Tk, StringVar, Button
-from tkinter.ttk import Combobox
+from tkinter import StringVar
+
+from customtkinter import CTk, CTkLabel, CTkComboBox, CTkButton
 
 from embark.domain.config.loader import AbstractTaskLoader
 from embark.domain.tasks.task import Task, AbstractExecutionTarget, TaskExecutionContext
@@ -29,7 +29,7 @@ class SelectUserTarget(AbstractExecutionTarget):
     def __init__(self): ...
 
     def execute(self, context: TaskExecutionContext) -> bool:
-        root = Tk()
+        root = CTk()
         root.title("Select target user")
         root.geometry("300x100")
         root.resizable(False, False)
@@ -44,12 +44,12 @@ class SelectUserTarget(AbstractExecutionTarget):
             return True
         variable = StringVar(root)
         variable.set(choices[0])
-        lbl = tkinter.Label(root, text="Select target user")
+        lbl = CTkLabel(root, text="Select target user")
         lbl.pack(fill="x", padx=4, pady=4)
-        w = Combobox(root, state="readonly", values=choices, textvariable=variable)
+        w = CTkComboBox(root, state="readonly", values=choices, variable=variable)
         w.set(choices[0])
         w.pack(fill="x", padx=4, pady=4)
-        btn = Button(root, text="OK", command=lambda: (ok_pressed.set(True), root.destroy()))
+        btn = CTkButton(root, text="OK", command=lambda: (ok_pressed.set(True), root.destroy()))
         btn.pack(fill="x", padx=4, pady=4)
         root.mainloop()
 

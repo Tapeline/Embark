@@ -3,54 +3,53 @@ Main UI frame and tools
 """
 
 import os
-from tkinter import font, Label, Tk
+from customtkinter import CTkLabel, CTk, CTkFont, CTkButton
 
 import yaml
 
 from embark.localization.i18n import L
 from embark.resources import get_resource
-from embark.ui import utils, components
+from embark.ui import utils
 
 
-class MainFrame(Tk):
+class MainFrame(CTk):
     """Main UI frame"""
     def __init__(self, encoding):
-        super().__init__("Embark UI")
+        super().__init__()
         self.title("Embark UI")
-        self.geometry("450x600")
+        self.geometry("600x600")
         self.resizable(False, False)
         self.iconbitmap(get_resource("icon.ico"))
         utils.center(self)
-        self._font = font.nametofont("TkDefaultFont").copy()
-        self._font.configure(size=10, weight=font.BOLD)
+        self._font = CTkFont("TkDefaultFont", 16, "bold")
         self._controller = Controller(encoding)
         self._setup_ui()
         self._selected_file = None
 
     def _setup_ui(self):
         """Create and place UI components"""
-        self._label1 = Label(
+        self._label1 = CTkLabel(
             self, anchor="w",
             text=L("UI.playbooks_found_title")
         )
-        self._label1.config(font=self._font)
+        self._label1.configure(font=self._font)
         self._label1.grid(row=0, column=0, padx=(16, 16), pady=(16, 0), sticky="w")
-        self._label2 = Label(self, text=L("UI.playbooks_found_subtitle"), anchor="w")
+        self._label2 = CTkLabel(self, text=L("UI.playbooks_found_subtitle"), anchor="w")
         self._label2.grid(row=1, column=0, padx=(16, 16), pady=(0, 16), sticky="w")
         playbooks = self._controller.get_playbooks()
         if len(playbooks) == 0:
-            self._404_label = Label(self, text=L("UI.playbooks_not_found"), anchor="w")
+            self._404_label = CTkLabel(self, text=L("UI.playbooks_not_found"), anchor="w")
             self._404_label.grid(row=2, column=0, padx=(16, 16), pady=(16, 16), sticky="w")
             return
         row = 2
         self._buttons = []
         for file, name in playbooks.items():
-            button = components.Button(
+            button = CTkButton(
                 self, text=name,
                 command=lambda *_, f=file: self._choose_playbook(f)
             )
-            button.grid(row=row, column=0, padx=(16, 16), sticky="w")
-            button.config(font=self._font, width=50)
+            button.grid(row=row, column=0, padx=(16, 16), sticky="we")
+            button.configure(font=self._font, width=50)
             self._buttons.append(button)
             row += 1
 

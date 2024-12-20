@@ -6,7 +6,7 @@ Application declaration
 import os
 
 from embark.domain import action
-from embark.impl.context_factory import ContextFactory
+from embark.impl.context_factory import CLIContextFactory
 from embark.impl.task_loader_repo import TaskLoaderRepository
 
 
@@ -15,7 +15,7 @@ class Application:
 
     def __init__(self, config_file: str, file_encoding=None):
         self.config_file = config_file
-        self.context_factory = ContextFactory()
+        self.context_factory = CLIContextFactory()
         self.loader_repo = TaskLoaderRepository()
         self.file_encoding = file_encoding
 

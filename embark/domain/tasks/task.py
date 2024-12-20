@@ -5,11 +5,10 @@
 Provides objects for task execution
 """
 
-import logging
 from abc import ABC, abstractmethod
 from typing import Sequence, TYPE_CHECKING
 
-from embark import log_config
+from embark.domain.playbook_logger import AbstractPlaybookLogger, AbstractTaskLogger
 from embark.domain.utils import Interface
 
 if TYPE_CHECKING:
@@ -33,6 +32,10 @@ class AbstractPlaybookExecutionContext(ABC):
     @abstractmethod
     def file_path(self, path) -> str:
         """Resolve file path (with placeholders)"""
+        raise NotImplementedError
+
+    @abstractmethod
+    def create_logger(self) -> AbstractPlaybookLogger:
         raise NotImplementedError
 
     def variables[T](self, obj: T) -> T:
@@ -127,13 +130,12 @@ class Task(Nameable):
                  criteria: AbstractExecutionCriteria | None,
                  requirements: Sequence[AbstractExecutionRequirement],
                  target: AbstractExecutionTarget):
-        self.logger = logging.getLogger(name)
-        log_config.setup_default_handlers(self.logger)
-        self.context_factory = context_factory
         self.name = name
         self.criteria = criteria or NoExecutionCriteria()
         self.requirements = requirements
         self.target = target
+        self.context_factory = context_factory
+        self.logger: AbstractTaskLogger | None = None
 
     def get_display_name(self):
         return self.name
@@ -146,7 +148,10 @@ class Task(Nameable):
                 requirement.ensure_requirement_met(task_context)
             return True
         except RequirementCannotBeMetException as e:
-            self.logger.error("Cannot execute task, because requirements cannot be met")
+            self.logger.task_ended(
+                is_successful=False,
+                error_message="Cannot execute task, because requirements cannot be met"
+            )
             should_proceed = context.ask_should_proceed(
                 "Task failed to execute. Proceed playbook?"
             )
@@ -156,14 +161,18 @@ class Task(Nameable):
             self.logger.error("Cannot proceed. Playbook cancelled")
             raise e
 
-    def execute(self, context: AbstractPlaybookExecutionContext):
+    def execute(
+            self,
+            context: AbstractPlaybookExecutionContext
+    ):
         """Execute this task"""
         task_context = self.context_factory.create_task_context(context, self)
+        self.logger = context.playbook.logger.create_child_task_logger(self)
         should_execute = self.criteria.should_execute(task_context)
         if not should_execute:
-            self.logger.info("Skipping task")
+            self.logger.task_skipped()
             return
-        self.logger.info("Executing task")
+        self.logger.task_started()
         should_proceed = self._check_requirements(context, task_context)
         if not should_proceed:
             return False
@@ -173,7 +182,10 @@ class Task(Nameable):
         try:
             success = self.target.execute(task_context)
             if not success:
-                self.logger.error("Task was not executed successfully")
+                self.logger.task_ended(
+                    is_successful=False,
+                    error_message="Task was not executed successfully"
+                )
                 should_proceed = context.ask_should_proceed("Proceed playbook?")
                 if should_proceed:
                     self.logger.warning("Cancelled, playbook continues")
@@ -181,7 +193,10 @@ class Task(Nameable):
                 self.logger.error("Cannot proceed. Playbook cancelled")
                 cancel = True
         except TaskExecutionException as e:
-            self.logger.exception("Unknown exception occurred: %s", str(e))
+            self.logger.task_ended(
+                is_successful=False,
+                error_message="Unknown exception occurred: %s" % str(e)
+            )
             should_proceed = context.ask_should_proceed(
                 f"Task failed to execute:\n{str(e)}.\nProceed playbook?"
             )
@@ -192,4 +207,4 @@ class Task(Nameable):
             raise e
         if cancel:
             raise TaskExecutionException(task_context, "Cancel")
-        self.logger.info("Task successful")
+        self.logger.task_ended(is_successful=True)
