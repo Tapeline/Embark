@@ -3,6 +3,7 @@ Provides targets and tools for web requests
 """
 
 import sys
+import uuid
 
 import requests
 
@@ -20,6 +21,8 @@ class DownloadFileTarget(AbstractExecutionTarget):
         url = context.playbook_context.playbook.variables.format(self.url)
         dst = context.playbook_context.playbook.variables.format(self.dst_file)
         dst = context.playbook_context.file_path(dst)
+        uid = str(uuid.uuid4())
+        context.task.logger.start_progress(uid, f"Download {url}")
         with open(dst, "wb") as f:
             response = requests.get(url, stream=True, timeout=self.timeout_s)
             total_length = response.headers.get('content-length')
@@ -28,13 +31,19 @@ class DownloadFileTarget(AbstractExecutionTarget):
             else:
                 dl = 0
                 total_length = int(total_length)
+                prev_progress = -1
                 for data in response.iter_content(chunk_size=4096):
                     dl += len(data)
                     f.write(data)
-                    done = int(50 * dl / total_length)
-                    sys.stdout.write(f"\r[{'=' * done}{' ' * (50 - done)}]")
-                    sys.stdout.flush()
-        print()
+                    progress = dl / total_length
+                    if int(progress * 100) != int(prev_progress * 100):
+                        context.task.logger.set_progress(uid, progress)
+                    prev_progress = progress
+                    # done = int(50 * dl / total_length)
+                    # sys.stdout.write(f"\r[{'=' * done}{' ' * (50 - done)}]")
+                    # sys.stdout.flush()
+        # print()
+        context.task.logger.finish_progress(uid)
         return True
 
     def get_display_name(self) -> str:

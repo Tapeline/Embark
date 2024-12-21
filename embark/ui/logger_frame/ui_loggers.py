@@ -37,6 +37,18 @@ class GUIPlaybookLogger(CLIPlaybookLogger):
     def create_child_task_logger(self, task) -> AbstractTaskLogger:
         return GUITaskLogger(self.playbook, task, self.logger_frame)
 
+    def start_progress(self, uid: str, title: str):
+        super().start_progress(uid, title)
+        self.logger_frame.start_progress(uid, title)
+
+    def set_progress(self, uid: str, progress: float):
+        super().set_progress(uid, progress)
+        self.logger_frame.set_progress(uid, progress)
+
+    def finish_progress(self, uid: str):
+        super().finish_progress(uid)
+        self.logger_frame.finish_progress(uid)
+
 
 class GUITaskLogger(CLITaskLogger):
     def __init__(self, playbook: Playbook, task: Task, parent_logger_frame: GUILoggerFrame):
@@ -70,3 +82,15 @@ class GUITaskLogger(CLITaskLogger):
     def exception(self, message, *args):
         super().exception(message, *args)
         self.logger_frame.exception(message, *args)
+
+    def start_progress(self, uid: str, title: str):
+        super().start_progress(uid, title)
+        self.logger_frame.start_progress(uid, title)
+
+    def set_progress(self, uid: str, progress: float):
+        super().set_progress(uid, progress)
+        self.logger_frame.set_progress(uid, progress)
+
+    def finish_progress(self, uid: str):
+        super().finish_progress(uid)
+        self.logger_frame.finish_progress(uid)

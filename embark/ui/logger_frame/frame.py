@@ -4,7 +4,7 @@ Logger UI frame
 
 import os
 import threading
-from tkinter import messagebox, DISABLED
+from tkinter import messagebox, DISABLED, BOTTOM
 
 from customtkinter import CTkLabel, CTk, CTkFont, CTkFrame, CTkButton
 
@@ -24,7 +24,6 @@ class LoggerFrame(CTk):
         super().__init__()
         self._encoding = encoding
         self._playbook_path = playbook_path
-
         self.title("Embark UI")
         self.geometry("1000x700")
         self.resizable(False, False)
@@ -51,6 +50,8 @@ class LoggerFrame(CTk):
         self._lp_title.pack(padx=8, pady=8, fill="x")
         self._lp_subtitle.pack(fill="x")
         self._lp_stop_btn.pack(padx=8, pady=8, fill="x")
+        self._lp_copyright = CTkLabel(self._left_pane, text="© Tapeline 2024")
+        self._lp_copyright.pack(side=BOTTOM)
 
         self._logger_frame = GUILoggerFrame(self)
 

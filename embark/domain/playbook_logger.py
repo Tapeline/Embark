@@ -18,6 +18,23 @@ class AbstractLogger(ABC):
     def exception(self, message, *args):
         raise NotImplementedError
 
+    @abstractmethod
+    def start_progress(self, uid: str, title: str):
+        raise NotImplementedError
+
+    @abstractmethod
+    def set_progress(self, uid: str, progress: float):
+        """
+        Set progress bar
+        :param uid: progress id
+        :param progress: [0;1]
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def finish_progress(self, uid: str):
+        raise NotImplementedError
+
 
 class AbstractTaskLogger(AbstractLogger, ABC):
     @abstractmethod

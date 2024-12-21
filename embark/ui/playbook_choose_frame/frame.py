@@ -12,7 +12,7 @@ from embark.resources import get_resource
 from embark.ui import utils
 
 
-class MainFrame(CTk):
+class PlaybookChooseFrame(CTk):
     """Main UI frame"""
     def __init__(self, encoding):
         super().__init__()
@@ -89,6 +89,6 @@ class Controller:
 
 def ask_for_playbook(encoding) -> str | None:
     """Open window and ask user for playbook"""
-    frame = MainFrame(encoding)
+    frame = PlaybookChooseFrame(encoding)
     frame.mainloop()
     return frame.get_selected_file()
