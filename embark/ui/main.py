@@ -2,7 +2,6 @@
 Main UI file
 """
 
-from embark.commands import cmd_run
 from embark.ui.playbook_choose_frame.frame import ask_for_playbook
 from embark.ui.logger_frame.frame import LoggerFrame
 

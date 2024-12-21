@@ -13,6 +13,7 @@ from embark.impl.task_loader_repo import TaskLoaderRepository
 from embark.localization.i18n import L
 from embark.resources import get_resource
 from embark.ui import utils
+from embark.ui.debug_frames import vars_frame, exec_frame
 from embark.ui.logger_frame.components import GUILoggerFrame
 from embark.ui.logger_frame.context_factory import GUIContextFactory
 
@@ -47,9 +48,23 @@ class LoggerFrame(CTk):
             text=L("UI.stop_playbook"),
             command=self._stop_playbook_cmd
         )
+        self._lp_debug_title = CTkLabel(self._left_pane, text=L("UI.debug"))
+        self._lp_debug_vars_btn = CTkButton(
+            self._left_pane,
+            text=L("UI.debug_vars"),
+            command=self._debug_vars_cmd
+        )
+        self._lp_debug_eval_btn = CTkButton(
+            self._left_pane,
+            text=L("UI.debug_exec"),
+            command=self._debug_eval_cmd
+        )
         self._lp_title.pack(padx=8, pady=8, fill="x")
         self._lp_subtitle.pack(fill="x")
         self._lp_stop_btn.pack(padx=8, pady=8, fill="x")
+        self._lp_debug_title.pack(padx=8, pady=8, fill="x")
+        self._lp_debug_vars_btn.pack(padx=8, pady=8, fill="x")
+        self._lp_debug_eval_btn.pack(padx=8, pady=8, fill="x")
         self._lp_copyright = CTkLabel(self._left_pane, text="© Tapeline 2024")
         self._lp_copyright.pack(side=BOTTOM)
 
@@ -62,6 +77,14 @@ class LoggerFrame(CTk):
     def _stop_playbook_cmd(self):
         if messagebox.askyesno(L("UI.ask_title"), L("UI.you_sure_want_exit")):
             self.destroy()
+
+    def _debug_vars_cmd(self):
+        if self._logger_frame.playbook is not None:
+            vars_frame.show(self._logger_frame.playbook)
+
+    def _debug_eval_cmd(self):
+        if self._logger_frame.playbook is not None:
+            exec_frame.show(self._logger_frame.playbook)
 
     def run(self):
         self.after(500, self._start_thread)

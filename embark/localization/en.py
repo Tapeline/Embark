@@ -19,3 +19,10 @@ class EnI18N(I18N):
         ask_title = "Question"
         you_sure_want_exit = "Are you sure you want to interrupt the playbook and exit immediately?"
         stop_playbook = "Stop execution"
+
+        debug = "Debug tools:"
+        debug_vars = "Debug variables"
+        debug_exec = "Execute in scope"
+        debug_vars_section = "Playbook variables"
+        debug_envs_section = "Environment variables"
+        execute_expression = "Execute code"
