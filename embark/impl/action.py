@@ -1,6 +1,4 @@
-"""
-Contains generified actions
-"""
+"""Contains generified actions."""
 
 import logging
 import sys
@@ -8,25 +6,29 @@ import sys
 from pydantic import ValidationError
 from yaml import YAMLError
 
-from embark.domain.config import config
+from embark.impl import config
 from embark.domain.config.exceptions import ConfigLoadingException
 from embark.domain.config.loader import AbstractTaskLoaderRepository
 from embark.domain.tasks.task import AbstractContextFactory
 
 
-IsSuccessful = bool
+type IsSuccessful = bool
 
 
-def execute_playbook_file(context_factory: AbstractContextFactory,
-                          loader_repo: AbstractTaskLoaderRepository,
-                          path: str, file_encoding=None) -> IsSuccessful:
-    """
-    Execute a playbook. Context factory and loader repo concrete
-    implementation should be provided in order for generified actions to work
-    """
+def execute_playbook_file(
+        context_factory: AbstractContextFactory,
+        loader_repo: AbstractTaskLoaderRepository,
+        path: str,
+        file_encoding: str | None = None
+) -> IsSuccessful:
+    """Execute a playbook."""
     try:
-        playbook = config.load_playbook_from_file(context_factory, loader_repo,
-                                                  path, encoding=file_encoding)
+        playbook = config.load_playbook_from_file(
+            context_factory,
+            loader_repo,
+            path,
+            encoding=file_encoding
+        )
     except ValidationError as e:
         logging.getLogger("Config loader").error(str(e))
         return False

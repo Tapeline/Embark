@@ -1,13 +1,10 @@
-"""
-dev_list_installs subcommand
-"""
+"""dev_list_installs subcommand."""
+
+from embark.std.target.install.installs_repo import WindowsInstallsRepository
 
 
-# pylint: disable=unused-argument
 def command(args):
-    """Subcommand impl"""
-    # pylint: disable=import-outside-toplevel
-    from embark.std.target.install.installs_repo import WindowsInstallsRepository
+    """Subcommand impl."""
     repo = WindowsInstallsRepository()
     for i, install in enumerate(repo.get_all_installs()):
         print(f"--- {i + 1} ---")

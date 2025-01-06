@@ -1,3 +1,5 @@
+"""Provides i18n base."""
+
 import ctypes
 import locale
 
@@ -7,7 +9,7 @@ _FALLBACK_LOCALE = _DEFAULT_LOCALE
 
 
 def get_windows_locale() -> str:
-    """Get current Windows locale"""
+    """Get current Windows locale."""
     global _CURRENT_LOCALE
     if _CURRENT_LOCALE is None:
         windll = ctypes.windll.kernel32
@@ -16,6 +18,8 @@ def get_windows_locale() -> str:
 
 
 class I18N:
+    """Base i18n class."""
+
     LOCALES = {}
 
     name = ""
@@ -26,6 +30,7 @@ class I18N:
 
 
 def get_locale(name: str) -> I18N | None:
+    """Get locale by name."""
     for l_name, lang in I18N.LOCALES.items():
         if l_name in name:
             return lang
@@ -33,7 +38,7 @@ def get_locale(name: str) -> I18N | None:
 
 
 def localize(message_code: str) -> str:
-    """Get message by code"""
+    """Get message by code."""
     lang_node = get_locale(get_windows_locale()) or get_locale(_DEFAULT_LOCALE)
     if lang_node is None:
         return "Translation not found"

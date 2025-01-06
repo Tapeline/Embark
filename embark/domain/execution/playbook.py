@@ -1,6 +1,4 @@
-"""
-Provides objects for executing playbook
-"""
+"""Provides objects for executing playbook."""
 
 import io
 import logging
@@ -13,18 +11,20 @@ from embark.domain.tasks.exception import TaskExecutionException
 from embark.domain.tasks.task import Task, AbstractContextFactory
 
 
-IsSuccessful = bool
+type IsSuccessful = bool
 
 
 class Playbook:
-    """
-    Playbook object which can be executed
-    """
-    def __init__(self,
-                 context_factory: AbstractContextFactory,
-                 name: str,
-                 tasks: list[Task],
-                 variables: VariablesEnv | None = None):
+    """Playbook object which can be executed."""
+
+    def __init__(
+            self,
+            context_factory: AbstractContextFactory,
+            name: str,
+            tasks: list[Task],
+            variables: VariablesEnv | None = None
+    ) -> None:
+        """Create playbook entity."""
         self.logger = logging.getLogger(name)
         log_config.setup_default_handlers(self.logger)
         self.tasks = tasks
@@ -32,15 +32,15 @@ class Playbook:
         self.variables: VariablesEnv = variables or VariablesEnv({}, os.environ)
         self.context = context_factory.create_playbook_context(self)
 
-    def run_tasks(self):
-        """Run all tasks sequentially"""
+    def run_tasks(self) -> None:
+        """Run all tasks sequentially."""
         self.logger.info("Starting playbook")
         for task in self.tasks:
             task.execute(self.context)
         self.logger.info("Playbook successfully ended")
 
     def run(self) -> IsSuccessful:
-        """Run all tasks and catch exceptions"""
+        """Run all tasks and catch exceptions."""
         try:
             self.run_tasks()
             return True

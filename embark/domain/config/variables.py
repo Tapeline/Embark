@@ -1,19 +1,18 @@
-"""
-Provides tools for managing variables inside configurations
-"""
+"""Provides tools for managing variables inside configurations."""
+
+from typing import Any
 
 
 class VariablesEnv:
-    """
-    Represents variable environment which is regular envs
-    + user-defined variables in `variables` section of playbook
-    """
-    def __init__(self, variables: dict, envs):
+    """Variables: envs + user-defined vars in ``variables`` section."""
+
+    def __init__(self, variables: dict, envs) -> None:
+        """Create variable environment."""
         self.vars = variables
         self.envs = envs
 
     def format(self, string: str) -> str:
-        """Format a single string"""
+        """Format a single string."""
         formatted = ""
         i = 0
         start = 0
@@ -37,7 +36,7 @@ class VariablesEnv:
         return formatted
 
     def get_value_or_leave_as_is(self, var: str) -> str:
-        """Get variable value or return string as is"""
+        """Get variable value or return string as is."""
         if not (var.startswith("{{") and var.endswith("}}")):
             return var
         var_name = var[2:len(var) - 2]
@@ -47,8 +46,8 @@ class VariablesEnv:
             return self.envs[var_name]
         return var
 
-    def format_object(self, obj):
-        """Recursively format object"""
+    def format_object[T: Any](self, obj: T) -> T:
+        """Recursively format object."""
         if isinstance(obj, dict):
             return {
                 key: self.format_object(value)

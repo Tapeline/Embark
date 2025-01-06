@@ -1,25 +1,26 @@
-# pylint: disable=too-few-public-methods
-# pylint: disable=too-many-arguments
-# pylint: disable=too-many-positional-arguments
-"""
-Provides targets and tools for installation management
-"""
+"""Provides targets and tools for installation management."""
+
 import os
 import re
 import subprocess
 from dataclasses import dataclass
 
 from embark.domain.tasks.task import AbstractExecutionTarget, TaskExecutionContext
-from embark.std.target.install.installs_repo import (WindowsInstallsRepository,
-                                              CannotUninstallQuietlyException,
-                                              CannotUninstallException,
-                                              CannotInstallQuietlyException,
-                                              CannotInstallException, WindowsInstallation,
-                                              determine_quiet_uninstall_command)
+from embark.std.target.install.installs_repo import (
+    WindowsInstallsRepository,
+    CannotUninstallQuietlyException,
+    CannotUninstallException,
+    CannotInstallQuietlyException,
+    CannotInstallException,
+    WindowsInstallation,
+    determine_quiet_uninstall_command
+)
 
 
 @dataclass
 class InstallTargetParams:
+    """DTO."""
+
     name: str
     version: str | None
     publisher: str | None
@@ -32,9 +33,10 @@ class InstallTargetParams:
 
 
 class InstallTarget(AbstractExecutionTarget):
-    """Target for installing"""
-    # pylint: disable=too-many-instance-attributes
-    def __init__(self, params: InstallTargetParams):
+    """Target for installing."""
+
+    def __init__(self, params: InstallTargetParams) -> None:
+        """Create target."""
         self.params = params
 
     def execute(self, context: TaskExecutionContext) -> bool:
@@ -47,23 +49,34 @@ class InstallTarget(AbstractExecutionTarget):
                 return False
         return self._install(params, repo, logger)
 
-    def _create_params(self, context: TaskExecutionContext):
+    def _create_params(
+            self,
+            context: TaskExecutionContext
+    ) -> InstallTargetParams:
+        """Re-create params with account of variables"""
         return InstallTargetParams(
             **context.playbook_context.playbook.variables.format_object(
                 self.params.__dict__
             )
         )
 
-    def _remove_existing_if_present(self, params, repo, logger) -> bool:
-        # pylint: disable=missing-function-docstring
+    def _remove_existing_if_present(
+            self,
+            params: InstallTargetParams,
+            repo: WindowsInstallsRepository,
+            logger
+    ) -> bool:
+        """Remove existing installation if present."""
         old_installation = None
-        if params.lookup_paths is not None:
-            logger.info("Preferring path lookup")
-            matched_path = self._try_to_match_lookup_path(params)
-            if matched_path is not None:
-                old_installation = self._get_installation_by_path(
-                    params, logger, matched_path, old_installation
-                )
+        logger.info("Preferring path lookup")
+        matched_path = self._try_to_match_lookup_path(params)
+        if matched_path is not None:
+            old_installation = self._get_installation_by_path(
+                params,
+                logger,
+                matched_path,
+                old_installation
+            )
         if old_installation is None:
             logger.info("Searching registry")
             old_installation = self._get_existing_installation(params, repo)
@@ -76,9 +89,14 @@ class InstallTarget(AbstractExecutionTarget):
             logger.info("Old installation not found")
         return True
 
-    def _try_to_match_lookup_path(self, params):
-        # pylint: disable=missing-function-docstring
+    def _try_to_match_lookup_path(
+            self,
+            params: InstallTargetParams
+    ) -> str | None:
+        """Get uninstaller by lookup path."""
         matched_path = None
+        if params.lookup_paths is None:
+            return None
         for path in params.lookup_paths:
             for name in os.listdir(path):
                 if re.match(params.name, name) is not None:
@@ -88,7 +106,13 @@ class InstallTarget(AbstractExecutionTarget):
                 break
         return matched_path
 
-    def _get_installation_by_path(self, params, logger, matched_path, old_installation):
+    def _get_installation_by_path(
+            self,
+            params: InstallTargetParams,
+            logger,
+            matched_path: str,
+            old_installation
+    ):
         # pylint: disable=missing-function-docstring
         logger.info("Path matched: %s", matched_path)
         uninstaller = None

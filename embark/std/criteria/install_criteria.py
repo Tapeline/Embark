@@ -1,6 +1,4 @@
-"""
-Provides criteria which account installed programs
-"""
+"""Provides criteria which account installed programs."""
 import re
 
 from embark.domain.tasks.task import AbstractExecutionCriteria, TaskExecutionContext
@@ -8,9 +6,16 @@ from embark.std.target.install.installs_repo import WindowsInstallsRepository
 
 
 class ProgramNotInstalledCriteria(AbstractExecutionCriteria):
-    """Execute if specific version of specific program is not installed"""
-    def __init__(self, name: str, version: str | None, publisher: str | None,
-                 ignore_version: bool = False):
+    """Execute if specific version of specific program is not installed."""
+
+    def __init__(
+            self,
+            name: str,
+            version: str | None,
+            publisher: str | None,
+            ignore_version: bool = False
+    ) -> None:
+        """Create criteria."""
         self.name = name
         self.version = version
         self.publisher = publisher
@@ -28,5 +33,8 @@ class ProgramNotInstalledCriteria(AbstractExecutionCriteria):
                 return False
         return True
 
-    def get_display_name(self):
-        return f"Program {self.name} {self.version} by {self.publisher} not installed"
+    def get_display_name(self) -> str:
+        return (
+            f"Program {self.name} {self.version} "
+            f"by {self.publisher} not installed"
+        )

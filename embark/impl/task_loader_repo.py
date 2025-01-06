@@ -1,7 +1,5 @@
-# pylint: disable=too-few-public-methods
-"""
-Implementation of task loader repo
-"""
+"""Implementation of task loader repo."""
+
 import importlib.util
 import logging
 import os.path
@@ -17,10 +15,12 @@ from embark.std.loader.web.download_file import DownloadFileTaskLoader
 
 
 class TaskLoaderRepository(AbstractTaskLoaderRepository):
-    """Task loader repo implementation"""
+    """Task loader repo implementation."""
+
     LOADERS: list[AbstractTaskLoader] = []
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """Create loader repo"""
         super().__init__()
         self.logger = logging.getLogger("task_loader")
         log_config.setup_default_handlers(self.logger)
@@ -31,8 +31,11 @@ class TaskLoaderRepository(AbstractTaskLoaderRepository):
                 return loader
         return self.lookup_loader_file(loader_name)
 
-    def lookup_loader_file(self, loader_name: str) -> AbstractTaskLoader | None:
-        """Try to load a custom loader from a .py file"""
+    def lookup_loader_file(
+            self,
+            loader_name: str
+    ) -> AbstractTaskLoader | None:
+        """Try to load a custom loader from a .py file."""
         loader_path = loader_name.replace(".", "/") + ".py"
         self._install_loader_requirements_if_needed(loader_path)
         module = self._load_py_module(loader_path)
@@ -43,7 +46,8 @@ class TaskLoaderRepository(AbstractTaskLoaderRepository):
             return None
         return module.__embark_loader__
 
-    def _load_py_module(self, filename):
+    def _load_py_module(self, filename: str):
+        """Load python module."""
         if not os.path.exists(filename):
             return None
         spec = importlib.util.spec_from_file_location(filename, filename)
@@ -51,7 +55,8 @@ class TaskLoaderRepository(AbstractTaskLoaderRepository):
         spec.loader.exec_module(module)
         return module
 
-    def _install_loader_requirements_if_needed(self, filename):
+    def _install_loader_requirements_if_needed(self, filename: str) -> None:
+        """Install pip requirements."""
         requirements_file = f"{filename}.requirements"
         if not os.path.exists(requirements_file):
             return
@@ -60,7 +65,8 @@ class TaskLoaderRepository(AbstractTaskLoaderRepository):
         if return_code != 0:
             self.logger.error("Pip install of %s failed!", requirements_file)
 
-    def _validate_loader_module(self, module, loader_name):
+    def _validate_loader_module(self, module, loader_name: str) -> bool:
+        """Check that loader module provides loader."""
         if not hasattr(module, "__embark_loader__"):
             self.logger.warning(
                 "Tried to import module %s, but file "

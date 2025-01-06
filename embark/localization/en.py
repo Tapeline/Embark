@@ -1,7 +1,11 @@
+"""EN locale."""
+
 from embark.localization.i18n import I18N
 
 
 class EnI18N(I18N):
+    """EN locale class."""
+
     name = "en"
 
     class UI:

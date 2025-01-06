@@ -1,6 +1,4 @@
-"""
-Provides targets and tools for web requests
-"""
+"""Provides targets and tools for web requests."""
 
 import sys
 
@@ -10,8 +8,10 @@ from embark.domain.tasks.task import AbstractExecutionTarget, TaskExecutionConte
 
 
 class DownloadFileTarget(AbstractExecutionTarget):
-    """Target for file downloading"""
-    def __init__(self, url: str, dst_file: str, timeout_s: int):
+    """Target for file downloading."""
+
+    def __init__(self, url: str, dst_file: str, timeout_s: int) -> None:
+        """Create target."""
         self.url = url
         self.dst_file = dst_file
         self.timeout_s = timeout_s

@@ -1,29 +1,29 @@
-"""
-Provides configuration loading exception
-"""
+"""Provides configuration loading exception."""
 
 
 class ConfigLoadingException(Exception):
-    """Thrown when config cannot be loaded"""
-    def __init__(self, message: str):
+    """Thrown when config cannot be loaded."""
+
+    def __init__(self, message: str) -> None:
         super().__init__()
         self.add_note(message)
         self.message = message
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.__class__.__name__}: {self.message}"
 
 
 class TaskLoadingException(ConfigLoadingException):
-    """Thrown when task loader cannot load a task"""
+    """Thrown when task loader cannot load a task."""
 
 
 class InvalidConfigException(ConfigLoadingException):
-    """Thrown when config format is invalid"""
+    """Thrown when config format is invalid."""
 
 
 class LoaderNotFoundException(ConfigLoadingException):
-    """Thrown when task loader is not found"""
-    def __init__(self, loader_name: str):
+    """Thrown when task loader is not found."""
+
+    def __init__(self, loader_name: str) -> None:
         super().__init__(f"Task loader {loader_name} not found")
         self.loader_name = loader_name

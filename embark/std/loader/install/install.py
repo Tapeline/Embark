@@ -1,7 +1,4 @@
-# pylint: disable=too-few-public-methods
-"""
-Provides loader and tools for `std.install`
-"""
+"""Provides loader and tools for ``std.install``."""
 
 from typing import Optional
 
@@ -9,14 +6,15 @@ from pydantic import BaseModel
 
 from embark.domain.config.exceptions import InvalidConfigException
 from embark.domain.config.loader import AbstractTaskLoader
-from embark.domain.tasks.task import Task
+from embark.domain.tasks.task import Task, AbstractContextFactory
 from embark.std.criteria.install_criteria import ProgramNotInstalledCriteria
 from embark.std.requirement.privileges import AdminPrivilegesRequirement
 from embark.std.target.install.install_tasks import InstallTarget, InstallTargetParams
 
 
 class TaskModel(BaseModel):
-    """Pydantic model for task config"""
+    """Pydantic model for task config."""
+
     name: str
     publisher: Optional[str] = None
     version: Optional[str] = None
@@ -30,12 +28,21 @@ class TaskModel(BaseModel):
 
 
 class InstallTaskLoader(AbstractTaskLoader):
-    """Task loader impl for `std.install`"""
+    """Task loader impl for ``std.install``."""
+
     name = "std.install"
 
-    def load_task(self, context_factory, task_name: str, task_config: dict) -> Task:
+    def load_task(
+            self,
+            context_factory: AbstractContextFactory,
+            task_name: str,
+            task_config: dict
+    ) -> Task:
         model = TaskModel(**task_config)
-        if (model.publisher is None or model.version is None) and model.lookup_paths is None:
+        if (
+                (model.publisher is None or model.version is None)
+                and model.lookup_paths is None
+        ):
             raise InvalidConfigException(
                 "Either publisher and version should be provided or lookup_paths"
             )
@@ -61,4 +68,10 @@ class InstallTaskLoader(AbstractTaskLoader):
             )
         )
 
-        return Task(context_factory, task_name, criteria, requirements, target)
+        return Task(
+            context_factory,
+            task_name,
+            criteria,
+            requirements,
+            target
+        )

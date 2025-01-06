@@ -1,7 +1,5 @@
-"""
-Provides function for loading yaml playbook
-"""
-import os.path
+"""Provides function for loading yaml playbook."""
+
 from pathlib import Path
 
 import yaml
@@ -12,13 +10,23 @@ from embark.domain.execution.playbook import Playbook
 from embark.domain.tasks.task import AbstractContextFactory
 
 
-def load_playbook_from_file(context_factory: AbstractContextFactory,
-                            loader_repo: AbstractTaskLoaderRepository,
-                            path: str, encoding=None) -> Playbook:
+def load_playbook_from_file(
+        context_factory: AbstractContextFactory,
+        loader_repo: AbstractTaskLoaderRepository,
+        path: str,
+        encoding: str | None = None,
+) -> Playbook:
     """
     Load playbook from yaml file.
-    Context factory and loader repo concrete implementation
-    should be provided in order for generified actions to work
+
+    Args:
+        context_factory: playbook and task context factory
+        loader_repo: repository of task loaders
+        path: playbook file path
+        encoding: playbook encoding name
+
+    Returns:
+        loaded playbook entity.
     """
     with open(path, "r", encoding=encoding) as f:
         data = yaml.safe_load(f)
@@ -29,4 +37,8 @@ def load_playbook_from_file(context_factory: AbstractContextFactory,
             variables = yaml.safe_load(f)
     playbook_config = models.load_playbook_config(data)
     playbook_config.variables.update(variables)
-    return loader.load_playbook_from_config(context_factory, loader_repo, playbook_config)
+    return loader.load_playbook_from_config(
+        context_factory,
+        loader_repo,
+        playbook_config,
+    )

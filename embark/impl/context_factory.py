@@ -1,18 +1,25 @@
-"""
-Implementation of contexts
-"""
+"""Implementation of contexts."""
+
 import os
 import time
+from typing import TYPE_CHECKING
 
-from embark.domain.tasks.task import (AbstractContextFactory,
-                                      TaskExecutionContext,
-                                      AbstractPlaybookExecutionContext)
+from embark.domain.execution.playbook import Playbook
+from embark.domain.tasks.task import (
+    AbstractContextFactory,
+    TaskExecutionContext,
+    AbstractPlaybookExecutionContext,
+)
+
+if TYPE_CHECKING:
+    from embark.domain.tasks.task import Task
 
 
 class PlaybookExecutionContext(AbstractPlaybookExecutionContext):
-    """Implementation of playbook execution context"""
+    """Implementation of playbook execution context."""
 
-    def __init__(self, playbook):
+    def __init__(self, playbook: Playbook) -> None:
+        """Create context."""
         self._playbook = playbook
 
     def ask_should_proceed(self, text: str) -> bool:
@@ -30,10 +37,17 @@ class PlaybookExecutionContext(AbstractPlaybookExecutionContext):
 
 
 class ContextFactory(AbstractContextFactory):
-    """Implementation of context factory"""
+    """Implementation of context factory."""
 
-    def create_playbook_context(self, playbook) -> AbstractPlaybookExecutionContext:
+    def create_playbook_context(
+            self,
+            playbook: Playbook
+    ) -> AbstractPlaybookExecutionContext:
         return PlaybookExecutionContext(playbook)
 
-    def create_task_context(self, playbook_context, task) -> TaskExecutionContext:
+    def create_task_context(
+            self,
+            playbook_context: AbstractPlaybookExecutionContext,
+            task: Task
+    ) -> TaskExecutionContext:
         return TaskExecutionContext(playbook_context, task)

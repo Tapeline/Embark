@@ -1,3 +1,5 @@
+"""Loader for std.echo."""
+
 from pydantic import BaseModel
 
 from embark.domain.config.loader import AbstractTaskLoader
@@ -6,10 +8,14 @@ from embark.domain.tasks.task import (Task, AbstractExecutionTarget,
 
 
 class TaskModel(BaseModel):
+    """Pydantic model."""
+
     message: str
 
 
 class EchoTaskLoader(AbstractTaskLoader):
+    """std.echo loader."""
+
     name = "std.echo"
 
     def load_task(self, context_factory, task_name: str, task_config: dict) -> Task:
@@ -23,7 +29,10 @@ class EchoTaskLoader(AbstractTaskLoader):
 
 
 class PrintMessageTarget(AbstractExecutionTarget):
-    def __init__(self, message: str):
+    """Echo target."""
+
+    def __init__(self, message: str) -> None:
+        """Create target."""
         self.message = message
 
     def execute(self, context: TaskExecutionContext) -> bool:

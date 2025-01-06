@@ -5,7 +5,7 @@ Application declaration
 
 import os
 
-from embark.domain import action
+from embark.impl import action
 from embark.impl.context_factory import ContextFactory
 from embark.impl.task_loader_repo import TaskLoaderRepository
 

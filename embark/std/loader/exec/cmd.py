@@ -1,27 +1,31 @@
-# pylint: disable=too-few-public-methods
-"""
-Provides loader and tools for `std.cmd`
-"""
+"""Provides loader and tools for `std.cmd`"""
 
 from pydantic import BaseModel
 
 from embark.domain.config.loader import AbstractTaskLoader
-from embark.domain.tasks.task import Task
+from embark.domain.tasks.task import Task, AbstractContextFactory
 from embark.std.requirement.privileges import AdminPrivilegesRequirement
 from embark.std.target.exec_tasks import RunCommandTarget
 
 
 class TaskModel(BaseModel):
-    """Pydantic model of task config"""
+    """Pydantic model of task config."""
+
     cmd: str
     admin: bool = False
 
 
 class CmdTaskLoader(AbstractTaskLoader):
-    """Task loader impl for `std.cmd`"""
+    """Task loader impl for ``std.cmd``."""
+
     name = "std.cmd"
 
-    def load_task(self, context_factory, task_name: str, task_config: dict) -> Task:
+    def load_task(
+            self,
+            context_factory: AbstractContextFactory,
+            task_name: str,
+            task_config: dict
+    ) -> Task:
         model = TaskModel(**task_config)
 
         criteria = None
@@ -32,4 +36,10 @@ class CmdTaskLoader(AbstractTaskLoader):
 
         target = RunCommandTarget(model.cmd)
 
-        return Task(context_factory, task_name, criteria, requirements, target)
+        return Task(
+            context_factory,
+            task_name,
+            criteria,
+            requirements,
+            target
+        )
