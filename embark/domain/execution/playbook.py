@@ -3,11 +3,9 @@ Provides objects for executing playbook
 """
 
 import io
-import logging
 import os
 import traceback
 
-from embark import log_config
 from embark.domain.config.variables import VariablesEnv
 from embark.domain.tasks.exception import TaskExecutionException
 from embark.domain.tasks.task import Task, AbstractContextFactory

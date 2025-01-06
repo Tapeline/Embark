@@ -38,15 +38,12 @@ class GUIPlaybookLogger(CLIPlaybookLogger):
         return GUITaskLogger(self.playbook, task, self.logger_frame)
 
     def start_progress(self, uid: str, title: str):
-        super().start_progress(uid, title)
         self.logger_frame.start_progress(uid, title)
 
     def set_progress(self, uid: str, progress: float):
-        super().set_progress(uid, progress)
         self.logger_frame.set_progress(uid, progress)
 
     def finish_progress(self, uid: str):
-        super().finish_progress(uid)
         self.logger_frame.finish_progress(uid)
 
 
@@ -84,13 +81,10 @@ class GUITaskLogger(CLITaskLogger):
         self.logger_frame.exception(message, *args)
 
     def start_progress(self, uid: str, title: str):
-        super().start_progress(uid, title)
         self.logger_frame.start_progress(uid, title)
 
     def set_progress(self, uid: str, progress: float):
-        super().set_progress(uid, progress)
         self.logger_frame.set_progress(uid, progress)
 
     def finish_progress(self, uid: str):
-        super().finish_progress(uid)
         self.logger_frame.finish_progress(uid)
