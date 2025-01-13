@@ -21,8 +21,8 @@ class CopyFileTarget(AbstractExecutionTarget):
         dst = context.playbook_context.file_path(dst)
         try:
             shutil.copy(src, dst)
-        except FileNotFoundError as exc:
-            context.task.logger.exception("File not found", exc)
+        except Exception as exc:
+            context.task.logger.exception("File copy error", exc)
             return False
         return os.path.exists(dst)
 
