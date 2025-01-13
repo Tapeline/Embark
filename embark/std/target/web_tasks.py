@@ -1,6 +1,4 @@
-"""
-Provides targets and tools for web requests
-"""
+"""Provides targets and tools for web requests."""
 
 import sys
 import uuid
@@ -11,8 +9,10 @@ from embark.domain.tasks.task import AbstractExecutionTarget, TaskExecutionConte
 
 
 class DownloadFileTarget(AbstractExecutionTarget):
-    """Target for file downloading"""
-    def __init__(self, url: str, dst_file: str, timeout_s: int):
+    """Target for file downloading."""
+
+    def __init__(self, url: str, dst_file: str, timeout_s: int) -> None:
+        """Create target."""
         self.url = url
         self.dst_file = dst_file
         self.timeout_s = timeout_s
@@ -25,8 +25,8 @@ class DownloadFileTarget(AbstractExecutionTarget):
         context.task.logger.start_progress(uid, f"Download {url}")
         with open(dst, "wb") as f:
             response = requests.get(url, stream=True, timeout=self.timeout_s)
-            total_length = response.headers.get('content-length')
-            if total_length is None:
+            total_length_str = response.headers.get('content-length')
+            if total_length_str is None:
                 f.write(response.content)
             else:
                 dl = 0

@@ -12,17 +12,22 @@ pydantic = "^2.9.2"
 PyYAML = "^6.0.2"
 customtkinter = "^5.2.2"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pylint = "^3.3.1"
 mypy = "^1.11.2"
 pyinstaller = "6.11.1"
+wemake-python-styleguide = "^1.0.0"
+ruff = "^0.9.1"
+import-linter = "^2.1"
 
 [tool.poetry.scripts]
 cleanbuild = "project_scripts:clean_build"
 build = "project_scripts:build"
 check = "project_scripts:check_all"
+check_no_wps = "project_scripts:check_all_no_wps"
 check_types = "project_scripts:check_mypy"
-check_pylint = "project_scripts:check_pylint"
+check_wps = "project_scripts:check_wps"
+check_imports = "project_scripts:check_imports"
 
 [build-system]
 requires = ["poetry-core"]

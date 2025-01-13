@@ -1,9 +1,4 @@
-# pylint: disable=too-few-public-methods
-# pylint: disable=too-many-arguments
-# pylint: disable=too-many-positional-arguments
-"""
-Provides tools for managing installations
-"""
+"""Provides tools for managing installations"""
 
 import subprocess
 import winreg
@@ -201,7 +196,7 @@ class WindowsInstallsRepository(AbstractInstallsRepository[WindowsInstallation])
         except FileNotFoundError:
             return []
 
-    def get_all_installs(self) -> Sequence[AbstractInstallation]:
+    def get_all_installs(self) -> Sequence[WindowsInstallation]:
         """
         Get all existing installations.
         Windows installations are located under different paths:

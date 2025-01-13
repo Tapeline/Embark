@@ -1,16 +1,15 @@
-"""
-Main UI file
-"""
+"""Main UI file."""
 
 from embark.ui.playbook_choose_frame.frame import ask_for_playbook
 from embark.ui.logger_frame.frame import LoggerFrame
+
 
 DEFAULT_ENCODING = "UTF-8"
 
 
 class ArgsMock:
     """Mocks argparse arg object"""
-    # pylint: disable=too-few-public-methods
+
     filename: str
     encoding: str = DEFAULT_ENCODING
 

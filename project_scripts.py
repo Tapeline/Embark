@@ -3,30 +3,52 @@ import shutil
 import subprocess
 import sys
 
-from mypy.api import run as mypy_run
-from pylint import lint
-
-
-def check_pylint():
-    lint.Run(["embark", "--fail-under=9.75"])
-
 
 def check_mypy():
-    process = subprocess.run("mypy --install-types")
+    process = subprocess.run(
+        "mypy --install-types",
+        stderr=sys.stderr,
+        stdout=sys.stdout
+    )
     if process.returncode != 0:
-        print(process.stdout)
-        print(process.stderr, file=sys.stderr)
         exit(process.returncode)
-    stdout, stderr, exit_code = mypy_run(["embark/main.py"])
-    print(stdout, file=sys.stdout)
-    print(stderr, file=sys.stderr)
-    if exit_code != 0:
-        exit(exit_code)
+    process = subprocess.run(
+        "mypy embark",
+        stderr=sys.stderr,
+        stdout=sys.stdout
+    )
+    if process.returncode != 0:
+        exit(process.returncode)
+
+
+def check_imports():
+    process = subprocess.run(
+        "lint-imports",
+        stderr=sys.stderr,
+        stdout=sys.stdout
+    )
+    if process.returncode != 0:
+        exit(process.returncode)
+
+
+def check_wps():
+    process = subprocess.run(
+        "flake8 ./embark",
+        stderr=sys.stderr,
+        stdout=sys.stdout
+    )
+    if process.returncode != 0:
+        exit(process.returncode)
 
 
 def check_all():
+    check_all_no_wps()
+    check_wps()
+
+
+def check_all_no_wps():
     check_mypy()
-    check_pylint()
+    check_imports()
 
 
 def clean_build():
@@ -38,7 +60,9 @@ def clean_build():
 
 
 def build():
-    process = subprocess.run("build.bat")
-    print(process.stdout)
-    print(process.stderr, file=sys.stderr)
+    process = subprocess.run(
+        "build.bat",
+        stderr=sys.stderr,
+        stdout=sys.stdout
+    )
     exit(process.returncode)

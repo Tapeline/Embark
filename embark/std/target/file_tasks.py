@@ -1,6 +1,4 @@
-"""
-Provides targets and tools for file management
-"""
+"""Provides targets and tools for file management."""
 
 import os.path
 import shutil
@@ -9,8 +7,10 @@ from embark.domain.tasks.task import AbstractExecutionTarget, TaskExecutionConte
 
 
 class CopyFileTarget(AbstractExecutionTarget):
-    """Target for file copying"""
-    def __init__(self, src_file: str, dst_file: str):
+    """Target for file copying."""
+
+    def __init__(self, src_file: str, dst_file: str) -> None:
+        """Create target."""
         self.src_file = src_file
         self.dst_file = dst_file
 
@@ -21,8 +21,8 @@ class CopyFileTarget(AbstractExecutionTarget):
         dst = context.playbook_context.file_path(dst)
         try:
             shutil.copy(src, dst)
-        except FileNotFoundError as exc:
-            context.task.logger.exception("File not found", exc)
+        except Exception as exc:
+            context.task.logger.exception("File copy error", exc)
             return False
         return os.path.exists(dst)
 

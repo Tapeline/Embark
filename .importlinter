@@ -1,0 +1,81 @@
+[importlinter]
+root_package = embark
+
+
+[importlinter:contract:isolate_domain]
+name = Domain knows nothing about lower levels
+type = forbidden
+source_modules =
+    embark.domain
+forbidden_modules =
+    embark.commands
+    embark.impl
+    embark.localization
+    embark.std
+    embark.ui
+    embark.use_case
+    embark.application
+    embark.main
+    embark.resources
+
+
+[importlinter:contract:isolate_use_cases]
+name = Use cases know nothing about lower levels
+type = forbidden
+source_modules =
+    embark.use_case
+forbidden_modules =
+    embark.commands
+    embark.impl
+    embark.localization
+    embark.std
+    embark.ui
+    embark.application
+    embark.main
+    embark.resources
+
+
+[importlinter:contract:isolate_localization]
+name = Localization module shall not be dependent on anything
+type = forbidden
+source_modules =
+    embark.localization
+forbidden_modules =
+    embark.commands
+    embark.domain
+    embark.impl
+    embark.std
+    embark.ui
+    embark.use_case
+    embark.application
+    embark.log_config
+    embark.main
+    embark.resources
+
+
+[importlinter:contract:isolate_commands]
+name = Command shall not be dependent on UI
+type = forbidden
+source_modules =
+    embark.commands
+forbidden_modules =
+    embark.ui
+
+
+[importlinter:contract:isolate_std]
+name = Std lib shall not be dependent on UI and CLI commands
+type = forbidden
+source_modules =
+    embark.std
+forbidden_modules =
+    embark.ui
+    embark.commands
+
+
+[importlinter:contract:isolate_ui]
+name = UI shall not be dependent on commands
+type = forbidden
+source_modules =
+    embark.ui
+forbidden_modules =
+    embark.commands

@@ -1,15 +1,13 @@
-# pylint: disable=too-few-public-methods
-# pylint: disable=too-many-arguments
-# pylint: disable=too-many-positional-arguments
-"""
-Provides objects for task execution
-"""
+"""Provides objects for task execution."""
 
 from abc import ABC, abstractmethod
 from typing import Sequence, TYPE_CHECKING
 
+from embark.domain.tasks.exception import (
+    TaskExecutionException,
+    RequirementCannotBeMetException,
+)
 from embark.domain.playbook_logger import AbstractPlaybookLogger, AbstractTaskLogger
-from embark.domain.utils import Interface
 
 if TYPE_CHECKING:
     from embark.domain.execution.playbook import Playbook
@@ -32,10 +30,6 @@ class AbstractPlaybookExecutionContext(ABC):
     @abstractmethod
     def file_path(self, path) -> str:
         """Resolve file path (with placeholders)"""
-        raise NotImplementedError
-
-    @abstractmethod
-    def create_logger(self) -> AbstractPlaybookLogger:
         raise NotImplementedError
 
     def variables[T](self, obj: T) -> T:
@@ -80,18 +74,17 @@ class Nameable(Interface):
 
 
 class AbstractExecutionCriteria(Nameable, ABC):
-    """
-    Represents a condition under which
-    task should or should not be run
-    """
+    """A condition under which task should or should not be run."""
+
     @abstractmethod
     def should_execute(self, context: TaskExecutionContext) -> bool:
-        """Determine if task should be executed"""
+        """Determine if task should be executed."""
         raise NotImplementedError
 
 
 class NoExecutionCriteria(AbstractExecutionCriteria):
-    """Dummy criteria which is always true"""
+    """Dummy criteria which is always true."""
+
     def should_execute(self, context: TaskExecutionContext) -> bool:
         return True
 
@@ -100,36 +93,43 @@ class NoExecutionCriteria(AbstractExecutionCriteria):
 
 
 class AbstractExecutionRequirement(Nameable, ABC):
-    """
-    Represents a requirement which
-    must be met to execute the task.
-    Throws RequirementCannotBeMetException if requirement cannot be met
-    """
+    """Represents a requirement which must be met to execute the task."""
+
     @abstractmethod
     def ensure_requirement_met(self, context: TaskExecutionContext) -> None:
-        """Check if requirement is met and if not - request user action"""
+        """
+        Check if requirement is met and if not - request user action.
+
+        Args:
+            context: task execution context
+
+        Throws:
+            RequirementCannotBeMetException: if requirement cannot be met
+        """
         raise NotImplementedError
 
 
 class AbstractExecutionTarget(Nameable, ABC):
-    """
-    Represents a target (action) which must be executed
-    """
+    """Represents a target (action) which must be executed."""
+
     @abstractmethod
     def execute(self, context: TaskExecutionContext) -> bool:
-        """Execute action"""
+        """Execute action."""
         raise NotImplementedError
 
 
 class Task(Nameable):
-    """Represents playbook task"""
+    """Represents playbook task."""
 
-    def __init__(self,
-                 context_factory: AbstractContextFactory,
-                 name: str,
-                 criteria: AbstractExecutionCriteria | None,
-                 requirements: Sequence[AbstractExecutionRequirement],
-                 target: AbstractExecutionTarget):
+    def __init__(
+            self,
+            context_factory: AbstractContextFactory,
+            name: str,
+            criteria: AbstractExecutionCriteria | None,
+            requirements: Sequence[AbstractExecutionRequirement],
+            target: AbstractExecutionTarget
+    ) -> None:
+        """Create task entity."""
         self.name = name
         self.criteria = criteria or NoExecutionCriteria()
         self.requirements = requirements
@@ -140,9 +140,39 @@ class Task(Nameable):
     def get_display_name(self):
         return self.name
 
-    def _check_requirements(self, context, task_context):
-        # pylint: disable=import-outside-toplevel
-        from embark.domain.tasks.exception import RequirementCannotBeMetException
+    def execute(self, context: AbstractPlaybookExecutionContext) -> bool:
+        """Execute this task"""
+        task_context = self.context_factory.create_task_context(context, self)
+        self.logger = context.playbook.logger.create_child_task_logger(self)
+        should_execute = self.criteria.should_execute(task_context)
+        if not should_execute:
+            self.logger.task_skipped()
+            return
+        self.logger.task_started()
+        should_proceed = self._check_requirements(context, task_context)
+        if not should_proceed:
+            return False
+        self.logger.info("Executing task")
+        should_proceed = self._check_requirements(context, task_context)
+        if not should_proceed:
+            return False
+        is_successful, is_cancelled = self._try_to_execute_target(
+            context,
+            task_context,
+        )
+        if not is_successful:
+            return False
+        if is_cancelled:
+            raise TaskExecutionException(task_context, "Cancel")
+        self.logger.task_ended(is_successful=True)
+        return True
+
+    def _check_requirements(
+            self,
+            context: AbstractPlaybookExecutionContext,
+            task_context: TaskExecutionContext,
+    ) -> bool:
+        """Check task requirements."""
         try:
             for requirement in self.requirements:
                 requirement.ensure_requirement_met(task_context)
@@ -161,23 +191,12 @@ class Task(Nameable):
             self.logger.error("Cannot proceed. Playbook cancelled")
             raise e
 
-    def execute(
+    def _try_to_execute_target(
             self,
-            context: AbstractPlaybookExecutionContext
-    ):
-        """Execute this task"""
-        task_context = self.context_factory.create_task_context(context, self)
-        self.logger = context.playbook.logger.create_child_task_logger(self)
-        should_execute = self.criteria.should_execute(task_context)
-        if not should_execute:
-            self.logger.task_skipped()
-            return
-        self.logger.task_started()
-        should_proceed = self._check_requirements(context, task_context)
-        if not should_proceed:
-            return False
-        # pylint: disable=import-outside-toplevel
-        from embark.domain.tasks.exception import TaskExecutionException
+            context: AbstractPlaybookExecutionContext,
+            task_context: TaskExecutionContext,
+    ) -> tuple[bool, bool]:
+        """Try to execute target."""
         cancel = False
         try:
             success = self.target.execute(task_context)
@@ -186,10 +205,12 @@ class Task(Nameable):
                     is_successful=False,
                     error_message="Task was not executed successfully"
                 )
-                should_proceed = context.ask_should_proceed("Proceed playbook?")
+                should_proceed = context.ask_should_proceed(
+                    "Proceed playbook?"
+                )
                 if should_proceed:
                     self.logger.warning("Cancelled, playbook continues")
-                    return
+                    return True, cancel
                 self.logger.error("Cannot proceed. Playbook cancelled")
                 cancel = True
         except TaskExecutionException as e:
@@ -202,9 +223,7 @@ class Task(Nameable):
             )
             if should_proceed:
                 self.logger.warning("Cancelled, playbook continues")
-                return
+                return True, cancel
             self.logger.error("Cannot proceed. Playbook cancelled")
             raise e
-        if cancel:
-            raise TaskExecutionException(task_context, "Cancel")
-        self.logger.task_ended(is_successful=True)
+        return True, False

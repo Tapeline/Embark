@@ -1,13 +1,12 @@
-"""
-dev_query_install subcommand
-"""
+"""dev_query_install subcommand."""
+
 import re
+
+from embark.std.target.install.installs_repo import WindowsInstallsRepository
 
 
 def command(args):
     """Subcommand impl"""
-    # pylint: disable=import-outside-toplevel
-    from embark.std.target.install.installs_repo import WindowsInstallsRepository
     repo = WindowsInstallsRepository()
     for install in repo.get_all_installs():
         if (re.fullmatch(args.name, install.name) is not None

@@ -1,14 +1,12 @@
-"""
-run subcommand
-"""
+"""run subcommand."""
 
 import time
+
+from embark.application import Application
 
 
 def command(args):
     """Subcommand impl"""
-    # pylint: disable=import-outside-toplevel
-    from embark.application import Application
     app = Application(args.filename, file_encoding=args.encoding)
     app.run()
     time.sleep(0.5)

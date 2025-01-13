@@ -1,19 +1,18 @@
-"""
-Provides tools for managing variables inside configurations
-"""
+"""Provides tools for managing variables inside configurations."""
+
+from typing import Any
 
 
 class VariablesEnv:
-    """
-    Represents variable environment which is regular envs
-    + user-defined variables in `variables` section of playbook
-    """
-    def __init__(self, variables: dict, envs):
-        self.vars = variables
+    """Variables: envs + user-defined vars in ``variables`` section."""
+
+    def __init__(self, variables: dict, envs) -> None:
+        """Create variable environment."""
+        self.vars = variables  # noqa: WPS110 (bad name)
         self.envs = envs
 
     def format(self, string: str) -> str:
-        """Format a single string"""
+        """Format a single string."""
         formatted = ""
         i = 0
         start = 0
@@ -36,29 +35,25 @@ class VariablesEnv:
             i += 1
         return formatted
 
-    def get_value_or_leave_as_is(self, var: str) -> str:
-        """Get variable value or return string as is"""
-        if not (var.startswith("{{") and var.endswith("}}")):
-            return var
-        var_name = var[2:len(var) - 2]
-        if var_name in self.vars:
-            return self.vars[var_name]
-        if var_name in self.envs:
-            return self.envs[var_name]
-        return var
+    def get_value_or_leave_as_is(self, var_str: str) -> str:
+        """Get variable value or return string as is."""
+        if not (var_str.startswith("{{") and var_str.endswith("}}")):
+            return var_str
+        var_name = var_str[2:len(var_str) - 2]
+        return self.vars.get(var_name) or self.envs.get(var_name) or var_str
 
-    def format_object(self, obj):
-        """Recursively format object"""
+    def format_object[T: Any](self, obj: T) -> T:  # noqa: WPS110
+        """Recursively format object."""
         if isinstance(obj, dict):
-            return {
+            return {  # type: ignore
                 key: self.format_object(value)
-                for key, value in obj.items()
+                for key, value in obj.items()  # noqa: WPS110
             }
         if isinstance(obj, list):
-            return [
+            return [  # type: ignore
                 self.format_object(element)
                 for element in obj
             ]
         if isinstance(obj, str):
-            return self.format(obj)
+            return self.format(obj)  # type: ignore
         return obj

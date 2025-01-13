@@ -32,8 +32,8 @@ def get_file_handler():
 def setup_default_handlers(logger):
     """Clear old handlers and add default"""
     ch = get_default_handler()
-    for handler in logger.handlers:
-        logger.removeHandler(handler)
+    for logging_handler in logger.handlers:
+        logger.removeHandler(logging_handler)
     logger.addHandler(ch)
     logger.addHandler(get_file_handler())
     logger.parent = None

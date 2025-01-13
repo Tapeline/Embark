@@ -1,20 +1,25 @@
-# pylint: disable=too-few-public-methods
-"""
-Provides loader and tools for `std.copy`
-"""
+"""Provides loader and tools for ``std.copy``."""
 
 from pydantic import BaseModel
 
 from embark.domain.config.loader import AbstractTaskLoader
-from embark.domain.tasks.task import Task
-from embark.std.criteria.file_criteria import FileDoesNotExistCriteria, FileExistsCriteria
+from embark.domain.tasks.task import (
+    Task,
+    AbstractContextFactory,
+    AbstractExecutionCriteria
+)
+from embark.std.criteria.file_criteria import (
+    FileDoesNotExistCriteria,
+    FileExistsCriteria
+)
 from embark.std.criteria.logic_criteria import AndCriteria
 from embark.std.requirement.privileges import AdminPrivilegesRequirement
 from embark.std.target.file_tasks import CopyFileTarget
 
 
 class TaskModel(BaseModel):
-    """Pydantic model of task config"""
+    """Pydantic model of task config."""
+
     admin: bool = False
     overwrite: bool = False
     src: str
@@ -23,13 +28,19 @@ class TaskModel(BaseModel):
 
 
 class CopyFileTaskLoader(AbstractTaskLoader):
-    """Task loader impl for `std.copy`"""
+    """Task loader impl for ``std.copy``."""
+
     name = "std.copy"
 
-    def load_task(self, context_factory, task_name: str, task_config: dict) -> Task:
+    def load_task(
+            self,
+            context_factory: AbstractContextFactory,
+            task_name: str,
+            task_config: dict
+    ) -> Task:
         model = TaskModel(**task_config)
 
-        criteria = None
+        criteria: AbstractExecutionCriteria | None = None
         if not model.overwrite:
             criteria = FileDoesNotExistCriteria(model.dst)
         if model.skip_if_missing:
@@ -41,4 +52,10 @@ class CopyFileTaskLoader(AbstractTaskLoader):
 
         target = CopyFileTarget(model.src, model.dst)
 
-        return Task(context_factory, task_name, criteria, requirements, target)
+        return Task(
+            context_factory,
+            task_name,
+            criteria,
+            requirements,
+            target
+        )
