@@ -1,76 +1,19 @@
 """Provides objects for task execution."""
 
 from abc import ABC, abstractmethod
-from typing import Sequence, TYPE_CHECKING
+from typing import Sequence
 
+from embark.domain.execution.context import (
+    TaskExecutionContext,
+    AbstractContextFactory,
+    AbstractPlaybookExecutionContext
+)
+from embark.domain.interfaces import Nameable
 from embark.domain.tasks.exception import (
     TaskExecutionException,
     RequirementCannotBeMetException,
 )
-from embark.domain.playbook_logger import AbstractPlaybookLogger, AbstractTaskLogger
-
-if TYPE_CHECKING:
-    from embark.domain.execution.playbook import Playbook
-
-
-class AbstractPlaybookExecutionContext(ABC):
-    """
-    Context of current playbook
-    """
-    @property
-    @abstractmethod
-    def playbook(self) -> "Playbook":
-        raise NotImplementedError
-
-    @abstractmethod
-    def ask_should_proceed(self, text: str) -> bool:
-        """Blocking function which prompts user if he wants to proceed"""
-        raise NotImplementedError
-
-    @abstractmethod
-    def file_path(self, path) -> str:
-        """Resolve file path (with placeholders)"""
-        raise NotImplementedError
-
-    def variables[T](self, obj: T) -> T:
-        return self.playbook.variables.format_object(obj)
-
-    def set_variable(self, name: str, obj) -> None:
-        self.playbook.variables.vars[name] = obj
-
-
-class TaskExecutionContext:
-    """
-    Context of current task
-    """
-    def __init__(self,
-                 playbook_context: AbstractPlaybookExecutionContext,
-                 task: "Task"):
-        self.playbook_context = playbook_context
-        self.task = task
-
-
-class AbstractContextFactory(ABC):
-    """Factory for contexts"""
-
-    def create_playbook_context(self, playbook) -> AbstractPlaybookExecutionContext:
-        """Create context for provided playbook"""
-        raise NotImplementedError
-
-    def create_task_context(self, playbook_context, task) -> TaskExecutionContext:
-        """Create context for provided task"""
-        raise NotImplementedError
-
-
-class Nameable(Interface):
-    """Interface which supports getting name"""
-    @abstractmethod
-    def get_display_name(self) -> str:
-        """
-        Should return display name.
-        Should not be used as a unique name at all costs
-        """
-        raise NotImplementedError
+from embark.domain.playbook_logger import AbstractTaskLogger
 
 
 class AbstractExecutionCriteria(Nameable, ABC):
@@ -147,7 +90,7 @@ class Task(Nameable):
         should_execute = self.criteria.should_execute(task_context)
         if not should_execute:
             self.logger.task_skipped()
-            return
+            return True
         self.logger.task_started()
         should_proceed = self._check_requirements(context, task_context)
         if not should_proceed:

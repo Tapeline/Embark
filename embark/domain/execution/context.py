@@ -3,6 +3,8 @@
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 
+from embark.domain.playbook_logger import AbstractPlaybookLogger
+
 if TYPE_CHECKING:
     from embark.domain.execution.playbook import Playbook
     from embark.domain.tasks.task import Task
@@ -25,6 +27,10 @@ class AbstractPlaybookExecutionContext(ABC):
     @abstractmethod
     def file_path(self, path) -> str:
         """Resolve file path (with placeholders)."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def create_logger(self) -> AbstractPlaybookLogger:
         raise NotImplementedError
 
     def variables[T](self, target_obj: T) -> T:  # noqa: WPS111

@@ -8,7 +8,7 @@ from tkinter import messagebox, DISABLED, BOTTOM
 
 from customtkinter import CTkLabel, CTk, CTkFont, CTkFrame, CTkButton
 
-from embark.domain import action
+from embark.impl import action
 from embark.impl.task_loader_repo import TaskLoaderRepository
 from embark.localization.i18n import L
 from embark.resources import get_resource
