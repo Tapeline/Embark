@@ -31,6 +31,16 @@ def check_imports():
         exit(process.returncode)
 
 
+def check_ruff():
+    process = subprocess.run(
+        "ruff check",
+        stderr=sys.stderr,
+        stdout=sys.stdout
+    )
+    if process.returncode != 0:
+        exit(process.returncode)
+
+
 def check_wps():
     process = subprocess.run(
         "flake8 ./embark",
@@ -49,6 +59,7 @@ def check_all():
 def check_all_no_wps():
     check_mypy()
     check_imports()
+    check_ruff()
 
 
 def clean_build():

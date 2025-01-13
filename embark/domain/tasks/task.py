@@ -78,54 +78,70 @@ class Task(Nameable):
         self.requirements = requirements
         self.target = target
         self.context_factory = context_factory
-        self.logger: AbstractTaskLogger | None = None
+        self._playbook_context: AbstractPlaybookExecutionContext | None = None
+        self._task_context: TaskExecutionContext | None = None
+        self._logger: AbstractTaskLogger | None = None
+
+    @property
+    def playbook_context(self) -> AbstractPlaybookExecutionContext:
+        if self._playbook_context is not None:
+            return self._playbook_context
+        raise ValueError("Playbook context is None", self)
+
+    @property
+    def task_context(self) -> TaskExecutionContext:
+        if self._task_context is not None:
+            return self._task_context
+        raise ValueError("Task context is None", self)
+
+    @property
+    def logger(self) -> AbstractTaskLogger:
+        if self._logger is not None:
+            return self._logger
+        raise ValueError("Logger is None", self)
 
     def get_display_name(self):
         return self.name
 
     def execute(self, context: AbstractPlaybookExecutionContext) -> bool:
         """Execute this task"""
-        task_context = self.context_factory.create_task_context(context, self)
-        self.logger = context.playbook.logger.create_child_task_logger(self)
-        should_execute = self.criteria.should_execute(task_context)
+        self._playbook_context = context
+        self._task_context = self.context_factory.create_task_context(
+            self.playbook_context, self
+        )
+        self._logger = context.playbook.logger.create_child_task_logger(self)
+        should_execute = self.criteria.should_execute(self.task_context)
         if not should_execute:
             self.logger.task_skipped()
             return True
         self.logger.task_started()
-        should_proceed = self._check_requirements(context, task_context)
+        should_proceed = self._check_requirements()
         if not should_proceed:
             return False
         self.logger.info("Executing task")
-        should_proceed = self._check_requirements(context, task_context)
+        should_proceed = self._check_requirements()
         if not should_proceed:
             return False
-        is_successful, is_cancelled = self._try_to_execute_target(
-            context,
-            task_context,
-        )
+        is_successful, is_cancelled = self._try_to_execute_target()
         if not is_successful:
             return False
         if is_cancelled:
-            raise TaskExecutionException(task_context, "Cancel")
+            raise TaskExecutionException(self.task_context, "Cancel")
         self.logger.task_ended(is_successful=True)
         return True
 
-    def _check_requirements(
-            self,
-            context: AbstractPlaybookExecutionContext,
-            task_context: TaskExecutionContext,
-    ) -> bool:
+    def _check_requirements(self) -> bool:
         """Check task requirements."""
         try:
             for requirement in self.requirements:
-                requirement.ensure_requirement_met(task_context)
+                requirement.ensure_requirement_met(self.task_context)
             return True
         except RequirementCannotBeMetException as e:
             self.logger.task_ended(
                 is_successful=False,
                 error_message="Cannot execute task, because requirements cannot be met"
             )
-            should_proceed = context.ask_should_proceed(
+            should_proceed = self.playbook_context.ask_should_proceed(
                 "Task failed to execute. Proceed playbook?"
             )
             if should_proceed:
@@ -134,21 +150,17 @@ class Task(Nameable):
             self.logger.error("Cannot proceed. Playbook cancelled")
             raise e
 
-    def _try_to_execute_target(
-            self,
-            context: AbstractPlaybookExecutionContext,
-            task_context: TaskExecutionContext,
-    ) -> tuple[bool, bool]:
+    def _try_to_execute_target(self) -> tuple[bool, bool]:
         """Try to execute target."""
         cancel = False
         try:
-            success = self.target.execute(task_context)
+            success = self.target.execute(self.task_context)
             if not success:
                 self.logger.task_ended(
                     is_successful=False,
                     error_message="Task was not executed successfully"
                 )
-                should_proceed = context.ask_should_proceed(
+                should_proceed = self.playbook_context.ask_should_proceed(
                     "Proceed playbook?"
                 )
                 if should_proceed:
@@ -161,7 +173,7 @@ class Task(Nameable):
                 is_successful=False,
                 error_message="Unknown exception occurred: %s" % str(e)
             )
-            should_proceed = context.ask_should_proceed(
+            should_proceed = self.playbook_context.ask_should_proceed(
                 f"Task failed to execute:\n{str(e)}.\nProceed playbook?"
             )
             if should_proceed:

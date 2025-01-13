@@ -1,6 +1,5 @@
 """Provides targets and tools for web requests."""
 
-import sys
 import uuid
 
 import requests
@@ -34,9 +33,10 @@ class DownloadFileTarget(AbstractExecutionTarget):
             total_length_str = response.headers.get('content-length')
             if total_length_str is None:
                 f.write(response.content)
+                return True
             total_length = int(total_length_str)
             dl = 0
-            prev_progress = -1
+            prev_progress: float = -1
             for data in response.iter_content(chunk_size=4096):
                 dl += len(data)
                 f.write(data)

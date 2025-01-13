@@ -1,6 +1,6 @@
 """Eval debug UI frame"""
 
-from customtkinter import CTk, CTkFont, CTkLabel, CTkEntry, CTkButton, CTkTextbox
+from customtkinter import CTk, CTkFont, CTkButton, CTkTextbox
 
 from embark.domain.execution.playbook import Playbook
 from embark.localization.i18n import L

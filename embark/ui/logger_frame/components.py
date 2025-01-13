@@ -51,7 +51,7 @@ class Progress:
 
 
 class ProgressMixin:
-    def __init__(self):
+    def __init__(self) -> None:
         self._progresses: dict[str, Progress] = {}
 
     @property
@@ -96,7 +96,7 @@ class ProgressMixin:
 
 class GUILoggerFrame(CTkFrame, ProgressMixin, AbstractLoggerFrame):
     def __init__(self, root):
-        super().__init__(root)
+        super().__init__(root)  # type: ignore
         ProgressMixin.__init__(self)
         self.playbook = None
         self._progresses: dict[str, Progress] = {}
@@ -146,7 +146,7 @@ class GUILoggerFrame(CTkFrame, ProgressMixin, AbstractLoggerFrame):
 
 class TaskLoggerFrame(CTkFrame, ProgressMixin, AbstractLoggerFrame):
     def __init__(self, root, task):
-        super().__init__(root)
+        super().__init__(root)  # type: ignore
         ProgressMixin.__init__(self)
         self.task = task
         self._header_pane = CTkFrame(self)

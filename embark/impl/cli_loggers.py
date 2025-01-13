@@ -1,5 +1,5 @@
 import logging
-from abc import abstractmethod, ABC
+from abc import abstractmethod
 
 from embark import log_config
 from embark.domain.execution.playbook import Playbook
