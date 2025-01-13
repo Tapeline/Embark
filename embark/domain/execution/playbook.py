@@ -6,7 +6,7 @@ import os
 import traceback
 
 from embark import log_config
-from embark.domain.config.variables import VariablesEnv
+from embark.domain.execution.variables import VariablesEnv
 from embark.domain.tasks.exception import TaskExecutionException
 from embark.domain.tasks.task import Task, AbstractContextFactory
 
@@ -29,7 +29,9 @@ class Playbook:
         log_config.setup_default_handlers(self.logger)
         self.tasks = tasks
         self.context_factory = context_factory
-        self.variables: VariablesEnv = variables or VariablesEnv({}, os.environ)
+        self.variables: VariablesEnv = (
+                variables or VariablesEnv({}, os.environ)
+        )
         self.context = context_factory.create_playbook_context(self)
 
     def run_tasks(self) -> None:
@@ -41,14 +43,14 @@ class Playbook:
 
     def run(self) -> IsSuccessful:
         """Run all tasks and catch exceptions."""
-        try:
+        try:  # noqa: WPS229 (too long try)
             self.run_tasks()
             return True
-        except TaskExecutionException as e:
+        except TaskExecutionException as exception:
             str_ex = io.StringIO()
-            traceback.print_exception(e, limit=0, file=str_ex)
-            content = str_ex.getvalue()
+            traceback.print_exception(exception, limit=0, file=str_ex)
+            exception_content = str_ex.getvalue()
             str_ex.close()
-            self.logger.error("Playbook failed: \n%s", content)
+            self.logger.error("Playbook failed: \n%s", exception_content)
             self.logger.error("Playbook exited with error")
             return False

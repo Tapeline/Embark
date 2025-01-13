@@ -18,14 +18,20 @@ class EchoTaskLoader(AbstractTaskLoader):
 
     name = "std.echo"
 
-    def load_task(self, context_factory, task_name: str, task_config: dict) -> Task:
+    def load_task(
+            self,
+            context_factory,
+            task_name: str,
+            task_config: dict
+    ) -> Task:
         model = TaskModel(**task_config)
-
-        criteria = None
-        requirements = []
-        target = PrintMessageTarget(model.message)
-
-        return Task(context_factory, task_name, criteria, requirements, target)
+        return Task(
+            context_factory,
+            task_name,
+            criteria=None,
+            requirements=[],
+            target=PrintMessageTarget(model.message),
+        )
 
 
 class PrintMessageTarget(AbstractExecutionTarget):

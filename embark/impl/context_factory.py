@@ -2,7 +2,7 @@
 
 import os
 import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Final
 
 from embark.domain.execution.playbook import Playbook
 from embark.domain.tasks.task import (
@@ -15,6 +15,9 @@ if TYPE_CHECKING:
     from embark.domain.tasks.task import Task
 
 
+LOGGER_WAIT_SECONDS: Final[float] = 0.2
+
+
 class PlaybookExecutionContext(AbstractPlaybookExecutionContext):
     """Implementation of playbook execution context."""
 
@@ -23,7 +26,7 @@ class PlaybookExecutionContext(AbstractPlaybookExecutionContext):
         self._playbook = playbook
 
     def ask_should_proceed(self, text: str) -> bool:
-        time.sleep(0.2)
+        time.sleep(LOGGER_WAIT_SECONDS)
         print(text)
         answer = input("y/n> ")
         return answer.lower() == "y"
@@ -48,6 +51,6 @@ class ContextFactory(AbstractContextFactory):
     def create_task_context(
             self,
             playbook_context: AbstractPlaybookExecutionContext,
-            task: Task
+            task: "Task"
     ) -> TaskExecutionContext:
         return TaskExecutionContext(playbook_context, task)

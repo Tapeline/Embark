@@ -11,10 +11,16 @@ class AndCriteria(AbstractExecutionCriteria):
         self.criteria = criteria
 
     def should_execute(self, context: TaskExecutionContext) -> bool:
-        return all(criteria.should_execute(context) for criteria in self.criteria)
+        return all(
+            criteria.should_execute(context)
+            for criteria in self.criteria
+        )
 
     def get_display_name(self) -> str:
-        return " and ".join(f"({criteria.get_display_name()})" for criteria in self.criteria)
+        return " and ".join(
+            f"({criteria.get_display_name()})"
+            for criteria in self.criteria
+        )
 
 
 class OrCriteria(AbstractExecutionCriteria):
@@ -25,7 +31,13 @@ class OrCriteria(AbstractExecutionCriteria):
         self.criteria = criteria
 
     def should_execute(self, context: TaskExecutionContext) -> bool:
-        return any(criteria.should_execute(context) for criteria in self.criteria)
+        return any(
+            criteria.should_execute(context)
+            for criteria in self.criteria
+        )
 
     def get_display_name(self) -> str:
-        return " or ".join(f"({criteria.get_display_name()})" for criteria in self.criteria)
+        return " or ".join(
+            f"({criteria.get_display_name()})"
+            for criteria in self.criteria
+        )

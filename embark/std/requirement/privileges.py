@@ -4,7 +4,10 @@ import ctypes
 import os
 
 from embark.domain.tasks.exception import RequirementCannotBeMetException
-from embark.domain.tasks.task import AbstractExecutionRequirement, TaskExecutionContext
+from embark.domain.tasks.task import (
+    AbstractExecutionRequirement,
+    TaskExecutionContext
+)
 
 
 def _is_admin() -> bool:

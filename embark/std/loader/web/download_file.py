@@ -34,14 +34,14 @@ class DownloadFileTaskLoader(AbstractTaskLoader):
         if not model.overwrite:
             criteria = FileDoesNotExistCriteria(model.dst)
 
-        requirements = []
-
-        target = DownloadFileTarget(model.url, model.dst, model.timeout_s)
-
         return Task(
             context_factory,
             task_name,
-            criteria,
-            requirements,
-            target
+            criteria=criteria,
+            requirements=[],
+            target=DownloadFileTarget(
+                model.url,
+                model.dst,
+                model.timeout_s
+            )
         )

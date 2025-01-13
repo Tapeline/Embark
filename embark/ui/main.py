@@ -1,8 +1,7 @@
 """
 Main UI file
 """
-
-from embark.commands import cmd_run
+from embark.application import Application
 from embark.ui import main_frame
 
 
@@ -22,4 +21,5 @@ def main():
     args.filename = main_frame.ask_for_playbook(args.encoding)
     if args.filename is None:
         return
-    cmd_run.command(args)
+    app = Application(args.filename, file_encoding=args.encoding)
+    app.run()

@@ -22,18 +22,18 @@ class DownloadFileTarget(AbstractExecutionTarget):
         dst = context.playbook_context.file_path(dst)
         with open(dst, "wb") as f:
             response = requests.get(url, stream=True, timeout=self.timeout_s)
-            total_length = response.headers.get('content-length')
-            if total_length is None:
+            total_length_str = response.headers.get('content-length')
+            if total_length_str is None:
                 f.write(response.content)
-            else:
-                dl = 0
-                total_length = int(total_length)
-                for data in response.iter_content(chunk_size=4096):
-                    dl += len(data)
-                    f.write(data)
-                    done = int(50 * dl / total_length)
-                    sys.stdout.write(f"\r[{'=' * done}{' ' * (50 - done)}]")
-                    sys.stdout.flush()
+                return True
+            dl = 0
+            total_length = int(total_length_str)
+            for data in response.iter_content(chunk_size=4096):
+                dl += len(data)
+                f.write(data)
+                done = int(50 * dl / total_length)
+                sys.stdout.write(f"\r[{'=' * done}{' ' * (50 - done)}]")
+                sys.stdout.flush()
         print()
         return True
 

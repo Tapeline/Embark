@@ -1,7 +1,10 @@
 """Provides criteria which account installed programs."""
 import re
 
-from embark.domain.tasks.task import AbstractExecutionCriteria, TaskExecutionContext
+from embark.domain.tasks.task import (
+    AbstractExecutionCriteria,
+    TaskExecutionContext,
+)
 from embark.std.target.install.installs_repo import WindowsInstallsRepository
 
 

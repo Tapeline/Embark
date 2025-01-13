@@ -3,7 +3,7 @@
 try:
     from pip import main as pip_main
 except ImportError:
-    from pip._internal import main as pip_main  # noqa
+    from pip._internal import main as pip_main
 
 
 def install_requirements(req_file_path: str) -> int:

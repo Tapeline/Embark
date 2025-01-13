@@ -9,7 +9,10 @@ from embark.domain.config.loader import AbstractTaskLoader
 from embark.domain.tasks.task import Task, AbstractContextFactory
 from embark.std.criteria.install_criteria import ProgramNotInstalledCriteria
 from embark.std.requirement.privileges import AdminPrivilegesRequirement
-from embark.std.target.install.install_tasks import InstallTarget, InstallTargetParams
+from embark.std.target.install.install_tasks import (
+    InstallTarget,
+    InstallTargetParams
+)
 
 
 class TaskModel(BaseModel):
@@ -39,12 +42,13 @@ class InstallTaskLoader(AbstractTaskLoader):
             task_config: dict
     ) -> Task:
         model = TaskModel(**task_config)
-        if (
+        if (  # TODO: move to model validator
                 (model.publisher is None or model.version is None)
                 and model.lookup_paths is None
         ):
             raise InvalidConfigException(
-                "Either publisher and version should be provided or lookup_paths"
+                "Either publisher and version "
+                "should be provided or lookup_paths"
             )
 
         criteria = ProgramNotInstalledCriteria(

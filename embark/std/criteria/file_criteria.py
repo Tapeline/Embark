@@ -1,8 +1,11 @@
 """Provides criteria which account files."""
 
-import os.path
+import os
 
-from embark.domain.tasks.task import AbstractExecutionCriteria, TaskExecutionContext
+from embark.domain.tasks.task import (
+    AbstractExecutionCriteria,
+    TaskExecutionContext,
+)
 
 
 class FileCriteria(AbstractExecutionCriteria):
@@ -20,7 +23,8 @@ class FileCriteria(AbstractExecutionCriteria):
         ) == self.should_exist
 
     def get_display_name(self) -> str:
-        return f"File {self.file_path} {'exists' if self.should_exist else 'does not exist'}"
+        exists_label = "exists" if self.should_exist else "does not exist"
+        return f"File {self.file_path} {exists_label}"
 
 
 class FileExistsCriteria(FileCriteria):

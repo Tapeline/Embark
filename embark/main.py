@@ -5,17 +5,20 @@ import argparse
 import sys
 
 from embark import log_config
-import embark.ui.main
+from embark.ui import main as ui_main
 
 logging.basicConfig(level=logging.INFO)
 log_config.setup_default_handlers(logging.getLogger())
 
 # cannot put imports before logging config
-# pylint: disable=wrong-import-position
-from embark.commands import cmd_run, cmd_dev_list_installs, cmd_dev_query_install
+from embark.commands import (  # noqa: E402 (import not on top)
+    cmd_run,
+    cmd_dev_list_installs,
+    cmd_dev_query_install
+)
 
 
-def _configure_arg_parser():
+def _configure_arg_parser():  # noqa: WPS213 (too many expressions)
     """Configures CLI arguments and subcommands"""
     parser = argparse.ArgumentParser(
         prog="embark",
@@ -74,7 +77,7 @@ def _configure_arg_parser():
 def main():
     """Main function"""
     if len(sys.argv) == 1:
-        embark.ui.main.main()
+        ui_main.main()
     else:
         args = _configure_arg_parser().parse_args()
         args.func(args)

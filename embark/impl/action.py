@@ -29,22 +29,30 @@ def execute_playbook_file(
             path,
             encoding=file_encoding
         )
-    except ValidationError as e:
-        logging.getLogger("Config loader").error(str(e))
+    except ValidationError as exception:
+        logging.getLogger("Config loader").error(str(exception))
         return False
-    except ConfigLoadingException as e:
-        logging.getLogger("Config loader").error(str(e))
+    except ConfigLoadingException as exception:
+        logging.getLogger("Config loader").error(str(exception))
         return False
-    except YAMLError as e:
+    except YAMLError as exception:
         print("Error while parsing YAML file:", file=sys.stderr)
-        if hasattr(e, 'problem_mark') and hasattr(e, 'context') and hasattr(e, 'problem'):
-            if e.context is not None:
-                print(f"{e.problem_mark}\n  {e.problem} {e.context}"
+        if (
+                hasattr(exception, 'problem_mark') and
+                hasattr(exception, 'context') and
+                hasattr(exception, 'problem')
+        ):
+            if exception.context is not None:
+                print(f"{exception.problem_mark}\n  "
+                      f"{exception.problem} {exception.context}"
                       f"\nPlease correct and retry.", file=sys.stderr)
             else:
-                print(f"{e.problem_mark}\n  {e.problem}"
+                print(f"{exception.problem_mark}\n  {exception.problem}"
                       f"\nPlease correct and retry.", file=sys.stderr)
         else:
-            print("Something went wrong while parsing yaml file", file=sys.stderr)
+            print(
+                "Something went wrong while parsing yaml file",
+                file=sys.stderr
+            )
         return False
     return playbook.run()

@@ -2,7 +2,10 @@
 
 import subprocess
 
-from embark.domain.tasks.task import AbstractExecutionTarget, TaskExecutionContext
+from embark.domain.tasks.task import (
+    AbstractExecutionTarget,
+    TaskExecutionContext,
+)
 
 
 class RunCommandTarget(AbstractExecutionTarget):

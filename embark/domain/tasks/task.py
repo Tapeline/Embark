@@ -2,81 +2,19 @@
 
 import logging
 from abc import ABC, abstractmethod
-from typing import Sequence, TYPE_CHECKING, Any, Protocol
+from typing import Sequence
 
 from embark import log_config
-
-if TYPE_CHECKING:
-    from embark.domain.execution.playbook import Playbook
-
-
-class AbstractPlaybookExecutionContext(ABC):
-    """Context of current playbook."""
-
-    @property
-    @abstractmethod
-    def playbook(self) -> "Playbook":
-        """Get the playbook."""
-        raise NotImplementedError
-
-    @abstractmethod
-    def ask_should_proceed(self, text: str) -> bool:
-        """Blocking function which prompts user if he wants to proceed."""
-        raise NotImplementedError
-
-    @abstractmethod
-    def file_path(self, path) -> str:
-        """Resolve file path (with placeholders)."""
-        raise NotImplementedError
-
-    def variables[T](self, obj: T) -> T:
-        """Format object with variables."""
-        return self.playbook.variables.format_object(obj)
-
-    def set_variable(self, name: str, obj: Any) -> None:
-        """Set variable for playbook."""
-        self.playbook.variables.vars[name] = obj
-
-
-class TaskExecutionContext:
-    """Context of current task."""
-
-    def __init__(
-            self,
-            playbook_context: AbstractPlaybookExecutionContext,
-            task: "Task"
-    ) -> None:
-        """Create task execution context."""
-        self.playbook_context = playbook_context
-        self.task = task
-
-
-class AbstractContextFactory(ABC):
-    """Factory for contexts."""
-
-    def create_playbook_context(
-            self,
-            playbook: Playbook
-    ) -> AbstractPlaybookExecutionContext:
-        """Create context for provided playbook."""
-        raise NotImplementedError
-
-    def create_task_context(
-            self,
-            playbook_context: AbstractPlaybookExecutionContext,
-            task: "Task"
-    ) -> TaskExecutionContext:
-        """Create context for provided task."""
-        raise NotImplementedError
-
-
-class Nameable(Protocol):
-    """Interface which supports getting name."""
-
-    @abstractmethod
-    def get_display_name(self) -> str:
-        """Should return display name. Not a unique id."""
-        raise NotImplementedError
+from embark.domain.execution.context import (
+    TaskExecutionContext,
+    AbstractContextFactory,
+    AbstractPlaybookExecutionContext,
+)
+from embark.domain.interfaces import Nameable
+from embark.domain.tasks.exception import (
+    TaskExecutionException,
+    RequirementCannotBeMetException,
+)
 
 
 class AbstractExecutionCriteria(Nameable, ABC):
@@ -147,28 +85,6 @@ class Task(Nameable):
     def get_display_name(self):
         return self.name
 
-    def _check_requirements(
-            self,
-            context: AbstractPlaybookExecutionContext,
-            task_context: TaskExecutionContext,
-    ) -> bool:
-        """Check task requirements."""
-        from embark.domain.tasks.exception import RequirementCannotBeMetException
-        try:
-            for requirement in self.requirements:
-                requirement.ensure_requirement_met(task_context)
-            return True
-        except RequirementCannotBeMetException as e:
-            self.logger.error("Cannot execute task, because requirements cannot be met")
-            should_proceed = context.ask_should_proceed(
-                "Task failed to execute. Proceed playbook?"
-            )
-            if should_proceed:
-                self.logger.warning("Cancelled, playbook continues")
-                return True
-            self.logger.error("Cannot proceed. Playbook cancelled")
-            raise e
-
     def execute(self, context: AbstractPlaybookExecutionContext) -> bool:
         """Execute this task"""
         task_context = self.context_factory.create_task_context(context, self)
@@ -180,17 +96,57 @@ class Task(Nameable):
         should_proceed = self._check_requirements(context, task_context)
         if not should_proceed:
             return False
-        # pylint: disable=import-outside-toplevel
-        from embark.domain.tasks.exception import TaskExecutionException
+        is_successful, is_cancelled = self._try_to_execute_target(
+            context,
+            task_context,
+        )
+        if not is_successful:
+            return False
+        if is_cancelled:
+            raise TaskExecutionException(task_context, "Cancel")
+        self.logger.info("Task successful")
+        return True
+
+    def _check_requirements(
+            self,
+            context: AbstractPlaybookExecutionContext,
+            task_context: TaskExecutionContext,
+    ) -> bool:
+        """Check task requirements."""
+        try:
+            for requirement in self.requirements:
+                requirement.ensure_requirement_met(task_context)
+            return True
+        except RequirementCannotBeMetException as e:
+            self.logger.error(
+                "Cannot execute task, because requirements cannot be met"
+            )
+            should_proceed = context.ask_should_proceed(
+                "Task failed to execute. Proceed playbook?"
+            )
+            if should_proceed:
+                self.logger.warning("Cancelled, playbook continues")
+                return True
+            self.logger.error("Cannot proceed. Playbook cancelled")
+            raise e
+
+    def _try_to_execute_target(
+            self,
+            context: AbstractPlaybookExecutionContext,
+            task_context: TaskExecutionContext,
+    ) -> tuple[bool, bool]:
+        """Try to execute target."""
         cancel = False
         try:
             success = self.target.execute(task_context)
             if not success:
                 self.logger.error("Task was not executed successfully")
-                should_proceed = context.ask_should_proceed("Proceed playbook?")
+                should_proceed = context.ask_should_proceed(
+                    "Proceed playbook?"
+                )
                 if should_proceed:
                     self.logger.warning("Cancelled, playbook continues")
-                    return True
+                    return True, cancel
                 self.logger.error("Cannot proceed. Playbook cancelled")
                 cancel = True
         except TaskExecutionException as e:
@@ -200,9 +156,7 @@ class Task(Nameable):
             )
             if should_proceed:
                 self.logger.warning("Cancelled, playbook continues")
-                return True
+                return True, cancel
             self.logger.error("Cannot proceed. Playbook cancelled")
             raise e
-        if cancel:
-            raise TaskExecutionException(task_context, "Cancel")
-        self.logger.info("Task successful")
+        return True, False
