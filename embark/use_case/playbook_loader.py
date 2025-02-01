@@ -5,14 +5,17 @@ import os
 
 from embark import log_config
 from embark.use_case.config.exceptions import LoaderNotFoundException
-from embark.use_case.config.loader import AbstractTaskLoaderRepository, AbstractTaskLoader
+from embark.use_case.config.loader import (
+    AbstractTaskLoaderRepository,
+    AbstractTaskLoader
+)
 from embark.domain.execution.playbook import Playbook
 from embark.domain.execution.variables import VariablesEnv
 from embark.domain.tasks.task import AbstractContextFactory, Task
 from embark.use_case.models import PlaybookConfig, TaskConfig
 
 
-def load_playbook_from_config(
+def load_playbook_from_config(  # noqa: WPS210
         context_factory: AbstractContextFactory,
         loader_repo: AbstractTaskLoaderRepository,
         playbook_config: PlaybookConfig,

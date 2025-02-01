@@ -1,4 +1,3 @@
-# noqa: WPS412
 """Provides localization files"""
 
 from embark.localization import (i18n, en, ru)

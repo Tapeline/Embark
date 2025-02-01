@@ -5,7 +5,10 @@ import re
 import subprocess
 from dataclasses import dataclass
 
-from embark.domain.tasks.task import AbstractExecutionTarget, TaskExecutionContext
+from embark.domain.tasks.task import (
+    AbstractExecutionTarget,
+    TaskExecutionContext
+)
 from embark.std.target.install.installs_repo import (
     WindowsInstallsRepository,
     CannotUninstallQuietlyException,
@@ -53,7 +56,7 @@ class InstallTarget(AbstractExecutionTarget):
             self,
             context: TaskExecutionContext
     ) -> InstallTargetParams:
-        """Re-create params with account of variables"""
+        """Re-create params with account of variables."""
         return InstallTargetParams(
             **context.playbook_context.playbook.variables.format_object(
                 self.params.__dict__
@@ -80,16 +83,15 @@ class InstallTarget(AbstractExecutionTarget):
         if old_installation is None:
             logger.info("Searching registry")
             old_installation = self._get_existing_installation(params, repo)
-        if old_installation is not None:
-            logger.info("Found old installation, removing")
-            success = self._uninstall(params, repo, logger, old_installation)
-            if not success:
-                return False
-        else:
+        if old_installation is None:
             logger.info("Old installation not found")
-        return True
+            return True
+        logger.info("Found old installation, removing")
+        success = self._uninstall(params, repo, logger, old_installation)
+        if not success:
+            return False
 
-    def _try_to_match_lookup_path(
+    def _try_to_match_lookup_path(  # noqa: WPS231
             self,
             params: InstallTargetParams
     ) -> str | None:
@@ -133,59 +135,80 @@ class InstallTarget(AbstractExecutionTarget):
             logger.info("Uninstaller found")
         return old_installation
 
-    def _install(self, params, repo, logger):
+    def _get_existing_installation(self, params, repo):
+        """Seek for existing installations of any version"""
+        return next(
+            (
+                install for install in repo.get_all_installs()
+                if install.matches(
+                    params.name,
+                    params.publisher,
+                    ignore_version=True
+                )
+            ),
+            None
+        )
+
+    def _uninstall(
+            self,
+            params,
+            repo,
+            logger,
+            old_installation: WindowsInstallation
+    ) -> bool:
+        """Uninstall old installation"""
+        logger.info("Uninstalling %s", old_installation)
+        success = False
+        if params.cmd_uninstall is not None:
+            cmd_uninstall = params.cmd_uninstall.replace(
+                "$$uninstaller$$",
+                old_installation.uninstaller or ""
+            )
+            success = subprocess.call(cmd_uninstall) == 0
+        else:
+            try:
+                success = repo.uninstall_quietly(old_installation)
+            except CannotUninstallQuietlyException:
+                logger.error(
+                    "Quiet uninstall failed. Trying regular uninstall"
+                )
+                logger.warning("User action required!")
+                try:  # noqa: WPS505
+                    success = repo.uninstall(old_installation)
+                except CannotUninstallException:
+                    logger.error("Uninstall failed")
+                    return False
+        if not success:  # noqa: WPS504
+            logger.error("Uninstall failed")
+            return False
+        return True
+
+    def _install(self, params, repo, logger) -> bool:
         """Install program"""
         logger.info("Installing %s", params.version)
         success = False
         if params.cmd_install is not None:
-            cmd_install = params.cmd_install.replace("$$installer$$",
-                                                     params.installer)
+            cmd_install = params.cmd_install.replace(
+                "$$installer$$",
+                params.installer
+            )
             success = subprocess.call(cmd_install) == 0
         else:
             try:
-                success = repo.install_quietly(params.installer, params.msi_admin)
+                success = repo.install_quietly(
+                    params.installer,
+                    params.msi_admin
+                )
             except CannotInstallQuietlyException:
                 logger.error("Quiet install failed. Trying regular install")
                 logger.warning("User action required!")
-                try:
+                try:  # noqa: WPS505
                     success = repo.install(params.installer, params.msi_admin)
                 except CannotInstallException:
                     logger.error("Install failed")
                     return False
         if not success:
             logger.error("Install failed")
-            return False
-        return True
-
-    def _get_existing_installation(self, params, repo):
-        """Seek for existing installations of any version"""
-        for install in repo.get_all_installs():
-            if (re.fullmatch(params.name, install.name) is not None
-                    and (install.publisher == params.publisher or install.publisher is None)):
-                return install
-        return None
-
-    def _uninstall(self, params, repo, logger, old_installation: WindowsInstallation):
-        """Uninstall old installation"""
-        logger.info("Uninstalling %s", old_installation)
-        success = False
-        if params.cmd_uninstall is not None:
-            cmd_uninstall = params.cmd_uninstall.replace("$$uninstaller$$",
-                                                         old_installation.uninstaller or "")
-            success = subprocess.call(cmd_uninstall) == 0
-        else:
-            try:
-                success = repo.uninstall_quietly(old_installation)
-            except CannotUninstallQuietlyException:
-                logger.error("Quiet uninstall failed. Trying regular uninstall")
-                logger.warning("User action required!")
-                try:
-                    success = repo.uninstall(old_installation)
-                except CannotUninstallException:
-                    logger.error("Uninstall failed")
-                    return False
-        if not success:
-            logger.error("Uninstall failed")
             return False
         return True
 

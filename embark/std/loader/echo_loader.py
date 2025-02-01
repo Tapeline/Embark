@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 from embark.domain.tasks.task import (Task, AbstractExecutionTarget,
                                       TaskExecutionContext)
+from embark.output import write_out
 from embark.use_case.config.loader import AbstractTaskLoader
 
 
@@ -42,7 +43,7 @@ class PrintMessageTarget(AbstractExecutionTarget):
         self.message = message
 
     def execute(self, context: TaskExecutionContext) -> bool:
-        print(self.message)
+        write_out(self.message)
         return True
 
     def get_display_name(self) -> str:

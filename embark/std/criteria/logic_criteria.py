@@ -1,6 +1,9 @@
 """Contains criteria related to logic operations."""
 
-from embark.domain.tasks.task import AbstractExecutionCriteria, TaskExecutionContext
+from embark.domain.tasks.task import (
+    AbstractExecutionCriteria,
+    TaskExecutionContext
+)
 
 
 class AndCriteria(AbstractExecutionCriteria):

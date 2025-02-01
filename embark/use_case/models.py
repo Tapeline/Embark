@@ -1,12 +1,11 @@
 """Provides DTOs and function for loading config from dict."""
 
 import pydantic
-from pydantic import BaseModel
 
 from embark.use_case.config.exceptions import InvalidConfigException
 
 
-class PlaybookModel(BaseModel):
+class PlaybookModel(pydantic.BaseModel):
     """Pydantic model for playbook."""
 
     name: str
@@ -32,7 +31,9 @@ class PlaybookConfig:
         self.tasks: list[TaskConfig] = tasks
 
 
-def get_task_from_dict(task_dict: dict) -> TaskConfig:
+def get_task_from_dict(  # noqa: WPS231, WPS238
+        task_dict: dict
+) -> TaskConfig:
     """Create task DTO from dict and also perform validation."""
     if not isinstance(task_dict.get("name"), str):
         raise InvalidConfigException("Name field in task not found")
@@ -53,8 +54,10 @@ def load_playbook_config(playbook_obj: dict) -> PlaybookConfig:
     playbook_model = None
     try:
         playbook_model = PlaybookModel(**playbook_obj)
-    except pydantic.ValidationError as e:
-        raise InvalidConfigException("Invalid playbook configuration") from e
+    except pydantic.ValidationError as exc:
+        raise InvalidConfigException(
+            "Invalid playbook configuration"
+        ) from exc
     tasks = list(map(get_task_from_dict, playbook_model.tasks))
     return PlaybookConfig(
         playbook_model.name,

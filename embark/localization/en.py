@@ -21,7 +21,10 @@ class EnI18N(I18N):
         task_skipped = "Task skipped"
         task_ended = "Task completed"
         ask_title = "Question"
-        you_sure_want_exit = "Are you sure you want to interrupt the playbook and exit immediately?"
+        you_sure_want_exit = (
+            "Are you sure you want to interrupt " +
+            "the playbook and exit immediately?"
+        )
         stop_playbook = "Stop execution"
 
         debug = "Debug tools:"

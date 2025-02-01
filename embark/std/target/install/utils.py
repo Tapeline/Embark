@@ -17,8 +17,10 @@ def get_current_sid():
     return sid
 
 
-def determine_quiet_uninstall_command(uninstall: str,
-                                      quiet_uninstall: str | None) -> str | None:
+def determine_quiet_uninstall_command(
+        uninstall: str,
+        quiet_uninstall: str | None
+) -> str | None:
     """
     Tries to determine quiet uninstallation command
     from regular uninstallation command.
@@ -33,7 +35,7 @@ def determine_quiet_uninstall_command(uninstall: str,
         quiet_uninstall = uninstall + " /passive /norestart"
         return quiet_uninstall
     # pylint: disable=broad-exception-caught
-    try:
+    try:  # noqa: WPS229
         uninstall_path = uninstall
         if uninstall.startswith('"'):
             uninstall_path = uninstall[1:-1]
@@ -52,7 +54,7 @@ def _is_inno_setup(installer: str) -> bool:
     for "Inno Setup" string marker in exe
     """
     with open(installer, "rb") as f:
-        data = f.read()
+        data = f.read()  # noqa: WPS110
         return b"Inno Setup" in data
 
 
@@ -62,18 +64,24 @@ def _is_nullsoft_installer(installer: str) -> bool:
     for "Nullsoft Install System" string marker in exe
     """
     with open(installer, "rb") as f:
-        data = f.read()
+        data = f.read()  # noqa: WPS110
         return b"Nullsoft Install System" in data
 
 
-def determine_quiet_install_command(installer: str, admin: bool = False) -> str | None:
+def determine_quiet_install_command(
+        installer: str,
+        admin: bool = False
+) -> str | None:
     """
     Tries to determine quiet installation command
     from regular installation command.
     At the moment supports MSI, NSIS and Inno Setup uninstallers
     """
     if installer.endswith(".msi"):
-        return f"msiexec {('/A' if admin else '/I')} \"{installer}\" /passive /norestart"
+        return (
+            f"msiexec {('/A' if admin else '/I')} "
+            f"\"{installer}\" /passive /norestart"
+        )
     if _is_inno_setup(installer):
         return f"{installer} /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-"
     if _is_nullsoft_installer(installer):

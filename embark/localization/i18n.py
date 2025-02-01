@@ -3,19 +3,19 @@
 import ctypes
 import locale
 
-__CURRENT_LOCALE: str | None = None
+_CURRENT_LOCALE: str | None = None
 _DEFAULT_LOCALE = "en"
 _FALLBACK_LOCALE = _DEFAULT_LOCALE
 
 
 def get_windows_locale() -> str:
     """Get current Windows locale."""
-    global __CURRENT_LOCALE
-    if __CURRENT_LOCALE is None:
+    global _CURRENT_LOCALE  # noqa: WPS420
+    if _CURRENT_LOCALE is None:
         windll = ctypes.windll.kernel32
         win_locale = windll.GetUserDefaultUILanguage()
-        __CURRENT_LOCALE = locale.windows_locale[win_locale]
-    return __CURRENT_LOCALE
+        _CURRENT_LOCALE = locale.windows_locale[win_locale]  # noqa: WPS122
+    return _CURRENT_LOCALE  # noqa: WPS121
 
 
 class I18N:
@@ -47,7 +47,7 @@ def localize(message_code: str) -> str:
         return _get_message(lang_node, message_code)
     except AttributeError:
         fallback_node = get_locale(_FALLBACK_LOCALE)
-        try:
+        try:  # noqa: WPS505
             return _get_message(fallback_node, message_code)
         except AttributeError:
             return "Translation not found"

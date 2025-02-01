@@ -38,25 +38,33 @@ class AbstractLogger(ABC):
 
 class AbstractTaskLogger(AbstractLogger, ABC):
     @abstractmethod
-    def task_started(self):
+    def task_started(self) -> None:
         raise NotImplementedError
 
     @abstractmethod
-    def task_skipped(self):
+    def task_skipped(self) -> None:
         raise NotImplementedError
 
     @abstractmethod
-    def task_ended(self, is_successful: bool, error_message: str | None = None):
+    def task_ended(
+            self,
+            is_successful: bool,
+            error_message: str | None = None
+    ) -> None:
         raise NotImplementedError
 
 
 class AbstractPlaybookLogger(AbstractLogger, ABC):
     @abstractmethod
-    def playbook_started(self):
+    def playbook_started(self) -> None:
         raise NotImplementedError
 
     @abstractmethod
-    def playbook_ended(self, is_successful: bool, error_message: str | None = None):
+    def playbook_ended(
+            self,
+            is_successful: bool,
+            error_message: str | None = None
+    ) -> None:
         raise NotImplementedError
 
     @abstractmethod

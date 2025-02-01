@@ -8,7 +8,7 @@ class VariablesEnv:
 
     def __init__(self, variables: dict, envs) -> None:
         """Create variable environment."""
-        self.vars = variables  # noqa: WPS110 (bad name)
+        self.vars = variables
         self.envs = envs
 
     def format(self, string: str) -> str:

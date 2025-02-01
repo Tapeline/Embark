@@ -1,6 +1,4 @@
 """Provides criteria which account installed programs."""
-import re
-
 from embark.domain.tasks.task import (
     AbstractExecutionCriteria,
     TaskExecutionContext,
@@ -29,12 +27,10 @@ class ProgramNotInstalledCriteria(AbstractExecutionCriteria):
         version = context.playbook_context.variables(self.version)
         publisher = context.playbook_context.variables(self.publisher)
         repo = WindowsInstallsRepository()
-        for install in repo.get_all_installs():
-            if (re.fullmatch(name, install.name) is not None
-                    and (install.publisher == publisher or install.publisher is None) and
-                    (install.version == version or self.ignore_version)):
-                return False
-        return True
+        return not any(
+            install.matches(name, version, publisher, self.ignore_version)
+            for install in repo.get_all_installs()
+        )
 
     def get_display_name(self) -> str:
         return (

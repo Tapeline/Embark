@@ -1,5 +1,5 @@
 """Provides tools for managing installations"""
-
+import re
 import subprocess
 import winreg
 from abc import ABC, abstractmethod
@@ -29,6 +29,20 @@ class AbstractInstallation(ABC):
         self.publisher = publisher
         self.major_version = major_version
         self.minor_version = minor_version
+
+    def matches(
+            self,
+            name: str,
+            publisher: str,
+            version: str,
+            ignore_version: bool = False
+    ) -> bool:
+        """Check if this installation matches the parameters."""
+        return (
+            re.fullmatch(name, self.name) is not None  # noqa: WPS222
+            and (self.publisher == publisher or self.publisher is None)
+            and (self.version == version or ignore_version)
+        )
 
 
 class CannotUninstallException(Exception):
@@ -70,7 +84,11 @@ class AbstractInstallsRepository[T: AbstractInstallation](ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def install_quietly(self, installer_path: str, admin: bool = False) -> bool:
+    def install_quietly(
+            self,
+            installer_path: str,
+            admin: bool = False
+    ) -> bool:
         """Try to install quietly"""
         raise NotImplementedError
 
@@ -93,7 +111,10 @@ class WindowsInstallation(AbstractInstallation):
     """Impl of installation on Windows"""
 
     @staticmethod
-    def from_registry_path(reg_path: str, reg_base: int):
+    def from_registry_path(  # noqa: WPS210, WPS231
+            reg_path: str,
+            reg_base: int
+    ):
         """Create from registry entry"""
         reg = winreg.ConnectRegistry(None, reg_base)
         software_key = winreg.OpenKey(reg, reg_path)
@@ -114,10 +135,10 @@ class WindowsInstallation(AbstractInstallation):
             software_key, "UninstallString")
         software_quiet_uninstall: str | None = _get_reg_value_or_none(
             software_key, "QuietUninstallString")
-        i = 0
+        index = 0
         while True:
-            try:
-                key, value, _ = winreg.EnumValue(software_key, i)
+            try:  # noqa: WPS229
+                key, value, _ = winreg.EnumValue(software_key, index)
                 if software_uninstall is None and \
                         "Uninstall" in key and \
                         "Quiet" not in key and \
@@ -128,13 +149,17 @@ class WindowsInstallation(AbstractInstallation):
                         "Quiet" in key and \
                         "Silent" in key:
                     software_quiet_uninstall = value
-                i += 1
+                index += 1
             except OSError:
                 break
         if software_uninstall is not None:
-            software_uninstall = winreg.ExpandEnvironmentStrings(software_uninstall)
+            software_uninstall = winreg.ExpandEnvironmentStrings(
+                software_uninstall
+            )
         if software_quiet_uninstall is not None:
-            software_quiet_uninstall = winreg.ExpandEnvironmentStrings(software_quiet_uninstall)
+            software_quiet_uninstall = winreg.ExpandEnvironmentStrings(
+                software_quiet_uninstall
+            )
         if software_uninstall is not None:
             software_quiet_uninstall = determine_quiet_uninstall_command(
                 software_uninstall, software_quiet_uninstall
@@ -149,7 +174,7 @@ class WindowsInstallation(AbstractInstallation):
             uninstaller=software_uninstall
         )
 
-    def __init__(
+    def __init__(  # noqa: WPS211
             self,
             *,
             name: str,
@@ -174,18 +199,23 @@ class WindowsInstallation(AbstractInstallation):
         return f"{self.name} {self.version}"
 
 
-class WindowsInstallsRepository(AbstractInstallsRepository[WindowsInstallation]):
-    """Impl of installation repo on Windows"""
+class WindowsInstallsRepository(
+    AbstractInstallsRepository[WindowsInstallation]
+):
+    """Impl of installation repo on Windows."""
 
-    def _get_all_installs_on_path(self, path,
-                                  base=winreg.HKEY_LOCAL_MACHINE) -> list[WindowsInstallation]:
-        """Gets all installs in registry folder"""
-        try:
+    def _get_all_installs_on_path(  # noqa: WPS210, WPS231
+            self,
+            path,
+            base=winreg.HKEY_LOCAL_MACHINE
+    ) -> list[WindowsInstallation]:
+        """Gets all installs in registry folder."""
+        try:  # noqa: WPS229
             reg = winreg.ConnectRegistry(None, base)
             key = winreg.OpenKey(reg, path)
             installs = []
-            for i in range(winreg.QueryInfoKey(key)[0]):
-                software_key_name = winreg.EnumKey(key, i)
+            for index in range(winreg.QueryInfoKey(key)[0]):
+                software_key_name = winreg.EnumKey(key, index)
                 install = WindowsInstallation.from_registry_path(
                     f"{path}\\{software_key_name}", base
                 )
@@ -231,7 +261,11 @@ class WindowsInstallsRepository(AbstractInstallsRepository[WindowsInstallation])
         ret_code = subprocess.call(installation.uninstaller)
         return ret_code == 0
 
-    def install_quietly(self, installer_path: str, admin: bool = False) -> bool:
+    def install_quietly(
+            self,
+            installer_path: str,
+            admin: bool = False
+    ) -> bool:
         cmd = determine_quiet_install_command(installer_path, admin)
         if cmd is None:
             raise CannotInstallQuietlyException

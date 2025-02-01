@@ -1,13 +1,13 @@
 """Contains generified actions."""
 
 import logging
-import sys
 
 from pydantic import ValidationError
 from yaml import YAMLError
 
 from embark.impl import config
 from embark.domain.tasks.task import AbstractContextFactory
+from embark.output import write_err
 from embark.use_case.config.exceptions import ConfigLoadingException
 from embark.use_case.config.loader import AbstractTaskLoaderRepository
 
@@ -35,23 +35,18 @@ def execute_playbook_file(
         logging.getLogger("Config loader").error(str(exception))
         return False
     except YAMLError as exception:
-        print("Error while parsing YAML file:", file=sys.stderr)
+        write_err("Error while parsing YAML file:")
         if (
                 hasattr(exception, 'problem_mark') and
                 hasattr(exception, 'context') and
                 hasattr(exception, 'problem')
         ):
-            if exception.context is not None:
-                print(f"{exception.problem_mark}\n  "
-                      f"{exception.problem} {exception.context}"
-                      f"\nPlease correct and retry.", file=sys.stderr)
-            else:
-                print(f"{exception.problem_mark}\n  {exception.problem}"
-                      f"\nPlease correct and retry.", file=sys.stderr)
-        else:
-            print(
-                "Something went wrong while parsing yaml file",
-                file=sys.stderr
+            write_err(
+                f"{exception.problem_mark}\n  "
+                f"{exception.problem} {exception.context}\n"
+                f"Please correct and retry."
             )
+        else:
+            write_err("Something went wrong while parsing yaml file")
         return False
     return playbook.run()

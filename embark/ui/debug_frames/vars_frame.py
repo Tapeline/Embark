@@ -1,4 +1,5 @@
 """Variables debug UI frame"""
+from typing import Final
 
 from customtkinter import CTk, CTkFont, CTkLabel, CTkScrollableFrame
 
@@ -6,6 +7,8 @@ from embark.domain.execution.playbook import Playbook
 from embark.localization.i18n import L
 from embark.resources import get_resource
 from embark.ui import utils
+
+_FONT_SIZE: Final = 14
 
 
 class DebugVariablesFrame(CTk):
@@ -19,7 +22,7 @@ class DebugVariablesFrame(CTk):
         self.resizable(False, False)
         self.iconbitmap(get_resource("icon.ico"))
         utils.center(self)
-        self._font = CTkFont("Consolas", 14, "normal")
+        self._font = CTkFont("Consolas", _FONT_SIZE, "normal")
         self._setup_ui()
 
     def _setup_ui(self):

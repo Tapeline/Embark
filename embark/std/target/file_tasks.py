@@ -1,9 +1,12 @@
 """Provides targets and tools for file management."""
 
-import os.path
+import os
 import shutil
 
-from embark.domain.tasks.task import AbstractExecutionTarget, TaskExecutionContext
+from embark.domain.tasks.task import (
+    AbstractExecutionTarget,
+    TaskExecutionContext
+)
 
 
 class CopyFileTarget(AbstractExecutionTarget):

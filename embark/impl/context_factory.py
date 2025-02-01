@@ -29,8 +29,8 @@ class CLIPlaybookExecutionContext(AbstractPlaybookExecutionContext):
 
     def ask_should_proceed(self, text: str) -> bool:
         time.sleep(LOGGER_WAIT_SECONDS)
-        print(text)
-        answer = input("y/n> ")
+        print(text)  # noqa: WPS421
+        answer = input("y/n> ")  # noqa: WPS421
         return answer.lower() == "y"
 
     @property
