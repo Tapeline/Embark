@@ -4,8 +4,8 @@ import logging
 import os
 
 from embark import log_config
-from embark.domain.config.exceptions import LoaderNotFoundException
-from embark.domain.config.loader import AbstractTaskLoaderRepository, AbstractTaskLoader
+from embark.use_case.config.exceptions import LoaderNotFoundException
+from embark.use_case.config.loader import AbstractTaskLoaderRepository, AbstractTaskLoader
 from embark.domain.execution.playbook import Playbook
 from embark.domain.execution.variables import VariablesEnv
 from embark.domain.tasks.task import AbstractContextFactory, Task

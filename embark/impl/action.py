@@ -7,10 +7,9 @@ from pydantic import ValidationError
 from yaml import YAMLError
 
 from embark.impl import config
-from embark.domain.config.exceptions import ConfigLoadingException
-from embark.domain.config.loader import AbstractTaskLoaderRepository
 from embark.domain.tasks.task import AbstractContextFactory
-
+from embark.use_case.config.exceptions import ConfigLoadingException
+from embark.use_case.config.loader import AbstractTaskLoaderRepository
 
 type IsSuccessful = bool
 

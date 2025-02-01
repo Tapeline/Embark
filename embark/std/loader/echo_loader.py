@@ -2,9 +2,9 @@
 
 from pydantic import BaseModel
 
-from embark.domain.config.loader import AbstractTaskLoader
 from embark.domain.tasks.task import (Task, AbstractExecutionTarget,
                                       TaskExecutionContext)
+from embark.use_case.config.loader import AbstractTaskLoader
 
 
 class TaskModel(BaseModel):

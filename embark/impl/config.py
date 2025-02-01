@@ -4,7 +4,7 @@ from pathlib import Path
 
 import yaml
 
-from embark.domain.config.loader import AbstractTaskLoaderRepository
+from embark.use_case.config.loader import AbstractTaskLoaderRepository
 from embark.domain.execution.playbook import Playbook
 from embark.domain.tasks.task import AbstractContextFactory
 from embark.use_case import models, playbook_loader

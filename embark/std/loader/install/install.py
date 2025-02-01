@@ -4,8 +4,8 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from embark.domain.config.exceptions import InvalidConfigException
-from embark.domain.config.loader import AbstractTaskLoader
+from embark.use_case.config.exceptions import InvalidConfigException
+from embark.use_case.config.loader import AbstractTaskLoader
 from embark.domain.tasks.task import Task, AbstractContextFactory
 from embark.std.criteria.install_criteria import ProgramNotInstalledCriteria
 from embark.std.requirement.privileges import AdminPrivilegesRequirement

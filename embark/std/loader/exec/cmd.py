@@ -2,7 +2,7 @@
 
 from pydantic import BaseModel
 
-from embark.domain.config.loader import AbstractTaskLoader
+from embark.use_case.config.loader import AbstractTaskLoader
 from embark.domain.tasks.task import Task, AbstractContextFactory
 from embark.std.requirement.privileges import AdminPrivilegesRequirement
 from embark.std.target.exec_tasks import RunCommandTarget

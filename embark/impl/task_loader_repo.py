@@ -5,7 +5,7 @@ import os
 from importlib import util as import_util
 
 from embark import log_config
-from embark.domain.config.loader import (
+from embark.use_case.config.loader import (
     AbstractTaskLoaderRepository,
     AbstractTaskLoader,
 )

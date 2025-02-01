@@ -4,8 +4,8 @@ import uuid
 
 import requests
 
-from embark.domain.playbook_logger import ProgressReporter
 from embark.domain.tasks.task import AbstractExecutionTarget, TaskExecutionContext
+from embark.use_case.progress import ProgressReporter
 
 
 class DownloadFileTarget(AbstractExecutionTarget):

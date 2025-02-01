@@ -3,7 +3,7 @@
 import pydantic
 from pydantic import BaseModel
 
-from embark.domain.config.exceptions import InvalidConfigException
+from embark.use_case.config.exceptions import InvalidConfigException
 
 
 class PlaybookModel(BaseModel):
