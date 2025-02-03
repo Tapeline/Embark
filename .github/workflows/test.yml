@@ -30,8 +30,6 @@ jobs:
           pip install poetry
       - name: Install dependencies
         run: poetry install
-      - name: Install MyPy types
-        run: poetry run mypy --install-types
       - name: Run tests
         run: poetry run coverage run -m pytest tests
       - name: Check MyPy
