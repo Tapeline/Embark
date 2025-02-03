@@ -147,6 +147,7 @@ jobs:
         run: |
           rm -rf docs
           mkdir docs
+          cp docs-index.html docs/index.html
 
       - name: Download en artifacts
         uses: actions/download-artifact@v4
