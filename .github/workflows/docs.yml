@@ -30,7 +30,7 @@ jobs:
         run: |
           INSTANCE=${INSTANCE_EN#*/}
           INSTANCE_ID_UPPER=$(echo "$INSTANCE_EN" | tr '[:lower:]' '[:upper:]')
-          ARTIFACT="webHelp${INSTANCE_ID_UPPER}2-all.zip"
+          ARTIFACT="webHelpDOCS2-all.zip"
 
           # Print the values
           echo "INSTANCE_ID_UPPER: $INSTANCE_ID_UPPER"
@@ -71,7 +71,7 @@ jobs:
         run: |
           INSTANCE=${INSTANCE_RU#*/}
           INSTANCE_ID_UPPER=$(echo "$INSTANCE_RU" | tr '[:lower:]' '[:upper:]')
-          ARTIFACT="webHelp${INSTANCE_ID_UPPER}2-all.zip"
+          ARTIFACT="webHelpDOCS-RU2-all.zip"
 
           # Print the values
           echo "INSTANCE_ID_UPPER: $INSTANCE_ID_UPPER"
