@@ -152,6 +152,12 @@ jobs:
           name: docs_en
           path: artifacts
 
+      - name: Debug
+        run: |
+          echo "${{ needs.build_en.outputs.artifact }}"
+          echo "${{ needs.build_ru.outputs.artifact }}"
+          ls
+
       - name: Unzip en artifact
         run: unzip -O UTF-8 -qq "artifacts/${{ needs.build_en.outputs.artifact }}" -d docs/en
 
