@@ -1,6 +1,7 @@
 """Contains generified actions."""
 
 import logging
+import os
 
 from pydantic import ValidationError
 from yaml import YAMLError
@@ -49,4 +50,5 @@ def execute_playbook_file(
         else:
             write_err("Something went wrong while parsing yaml file")
         return False
+    os.chdir(os.path.dirname(os.path.abspath(path)))
     return playbook.run()

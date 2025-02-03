@@ -1,0 +1,7 @@
+name: Test
+variables:
+  MESSAGE: Hello, World!
+tasks:
+  - name: Echo
+    std.echo:
+      message: "{{MESSAGE}}"

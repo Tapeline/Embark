@@ -1,5 +1,5 @@
 """Provides function for loading yaml playbook."""
-
+import os
 from pathlib import Path
 from typing import Mapping
 
@@ -33,7 +33,7 @@ def load_playbook_from_file(
         config_data = yaml.safe_load(config_file)
     variables = _load_variables(encoding, path)
     playbook_config = models.load_playbook_config(config_data)
-    playbook_config.variables.update(variables)
+    playbook_config.variables = variables | playbook_config.variables
     return playbook_loader.load_playbook_from_config(
         context_factory,
         loader_repo,
@@ -41,7 +41,7 @@ def load_playbook_from_file(
     )
 
 
-def _load_variables(encoding: str, path: str) -> Mapping[str, str]:
+def _load_variables(encoding: str, path: str) -> dict[str, str]:
     var_path = Path(path).parent.joinpath(".variables.yml")
     variables = {}
     if var_path.exists():

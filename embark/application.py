@@ -21,7 +21,6 @@ class Application:
 
     def run(self) -> int:
         """Run Embark app"""
-        os.chdir(os.path.dirname(os.path.abspath(self.config_file)))
         is_successful = action.execute_playbook_file(
             self.context_factory, self.loader_repo,
             self.config_file, self.file_encoding

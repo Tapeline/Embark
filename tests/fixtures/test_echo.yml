@@ -1,0 +1,5 @@
+name: Test
+tasks:
+  - name: Echo
+    std.echo:
+      message: Hello, World!

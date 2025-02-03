@@ -1,0 +1,19 @@
+# serializer version: 1
+# name: test_variables_in_file
+  '''
+  Hello, World!
+  
+  '''
+# ---
+# name: test_variables_in_separate_file
+  '''
+  variables.yml1
+  
+  '''
+# ---
+# name: test_variables_mixing
+  '''
+  playbook variables.yml2 env
+  
+  '''
+# ---

@@ -1,0 +1,6 @@
+name: Test
+tasks:
+  - name: Copy
+    std.copy:
+      src: original.txt
+      dst: copied.txt

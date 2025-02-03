@@ -1,0 +1,7 @@
+name: Test
+tasks:
+  - name: Copy
+    std.copy:
+      src: missing.txt
+      dst: copied.txt
+      skip_if_missing: true

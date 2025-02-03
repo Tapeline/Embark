@@ -10,4 +10,3 @@ def command(args):
     app = Application(args.filename, file_encoding=args.encoding)
     app.run()
     time.sleep(0.5)
-    input("Press [ENTER] to close")  # noqa: WPS421

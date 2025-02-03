@@ -19,6 +19,8 @@ pyinstaller = "6.11.1"
 wemake-python-styleguide = "^1.0.0"
 ruff = "^0.9.1"
 import-linter = "^2.1"
+syrupy = "^4.8.1"
+pytest-cov = "^6.0.0"
 
 [tool.poetry.scripts]
 cleanbuild = "project_scripts:clean_build"

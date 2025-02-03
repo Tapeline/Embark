@@ -1,0 +1,7 @@
+name: Test
+variables:
+  VAR1: playbook
+tasks:
+  - name: Echo
+    std.echo:
+      message: "{{VAR1}} {{VAR2}} {{VAR3}}"

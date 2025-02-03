@@ -4,3 +4,4 @@ build/
 poetry.lock
 playbook.yml
 *.exe
+htmlcov
