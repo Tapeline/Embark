@@ -90,6 +90,7 @@ class InstallTarget(AbstractExecutionTarget):
         success = self._uninstall(params, repo, logger, old_installation)
         if not success:
             return False
+        return True
 
     def _try_to_match_lookup_path(  # noqa: WPS231
             self,

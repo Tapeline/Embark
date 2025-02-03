@@ -39,8 +39,15 @@ class GUIContextFactory(AbstractContextFactory):
     def __init__(self, logger_frame):
         self._logger_frame = logger_frame
 
-    def create_playbook_context(self, playbook) -> AbstractPlaybookExecutionContext:
+    def create_playbook_context(
+            self,
+            playbook
+    ) -> AbstractPlaybookExecutionContext:
         return GUIPlaybookExecutionContext(playbook, self._logger_frame)
 
-    def create_task_context(self, playbook_context, task) -> TaskExecutionContext:
+    def create_task_context(
+            self,
+            playbook_context,
+            task
+    ) -> TaskExecutionContext:
         return TaskExecutionContext(playbook_context, task)

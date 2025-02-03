@@ -3,7 +3,6 @@ Application declaration
 """
 # pylint: disable=too-few-public-methods
 
-import os
 
 from embark.impl import action
 from embark.impl.context_factory import CLIContextFactory

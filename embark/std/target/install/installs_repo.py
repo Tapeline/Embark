@@ -32,14 +32,14 @@ class AbstractInstallation(ABC):
 
     def matches(
             self,
-            name: str,
-            publisher: str,
-            version: str,
+            name: str | None,
+            publisher: str | None,
+            version: str | None,
             ignore_version: bool = False
     ) -> bool:
         """Check if this installation matches the parameters."""
         return (
-            re.fullmatch(name, self.name) is not None  # noqa: WPS222
+            re.fullmatch(name or "", self.name) is not None  # noqa: WPS222
             and (self.publisher == publisher or self.publisher is None)
             and (self.version == version or ignore_version)
         )

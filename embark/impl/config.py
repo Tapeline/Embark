@@ -1,7 +1,5 @@
 """Provides function for loading yaml playbook."""
-import os
 from pathlib import Path
-from typing import Mapping
 
 import yaml
 
@@ -41,7 +39,7 @@ def load_playbook_from_file(
     )
 
 
-def _load_variables(encoding: str, path: str) -> dict[str, str]:
+def _load_variables(encoding: str | None, path: str) -> dict[str, str]:
     var_path = Path(path).parent.joinpath(".variables.yml")
     variables = {}
     if var_path.exists():

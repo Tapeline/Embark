@@ -33,13 +33,39 @@ class PlaybookChooseFrame(CTk):
             text=L("UI.playbooks_found_title")
         )
         self._label1.configure(font=self._font)
-        self._label1.grid(row=0, column=0, padx=(16, 16), pady=(16, 0), sticky="w")
-        self._label2 = CTkLabel(self, text=L("UI.playbooks_found_subtitle"), anchor="w")
-        self._label2.grid(row=1, column=0, padx=(16, 16), pady=(0, 16), sticky="w")
+        self._label1.grid(
+            row=0,
+            column=0,
+            padx=(16, 16),
+            pady=(16, 0),
+            sticky="w"
+        )
+        self._label2 = CTkLabel(
+            self,
+            text=L("UI.playbooks_found_subtitle"),
+            anchor="w"
+        )
+        self._label2.grid(
+            row=1,
+            column=0,
+            padx=(16, 16),
+            pady=(0, 16),
+            sticky="w"
+        )
         playbooks = self._controller.get_playbooks()
         if len(playbooks) == 0:
-            self._404_label = CTkLabel(self, text=L("UI.playbooks_not_found"), anchor="w")
-            self._404_label.grid(row=2, column=0, padx=(16, 16), pady=(16, 16), sticky="w")
+            self._404_label = CTkLabel(
+                self,
+                text=L("UI.playbooks_not_found"),
+                anchor="w"
+            )
+            self._404_label.grid(
+                row=2,
+                column=0,
+                padx=(16, 16),
+                pady=(16, 16),
+                sticky="w"
+            )
             return
         row = 2
         self._buttons = []

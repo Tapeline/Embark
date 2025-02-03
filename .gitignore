@@ -5,3 +5,6 @@ poetry.lock
 playbook.yml
 *.exe
 htmlcov
+coverage.xml
+.coverage
+*.log

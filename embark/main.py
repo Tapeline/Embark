@@ -2,7 +2,6 @@
 
 import logging
 import argparse
-import os
 import sys
 
 from embark import log_config

@@ -14,7 +14,11 @@ class GUIPlaybookLogger(CLIPlaybookLogger):
         super().playbook_started()
         self.logger_frame.notify_started(self.playbook)
 
-    def playbook_ended(self, is_successful: bool, error_message: str | None = None):
+    def playbook_ended(
+            self,
+            is_successful: bool,
+            error_message: str | None = None
+    ):
         super().playbook_ended(is_successful, error_message)
         self.logger_frame.notify_ended(is_successful, error_message)
 
@@ -48,7 +52,12 @@ class GUIPlaybookLogger(CLIPlaybookLogger):
 
 
 class GUITaskLogger(CLITaskLogger):
-    def __init__(self, playbook: Playbook, task: Task, parent_logger_frame: GUILoggerFrame):
+    def __init__(
+            self,
+            playbook: Playbook,
+            task: Task,
+            parent_logger_frame: GUILoggerFrame
+    ):
         super().__init__(playbook, task)
         self.logger_frame = parent_logger_frame.create_task_logger(task)
 
@@ -60,7 +69,11 @@ class GUITaskLogger(CLITaskLogger):
         super().task_skipped()
         self.logger_frame.notify_skipped()
 
-    def task_ended(self, is_successful: bool, error_message: str | None = None):
+    def task_ended(
+            self,
+            is_successful: bool,
+            error_message: str | None = None
+    ) -> None:
         super().task_ended(is_successful, error_message)
         self.logger_frame.notify_ended(is_successful, error_message)
 

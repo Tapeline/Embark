@@ -41,8 +41,15 @@ class LoggerFrame(CTk):
         self.columnconfigure(index=0, weight=1)
         self.columnconfigure(index=1, weight=5)
         self._left_pane = CTkFrame(self)
-        self._lp_title = CTkLabel(self._left_pane, text="Embark", font=self._font)
-        self._lp_subtitle = CTkLabel(self._left_pane, text=L("UI.running_playbook"))
+        self._lp_title = CTkLabel(
+            self._left_pane,
+            text="Embark",
+            font=self._font
+        )
+        self._lp_subtitle = CTkLabel(
+            self._left_pane,
+            text=L("UI.running_playbook")
+        )
         self._lp_stop_btn = CTkButton(
             self._left_pane,
             text=L("UI.stop_playbook"),

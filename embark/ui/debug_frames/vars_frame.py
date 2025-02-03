@@ -30,13 +30,22 @@ class DebugVariablesFrame(CTk):
         variables = self._playbook.variables.vars.items()
         envs = self._playbook.variables.envs.items()
         self._scrollable1 = CTkScrollableFrame(self)
-        self._scrollable = CTkScrollableFrame(self._scrollable1, orientation="horizontal")
+        self._scrollable = CTkScrollableFrame(
+            self._scrollable1,
+            orientation="horizontal"
+        )
         for i in range(len(variables) + len(envs) + 2):
             self._scrollable.rowconfigure(index=i, weight=1)
         self._scrollable.columnconfigure(index=0, weight=1)
         self._scrollable.columnconfigure(index=1, weight=1)
-        self._vars_title = CTkLabel(self._scrollable, text=L("UI.debug_vars_section"))
-        self._envs_title = CTkLabel(self._scrollable, text=L("UI.debug_envs_section"))
+        self._vars_title = CTkLabel(
+            self._scrollable,
+            text=L("UI.debug_vars_section")
+        )
+        self._envs_title = CTkLabel(
+            self._scrollable,
+            text=L("UI.debug_envs_section")
+        )
         self._vars_title.grid(row=0, column=0, columnspan=2, sticky="nw")
         row = 1
         for var, val in variables:

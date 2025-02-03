@@ -3,7 +3,13 @@ from dataclasses import dataclass
 from datetime import datetime
 from tkinter import LEFT
 
-from customtkinter import CTkScrollableFrame, CTkLabel, CTkFrame, CTkFont, CTkProgressBar
+from customtkinter import (
+    CTkScrollableFrame,
+    CTkLabel,
+    CTkFrame,
+    CTkFont,
+    CTkProgressBar
+)
 
 from embark.localization.i18n import L
 
@@ -69,7 +75,12 @@ class ProgressMixin:
         label.pack(anchor="nw", padx=8, pady=4)
         progressbar = CTkProgressBar(frame, mode="indeterminate")
         progressbar.pack(anchor="nw", padx=8, pady=8, fill="x")
-        progress = Progress(uid=uid, title=title, progress=-1, progressbar=progressbar)
+        progress = Progress(
+            uid=uid,
+            title=title,
+            progress=-1,
+            progressbar=progressbar
+        )
         frame.pack(fill="x", padx=10)
         self._progresses[uid] = progress
 
@@ -102,21 +113,34 @@ class GUILoggerFrame(CTkFrame, ProgressMixin, AbstractLoggerFrame):
         self._progresses: dict[str, Progress] = {}
         self._header_pane = CTkFrame(self)
         self._logs_pane = CTkScrollableFrame(self)
-        self._playbook_status = CTkLabel(self._header_pane, text="⌛", font=_HEADER_FONT)
+        self._playbook_status = CTkLabel(
+            self._header_pane,
+            text="⌛",
+            font=_HEADER_FONT
+        )
         self._playbook_header = CTkLabel(
             self._header_pane,
             text=L("UI.waiting_for_playbook"),
             font=_HEADER_FONT
         )
         self._playbook_status.pack(anchor="w", side=LEFT, padx=5, pady=2)
-        self._playbook_header.pack(anchor="w", fill="x", side=LEFT, padx=2, pady=2)
+        self._playbook_header.pack(
+            anchor="w",
+            fill="x",
+            side=LEFT,
+            padx=2,
+            pady=2
+        )
         self._header_pane.pack(fill="x")
         self._logs_pane.pack(fill="both", expand=True)
         self.configure(bg_color="#FF0000", require_redraw=True)
 
     def notify_started(self, playbook):
         self.playbook = playbook
-        self._playbook_header.configure(require_redraw=True, text=playbook.name)
+        self._playbook_header.configure(
+            require_redraw=True,
+            text=playbook.name
+        )
         self.inform(L("UI.playbook_started"))
 
     def notify_ended(self, is_successful: bool, error_message: str | None):
@@ -128,7 +152,11 @@ class GUILoggerFrame(CTkFrame, ProgressMixin, AbstractLoggerFrame):
         self.inform(L("UI.playbook_ended"))
 
     def log(self, level, message: str, *args):
-        component = LogMessageComponent(self._logs_pane, level, _format(message, *args))
+        component = LogMessageComponent(
+            self._logs_pane,
+            level,
+            _format(message, *args)
+        )
         component.pack(anchor="nw", padx=2, pady=2)
 
     def create_task_logger(self, task) -> "TaskLoggerFrame":
@@ -150,14 +178,24 @@ class TaskLoggerFrame(CTkFrame, ProgressMixin, AbstractLoggerFrame):
         ProgressMixin.__init__(self)
         self.task = task
         self._header_pane = CTkFrame(self)
-        self._task_status = CTkLabel(self._header_pane, text="❔", font=_HEADER_FONT)
+        self._task_status = CTkLabel(
+            self._header_pane,
+            text="❔",
+            font=_HEADER_FONT
+        )
         self._task_header = CTkLabel(
             self._header_pane,
             text=task.get_display_name(),
             font=_HEADER_FONT
         )
         self._task_status.pack(anchor="w", side=LEFT, padx=10, pady=5)
-        self._task_header.pack(anchor="w", fill="x", side=LEFT, padx=5, pady=5)
+        self._task_header.pack(
+            anchor="w",
+            fill="x",
+            side=LEFT,
+            padx=5,
+            pady=5
+        )
         self._header_pane.pack(fill="x")
 
     def notify_started(self):
@@ -189,4 +227,9 @@ class TaskLoggerFrame(CTkFrame, ProgressMixin, AbstractLoggerFrame):
 
 
 def _format(message: str, *args):
-    return "[" + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + "] " + message % args
+    return (
+        "[" +
+        datetime.now().strftime("%d/%m/%Y %H:%M:%S") +
+        "] " +
+        message % args
+    )
