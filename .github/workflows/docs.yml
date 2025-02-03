@@ -153,7 +153,7 @@ jobs:
           path: artifacts
 
       - name: Unzip en artifact
-        run: unzip -O UTF-8 -qq "artifacts/${{ needs.build.outputs.artifact }}" -d docs/en
+        run: unzip -O UTF-8 -qq "artifacts/${{ needs.build_en.outputs.artifact }}" -d docs/en
 
       - name: Download ru artifacts
         uses: actions/download-artifact@v4
@@ -162,7 +162,7 @@ jobs:
           path: artifacts
 
       - name: Unzip ru artifact
-        run: unzip -O UTF-8 -qq "artifacts/${{ needs.build.outputs.artifact }}" -d docs/ru
+        run: unzip -O UTF-8 -qq "artifacts/${{ needs.build_ru.outputs.artifact }}" -d docs/ru
 
       - name: Remove artifacts
         run: rm -rf artifacts
