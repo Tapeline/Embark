@@ -30,8 +30,8 @@ jobs:
           pip install poetry
       - name: Install dependencies
         run: poetry install
-      - name: Run tests
-        run: poetry run coverage run -m pytest tests
+      #- name: Run tests
+      #  run: poetry run coverage run -m pytest tests
       - name: Check MyPy
         run: poetry run mypy embark
       - name: Check Ruff

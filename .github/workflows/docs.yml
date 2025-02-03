@@ -156,6 +156,7 @@ jobs:
         run: |
           echo "${{ needs.build_en.outputs.artifact }}"
           echo "${{ needs.build_ru.outputs.artifact }}"
+          cd artifacts
           ls
 
       - name: Unzip en artifact
