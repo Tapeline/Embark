@@ -11,7 +11,7 @@ permissions:
 
 env:
   INSTANCE_EN: 'Writerside/docs'
-  INSTANCE_RU: 'Writerside/docs_ru'
+  INSTANCE_RU: 'Writerside/docs-ru'
   DOCKER_VERSION: '243.22562'
 
 jobs:
