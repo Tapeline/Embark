@@ -144,7 +144,9 @@ jobs:
           ref: gh-pages
 
       - name: Remove old docs
-        run: rm -rf docs
+        run: |
+          rm -rf docs
+          mkdir docs
 
       - name: Download en artifacts
         uses: actions/download-artifact@v4
