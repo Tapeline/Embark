@@ -34,7 +34,7 @@ class AbstractInstallation(ABC):
             self,
             name: str | None,
             publisher: str | None,
-            version: str | None,
+            version: str | None = None,
             ignore_version: bool = False
     ) -> bool:
         """Check if this installation matches the parameters."""

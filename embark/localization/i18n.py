@@ -2,6 +2,7 @@
 
 import ctypes
 import locale
+import os
 
 _CURRENT_LOCALE: str | None = None
 _DEFAULT_LOCALE = "en"
@@ -16,6 +17,15 @@ def get_windows_locale() -> str:
         win_locale = windll.GetUserDefaultUILanguage()
         _CURRENT_LOCALE = locale.windows_locale[win_locale]  # noqa: WPS122
     return _CURRENT_LOCALE  # noqa: WPS121
+
+
+def get_selected_locale() -> "I18N":
+    """Get selected locale considering env and os settings."""
+    loc = get_locale(_DEFAULT_LOCALE)
+    loc = get_locale(get_windows_locale()) or loc
+    if "UI_LOCALE" in os.environ:
+        loc = get_locale(os.environ["UI_LOCALE"]) or loc
+    return loc
 
 
 class I18N:
@@ -40,7 +50,7 @@ def get_locale(name: str) -> I18N | None:
 
 def localize(message_code: str) -> str:
     """Get message by code."""
-    lang_node = get_locale(get_windows_locale()) or get_locale(_DEFAULT_LOCALE)
+    lang_node = get_selected_locale()
     if lang_node is None:
         return "Translation not found"
     try:
