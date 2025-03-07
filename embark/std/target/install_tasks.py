@@ -2,21 +2,22 @@
 
 import os
 import re
-import subprocess
 from dataclasses import dataclass
 
+from embark.domain.interfacing.installs_provider import InstallationsInterface
 from embark.domain.tasks.task import (
     AbstractExecutionTarget,
-    TaskExecutionContext
+    TaskExecutionContext,
 )
-from embark.std.target.install.installs_repo import (
-    WindowsInstallsRepository,
-    CannotUninstallQuietlyException,
-    CannotUninstallException,
-    CannotInstallQuietlyException,
+from embark.platform_impl.windows.exceptions import (
     CannotInstallException,
-    WindowsInstallation,
-    determine_quiet_uninstall_command
+    CannotInstallQuietlyException,
+    CannotUninstallException,
+    CannotUninstallQuietlyException,
+)
+from embark.platform_impl.windows.installs_provider import WindowsInstallation
+from embark.platform_impl.windows.utils import (
+    determine_quiet_uninstall_command,
 )
 
 
@@ -35,7 +36,8 @@ class InstallTargetParams:
     no_remove: bool = False
 
 
-class InstallTarget(AbstractExecutionTarget):
+# TODO: refactor class in future
+class InstallTarget(AbstractExecutionTarget):  # noqa: WPS214
     """Target for installing."""
 
     def __init__(self, params: InstallTargetParams) -> None:
@@ -45,12 +47,15 @@ class InstallTarget(AbstractExecutionTarget):
     def execute(self, context: TaskExecutionContext) -> bool:
         logger = context.task.logger
         params = self._create_params(context)
-        repo = WindowsInstallsRepository()
+        repo = context.playbook_context.os_provider.get_install_interface()
         if not params.no_remove:
             success = self._remove_existing_if_present(params, repo, logger)
             if not success:
                 return False
         return self._install(params, repo, logger)
+
+    def get_display_name(self) -> str:
+        return f"Install {self.params.name} {self.params.version}"
 
     def _create_params(
             self,
@@ -66,7 +71,7 @@ class InstallTarget(AbstractExecutionTarget):
     def _remove_existing_if_present(
             self,
             params: InstallTargetParams,
-            repo: WindowsInstallsRepository,
+            repo: InstallationsInterface,
             logger
     ) -> bool:
         """Remove existing installation if present."""
@@ -87,10 +92,7 @@ class InstallTarget(AbstractExecutionTarget):
             logger.info("Old installation not found")
             return True
         logger.info("Found old installation, removing")
-        success = self._uninstall(params, repo, logger, old_installation)
-        if not success:
-            return False
-        return True
+        return self._uninstall(params, repo, logger, old_installation)
 
     def _try_to_match_lookup_path(  # noqa: WPS231
             self,
@@ -159,59 +161,50 @@ class InstallTarget(AbstractExecutionTarget):
     ) -> bool:
         """Uninstall old installation"""
         logger.info("Uninstalling %s", old_installation)
-        success = False
-        if params.cmd_uninstall is not None:
-            cmd_uninstall = params.cmd_uninstall.replace(
-                "$$uninstaller$$",
-                old_installation.uninstaller or ""
-            )
-            success = subprocess.call(cmd_uninstall) == 0
-        else:
+        if params.cmd_uninstall is None:
             try:
-                success = repo.uninstall_quietly(old_installation)
+                repo.uninstall_quietly(old_installation)
             except CannotUninstallQuietlyException:
                 logger.error(
                     "Quiet uninstall failed. Trying regular uninstall"
                 )
                 logger.warning("User action required!")
                 try:  # noqa: WPS505
-                    success = repo.uninstall(old_installation)
+                    repo.uninstall(old_installation)
                 except CannotUninstallException:
                     logger.error("Uninstall failed")
                     return False
-        if not success:  # noqa: WPS504
-            logger.error("Uninstall failed")
-            return False
+        else:
+            cmd_uninstall = params.cmd_uninstall.replace(
+                "$$uninstaller$$",
+                old_installation.uninstaller or ""
+            )
+            if not repo.os_interface.run(cmd_uninstall).is_successful:
+                logger.error("Uninstall failed")
+                return False
         return True
 
     def _install(self, params, repo, logger) -> bool:
         """Install program"""
         logger.info("Installing %s", params.version)
-        success = False
-        if params.cmd_install is not None:
-            cmd_install = params.cmd_install.replace(
-                "$$installer$$",
-                params.installer
-            )
-            success = subprocess.call(cmd_install) == 0
-        else:
+        if params.cmd_install is None:
             try:
-                success = repo.install_quietly(
+                repo.install_quietly(
                     params.installer,
-                    params.msi_admin
+                    admin=params.msi_admin
                 )
             except CannotInstallQuietlyException:
                 logger.error("Quiet install failed. Trying regular install")
                 logger.warning("User action required!")
                 try:  # noqa: WPS505
-                    success = repo.install(params.installer, params.msi_admin)
+                    repo.install(params.installer, admin=params.msi_admin)
                 except CannotInstallException:
                     logger.error("Install failed")
                     return False
-        if not success:
-            logger.error("Install failed")
-            return False
+        else:
+            cmd_install = params.cmd_install.replace(
+                "$$installer$$",
+                params.installer
+            )
+            return repo.os_interface.run_console(cmd_install).is_successful
         return True
-
-    def get_display_name(self) -> str:
-        return f"Install {self.params.name} {self.params.version}"

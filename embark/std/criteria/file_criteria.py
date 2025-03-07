@@ -11,7 +11,7 @@ from embark.domain.tasks.task import (
 class FileCriteria(AbstractExecutionCriteria):
     """Generic file criteria which checks if file is present or not."""
 
-    def __init__(self, file_path: str, should_exist: bool) -> None:
+    def __init__(self, file_path: str, *, should_exist: bool) -> None:
         """Create criteria."""
         self.file_path = file_path
         self.should_exist = should_exist

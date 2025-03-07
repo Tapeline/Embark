@@ -19,7 +19,7 @@ class DebugVariablesFrame(CTk):
         self._playbook = playbook
         self.title(L("UI.debug_vars"))
         self.geometry("500x600")
-        self.resizable(False, False)
+        self.resizable(width=False, height=False)
         self.iconbitmap(get_resource("icon.ico"))
         utils.center(self)
         self._font = CTkFont("Consolas", _FONT_SIZE, "normal")

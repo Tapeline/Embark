@@ -3,10 +3,10 @@ from pathlib import Path
 
 import yaml
 
-from embark.use_case.config.loader import AbstractTaskLoaderRepository
 from embark.domain.execution.playbook import Playbook
 from embark.domain.tasks.task import AbstractContextFactory
 from embark.use_case import models, playbook_loader
+from embark.use_case.config.loader import AbstractTaskLoaderRepository
 
 
 def load_playbook_from_file(
@@ -26,9 +26,11 @@ def load_playbook_from_file(
 
     Returns:
         loaded playbook entity.
+
     """
-    with open(path, "r", encoding=encoding) as config_file:
+    with open(path, encoding=encoding) as config_file:
         config_data = yaml.safe_load(config_file)
+    loader_repo.set_playbook_root(str(Path(path).absolute().parent))
     variables = _load_variables(encoding, path)
     playbook_config = models.load_playbook_config(config_data)
     playbook_config.variables = variables | playbook_config.variables
@@ -45,7 +47,6 @@ def _load_variables(encoding: str | None, path: str) -> dict[str, str]:
     if var_path.exists():
         with open(
             str(var_path.absolute()),
-            "r",
             encoding=encoding
         ) as var_file:
             variables = yaml.safe_load(var_file)

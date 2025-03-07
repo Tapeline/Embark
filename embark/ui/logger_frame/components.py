@@ -4,15 +4,14 @@ from datetime import datetime
 from tkinter import LEFT
 
 from customtkinter import (
-    CTkScrollableFrame,
-    CTkLabel,
-    CTkFrame,
     CTkFont,
-    CTkProgressBar
+    CTkFrame,
+    CTkLabel,
+    CTkProgressBar,
+    CTkScrollableFrame,
 )
 
 from embark.localization.i18n import L
-
 
 _LOG_FONT = ("Consolas", 14, "normal")
 _HEADER_FONT = ("TkDefaultFont", 16, "bold")
@@ -25,7 +24,7 @@ class LogMessageComponent(CTkLabel):
             message = f"ⓘ {message}"
         if log_level == "warning":
             message = f"! {message}"
-        if log_level == "error" or log_level == "exception":
+        if log_level in {"error", "exception"}:
             message = f"X {message}"
         super().__init__(root, text=message, font=CTkFont(*_LOG_FONT))
 
@@ -45,7 +44,7 @@ class AbstractLoggerFrame(ABC):
 
     @abstractmethod
     def log(self, level, message: str, *args):
-        raise NotImplementedError
+        """Basic log function."""
 
 
 @dataclass
@@ -63,11 +62,11 @@ class ProgressMixin:
     @property
     @abstractmethod
     def log_component(self):
-        raise NotImplementedError
+        """Get logging component."""
 
     @abstractmethod
     def default_inform(self, message, *args):
-        raise NotImplementedError
+        """Inform progress w/text."""
 
     def start_progress(self, uid: str, title: str):
         frame = CTkFrame(self.log_component)
@@ -90,7 +89,7 @@ class ProgressMixin:
             return
         p = self._progresses[uid]
         p.progress = progress
-        if p.progressbar._mode == "indeterminate":
+        if p.progressbar._mode == "indeterminate":  # noqa: SLF001
             p.progressbar.configure(mode="determinate", require_redraw=True)
         p.progressbar.set(progress)
 
@@ -100,7 +99,7 @@ class ProgressMixin:
             return
         p = self._progresses[uid]
         p.progress = 100
-        if p.progressbar._mode == "indeterminate":
+        if p.progressbar._mode == "indeterminate":  # noqa: SLF001
             p.progressbar.configure(mode="determinate", require_redraw=True)
         p.progressbar.set(1)
 
@@ -143,7 +142,9 @@ class GUILoggerFrame(CTkFrame, ProgressMixin, AbstractLoggerFrame):
         )
         self.inform(L("UI.playbook_started"))
 
-    def notify_ended(self, is_successful: bool, error_message: str | None):
+    def notify_ended(
+            self, *, is_successful: bool, error_message: str | None
+    ) -> None:
         if is_successful:
             self._playbook_status.configure(require_redraw=True, text="✅")
         else:
@@ -206,7 +207,7 @@ class TaskLoggerFrame(CTkFrame, ProgressMixin, AbstractLoggerFrame):
         self._task_status.configure(require_redraw=True, text="⏩")
         self.inform(L("UI.task_skipped"))
 
-    def notify_ended(self, is_successful: bool, error_message: str | None):
+    def notify_ended(self, *, is_successful: bool, error_message: str | None):
         if is_successful:
             self._task_status.configure(require_redraw=True, text="✅")
         else:

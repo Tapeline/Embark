@@ -1,5 +1,5 @@
 """Provides localization files"""
 
-from embark.localization import (i18n, en, ru)
+from embark.localization import en, i18n, ru
 
-__all__ = ("i18n", "en", "ru")  # noqa: WPS410
+__all__ = ("en", "i18n", "ru")  # noqa: WPS410

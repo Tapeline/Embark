@@ -4,15 +4,12 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from embark.use_case.config.exceptions import InvalidConfigException
-from embark.use_case.config.loader import AbstractTaskLoader
-from embark.domain.tasks.task import Task, AbstractContextFactory
+from embark.domain.tasks.task import AbstractContextFactory, Task
 from embark.std.criteria.install_criteria import ProgramNotInstalledCriteria
 from embark.std.requirement.privileges import AdminPrivilegesRequirement
-from embark.std.target.install.install_tasks import (
-    InstallTarget,
-    InstallTargetParams
-)
+from embark.std.target.install_tasks import InstallTarget, InstallTargetParams
+from embark.use_case.config.exceptions import InvalidConfigException
+from embark.use_case.config.loader import AbstractTaskLoader
 
 
 class TaskModel(BaseModel):

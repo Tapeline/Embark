@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Final
 
-from tests.runner import run_embark, remove_after
+from tests.runner import remove_after, run_embark
 
 _COPIED: Final = "tests/fixtures/copied.txt"
 

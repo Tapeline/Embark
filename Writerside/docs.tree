@@ -4,8 +4,10 @@
 
 <instance-profile id="docs"
                  name="Embark (EN)"
-                 start-page="Quickstart.topic">
+                 start-page="Home.topic">
 
+    <toc-element topic="Home.topic"/>
+    <toc-element topic="Prebuilt-playbooks.md"/>
     <toc-element topic="Quickstart.topic"/>
     <toc-element topic="Execution-flow.topic"/>
     <toc-element topic="Configuration-guide.topic"/>

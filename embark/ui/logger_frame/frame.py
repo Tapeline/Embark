@@ -4,16 +4,16 @@ Logger UI frame
 
 import os
 import threading
-from tkinter import messagebox, DISABLED, BOTTOM
+from tkinter import BOTTOM, DISABLED, messagebox
 
-from customtkinter import CTkLabel, CTk, CTkFont, CTkFrame, CTkButton
+from customtkinter import CTk, CTkButton, CTkFont, CTkFrame, CTkLabel
 
 from embark.impl import action
 from embark.impl.task_loader_repo import TaskLoaderRepository
 from embark.localization.i18n import L
 from embark.resources import get_resource
 from embark.ui import utils
-from embark.ui.debug_frames import vars_frame, exec_frame
+from embark.ui.debug_frames import exec_frame, vars_frame
 from embark.ui.logger_frame.components import GUILoggerFrame
 from embark.ui.logger_frame.context_factory import GUIContextFactory
 
@@ -27,7 +27,7 @@ class LoggerFrame(CTk):
         self._playbook_path = playbook_path
         self.title("Embark UI")
         self.geometry("1000x700")
-        self.resizable(False, False)
+        self.resizable(width=False, height=False)
         self.iconbitmap(get_resource("icon.ico"))
         utils.center(self)
         self._font = CTkFont("TkDefaultFont", 16, "bold")

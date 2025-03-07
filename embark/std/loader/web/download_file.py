@@ -2,10 +2,10 @@
 
 from pydantic import BaseModel
 
-from embark.use_case.config.loader import AbstractTaskLoader
-from embark.domain.tasks.task import Task, AbstractContextFactory
+from embark.domain.tasks.task import AbstractContextFactory, Task
 from embark.std.criteria.file_criteria import FileDoesNotExistCriteria
 from embark.std.target.web_tasks import DownloadFileTarget
+from embark.use_case.config.loader import AbstractTaskLoader
 
 
 class TaskModel(BaseModel):

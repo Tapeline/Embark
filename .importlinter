@@ -17,6 +17,7 @@ forbidden_modules =
     embark.application
     embark.main
     embark.resources
+    embark.platform_impl
 
 
 [importlinter:contract:isolate_use_cases]
@@ -33,6 +34,7 @@ forbidden_modules =
     embark.application
     embark.main
     embark.resources
+    embark.platform_impl
 
 
 [importlinter:contract:isolate_localization]
@@ -51,6 +53,7 @@ forbidden_modules =
     embark.log_config
     embark.main
     embark.resources
+    embark.platform_impl
 
 
 [importlinter:contract:isolate_commands]
@@ -79,3 +82,16 @@ source_modules =
     embark.ui
 forbidden_modules =
     embark.commands
+
+
+[importlinter:contract:isolate_platform_impl]
+name = Platform impl shall not be dependent on commands, impl, l10n, std and ui
+type = forbidden
+source_modules =
+    embark.platform_impl
+forbidden_modules =
+    embark.commands
+    embark.impl
+    embark.localization
+    embark.std
+    embark.ui

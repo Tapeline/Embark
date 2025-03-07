@@ -1,7 +1,7 @@
 """Eval debug UI frame"""
 from typing import Final
 
-from customtkinter import CTk, CTkFont, CTkButton, CTkTextbox
+from customtkinter import CTk, CTkButton, CTkFont, CTkTextbox
 
 from embark.domain.execution.playbook import Playbook
 from embark.localization.i18n import L
@@ -19,7 +19,7 @@ class DebugExecFrame(CTk):
         self._playbook = playbook
         self.title(L("UI.debug_exec"))
         self.geometry("500x600")
-        self.resizable(False, False)
+        self.resizable(width=False, height=False)
         self.iconbitmap(get_resource("icon.ico"))
         utils.center(self)
         self._font = CTkFont("Consolas", _FONT_SIZE, "normal")
@@ -48,7 +48,7 @@ class DebugExecFrame(CTk):
         self._result_box.insert("end", " ".join(map(str, args)) + "\n")
 
     def _exec(self):
-        exec(  # noqa: WPS421
+        exec(  # noqa: WPS421, S102
             self._cmd.get("0.0", "end"),
             {
                 "playbook": self._playbook,

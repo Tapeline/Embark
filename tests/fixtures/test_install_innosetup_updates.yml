@@ -1,0 +1,14 @@
+name: Test
+tasks:
+  - name: Install old version
+    std.install:
+      name: BlankInnoSetupProgram .*
+      version: "1.0"
+      publisher: Embark
+      installer: output\\blankinnosetup.exe
+  - name: Install newer version
+    std.install:
+      name: BlankInnoSetupProgram .*
+      version: "1.5"
+      publisher: Embark
+      installer: output\\blankinnosetup_newer.exe

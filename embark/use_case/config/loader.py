@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 
-from embark.domain.tasks.task import Task, AbstractContextFactory
+from embark.domain.tasks.task import AbstractContextFactory, Task
 
 
 class AbstractTaskLoader(ABC):
@@ -41,8 +41,8 @@ class AbstractTaskLoader(ABC):
                 key2: value
             {key1: value, key2: value} will be provided as task_config
             and "Task Name" will be provided as task_name
+
         """
-        raise NotImplementedError
 
 
 class AbstractTaskLoaderRepository(ABC):
@@ -67,5 +67,9 @@ class AbstractTaskLoaderRepository(ABC):
               std.copy:
                 ...
             std.copy here is the loader_name
+
         """
-        raise NotImplementedError
+
+    @abstractmethod
+    def set_playbook_root(self, path: str) -> None:
+        """Set root of playbook."""

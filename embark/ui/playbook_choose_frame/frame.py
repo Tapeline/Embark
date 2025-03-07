@@ -3,9 +3,9 @@ Main UI frame and tools
 """
 
 import os
-from customtkinter import CTkLabel, CTk, CTkFont, CTkButton
 
 import yaml
+from customtkinter import CTk, CTkButton, CTkFont, CTkLabel
 
 from embark.localization.i18n import L
 from embark.resources import get_resource
@@ -14,11 +14,12 @@ from embark.ui import utils
 
 class PlaybookChooseFrame(CTk):
     """Main UI frame"""
+
     def __init__(self, encoding):
         super().__init__()
         self.title("Embark UI")
         self.geometry("600x600")
-        self.resizable(False, False)
+        self.resizable(width=False, height=False)
         self.iconbitmap(get_resource("icon.ico"))
         utils.center(self)
         self._font = CTkFont("TkDefaultFont", 16, "bold")
@@ -91,6 +92,7 @@ class PlaybookChooseFrame(CTk):
 
 class Controller:
     """Main frame controller"""
+
     # pylint: disable=too-few-public-methods
     def __init__(self, encoding, base_dir=""):
         self._base_dir = os.path.abspath(base_dir)
@@ -104,7 +106,7 @@ class Controller:
                 continue
             try:
                 playbook = os.path.join(self._base_dir, filename)
-                with open(playbook, "r", encoding=self._encoding) as f:
+                with open(playbook, encoding=self._encoding) as f:
                     data = yaml.safe_load(f.read())
                     if "name" in data:
                         playbooks[playbook] = data["name"]

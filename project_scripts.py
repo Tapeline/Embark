@@ -8,14 +8,14 @@ def check_mypy():
     process = subprocess.run(
         "mypy --install-types",
         stderr=sys.stderr,
-        stdout=sys.stdout
+        stdout=sys.stdout, check=False
     )
     if process.returncode != 0:
         exit(process.returncode)
     process = subprocess.run(
         "mypy embark",
         stderr=sys.stderr,
-        stdout=sys.stdout
+        stdout=sys.stdout, check=False
     )
     if process.returncode != 0:
         exit(process.returncode)
@@ -25,7 +25,7 @@ def check_imports():
     process = subprocess.run(
         "lint-imports",
         stderr=sys.stderr,
-        stdout=sys.stdout
+        stdout=sys.stdout, check=False
     )
     if process.returncode != 0:
         exit(process.returncode)
@@ -35,7 +35,7 @@ def check_ruff():
     process = subprocess.run(
         "ruff check",
         stderr=sys.stderr,
-        stdout=sys.stdout
+        stdout=sys.stdout, check=False
     )
     if process.returncode != 0:
         exit(process.returncode)
@@ -45,7 +45,7 @@ def check_wps():
     process = subprocess.run(
         "flake8 ./embark",
         stderr=sys.stderr,
-        stdout=sys.stdout
+        stdout=sys.stdout, check=False
     )
     if process.returncode != 0:
         exit(process.returncode)
@@ -74,6 +74,6 @@ def build():
     process = subprocess.run(
         "build.bat",
         stderr=sys.stderr,
-        stdout=sys.stdout
+        stdout=sys.stdout, check=False
     )
-    exit(process.returncode)
+    sys.exit(process.returncode)

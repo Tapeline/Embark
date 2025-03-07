@@ -4,8 +4,10 @@
 
 <instance-profile id="docs-ru"
                  name="Embark (RU)"
-                 start-page="Быстрый-старт.topic">
+                 start-page="Home-ru.topic">
 
+    <toc-element topic="Home-ru.topic"/>
+    <toc-element topic="Готовые-плейбуки.md"/>
     <toc-element topic="Быстрый-старт.topic"/>
     <toc-element topic="Поток-выполнения.topic"/>
     <toc-element topic="Конфигурация.topic"/>

@@ -3,6 +3,7 @@
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 
+from embark.domain.interfacing.os_provider import OSInterface
 from embark.domain.playbook_logger import AbstractPlaybookLogger
 
 if TYPE_CHECKING:
@@ -17,21 +18,18 @@ class AbstractPlaybookExecutionContext(ABC):
     @abstractmethod
     def playbook(self) -> "Playbook":
         """Get the playbook."""
-        raise NotImplementedError
 
     @abstractmethod
     def ask_should_proceed(self, text: str) -> bool:
         """Blocking function which prompts user if he wants to proceed."""
-        raise NotImplementedError
 
     @abstractmethod
     def file_path(self, path) -> str:
         """Resolve file path (with placeholders)."""
-        raise NotImplementedError
 
     @abstractmethod
     def create_logger(self) -> AbstractPlaybookLogger:
-        raise NotImplementedError
+        """Create logger for this playbook."""
 
     def variables[T](self, target_obj: T) -> T:  # noqa: WPS111
         """Format object with variables."""
@@ -40,6 +38,11 @@ class AbstractPlaybookExecutionContext(ABC):
     def set_variable(self, name: str, obj: Any) -> None:
         """Set variable for playbook."""
         self.playbook.variables.vars[name] = obj
+
+    @property
+    @abstractmethod
+    def os_provider(self) -> OSInterface:
+        """Get OS interface."""
 
 
 class TaskExecutionContext:
@@ -58,17 +61,17 @@ class TaskExecutionContext:
 class AbstractContextFactory(ABC):
     """Factory for contexts."""
 
+    @abstractmethod
     def create_playbook_context(
             self,
             playbook: "Playbook"
     ) -> AbstractPlaybookExecutionContext:
         """Create context for provided playbook."""
-        raise NotImplementedError
 
+    @abstractmethod
     def create_task_context(
             self,
             playbook_context: AbstractPlaybookExecutionContext,
             task: "Task"
     ) -> TaskExecutionContext:
         """Create context for provided task."""
-        raise NotImplementedError

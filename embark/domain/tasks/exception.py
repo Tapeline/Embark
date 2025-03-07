@@ -3,8 +3,10 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from embark.domain.tasks.task import TaskExecutionContext
-    from embark.domain.tasks.task import AbstractExecutionRequirement
+    from embark.domain.tasks.task import (
+        AbstractExecutionRequirement,
+        TaskExecutionContext,
+    )
 
 
 class TaskExecutionException(Exception):
@@ -23,6 +25,7 @@ class TaskExecutionException(Exception):
 
 class RequirementCannotBeMetException(TaskExecutionException):
     """Thrown when we tried, but anyway the requirement cannot be met."""
+
     def __init__(
             self,
             requirement: "AbstractExecutionRequirement",

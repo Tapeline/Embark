@@ -7,10 +7,9 @@ import requests
 
 from embark.domain.tasks.task import (
     AbstractExecutionTarget,
-    TaskExecutionContext
+    TaskExecutionContext,
 )
 from embark.use_case.progress import ProgressReporter
-
 
 _CHUNK_SIZE: Final = 4096
 
@@ -38,7 +37,7 @@ class DownloadFileTarget(AbstractExecutionTarget):
             ) as reporter
         ):
             response = requests.get(url, stream=True, timeout=self.timeout_s)
-            total_length_str = response.headers.get('content-length')
+            total_length_str = response.headers.get("content-length")
             if total_length_str is None:
                 target_file.write(response.content)
                 return True

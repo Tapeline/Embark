@@ -5,7 +5,7 @@ import shutil
 
 from embark.domain.tasks.task import (
     AbstractExecutionTarget,
-    TaskExecutionContext
+    TaskExecutionContext,
 )
 
 

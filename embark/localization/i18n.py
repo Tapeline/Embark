@@ -2,6 +2,8 @@
 
 import ctypes
 import locale
+import os
+from typing import ClassVar
 
 _CURRENT_LOCALE: str | None = None
 _DEFAULT_LOCALE = "en"
@@ -18,10 +20,22 @@ def get_windows_locale() -> str:
     return _CURRENT_LOCALE  # noqa: WPS121
 
 
+def get_selected_locale() -> "I18N":
+    """Get selected locale considering env and os settings."""
+    loc = get_locale(_DEFAULT_LOCALE)
+    loc = get_locale(get_windows_locale()) or loc
+    ui_locale_name = os.environ.get("UI_LOCALE")
+    if ui_locale_name:
+        loc = get_locale(ui_locale_name) or loc
+    if loc is None:
+        raise ValueError("Failed to set locale")
+    return loc
+
+
 class I18N:
     """Base i18n class."""
 
-    locales: dict[str, "I18N"] = {}
+    locales: ClassVar[dict[str, "I18N"]] = {}
 
     name = ""
 
@@ -40,7 +54,7 @@ def get_locale(name: str) -> I18N | None:
 
 def localize(message_code: str) -> str:
     """Get message by code."""
-    lang_node = get_locale(get_windows_locale()) or get_locale(_DEFAULT_LOCALE)
+    lang_node = get_selected_locale()
     if lang_node is None:
         return "Translation not found"
     try:
