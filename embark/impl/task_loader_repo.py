@@ -27,7 +27,11 @@ class TaskLoaderRepository(AbstractTaskLoaderRepository):
         """Create loader repo"""
         super().__init__()
         self.logger = logging.getLogger("task_loader")
+        self.base_path = os.getcwd()
         log_config.setup_default_handlers(self.logger)
+
+    def set_playbook_root(self, path: str) -> None:
+        self.base_path = path
 
     def get_task_loader(self, loader_name: str) -> AbstractTaskLoader | None:
         for loader in self.loaders:
@@ -41,7 +45,7 @@ class TaskLoaderRepository(AbstractTaskLoaderRepository):
     ) -> AbstractTaskLoader | None:
         """Try to load a custom loader from a .py file."""
         slashed_path = loader_name.replace(".", "/")
-        loader_path = f"{slashed_path}.py"
+        loader_path = os.path.join(self.base_path, f"{slashed_path}.py")
         self._install_loader_requirements_if_needed(loader_path)
         module = self._load_py_module(loader_path)
         if module is None:

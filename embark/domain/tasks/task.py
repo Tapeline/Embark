@@ -22,7 +22,6 @@ class AbstractExecutionCriteria(Nameable, ABC):
     @abstractmethod
     def should_execute(self, context: TaskExecutionContext) -> bool:
         """Determine if task should be executed."""
-        raise NotImplementedError
 
 
 class NoExecutionCriteria(AbstractExecutionCriteria):
@@ -50,7 +49,6 @@ class AbstractExecutionRequirement(Nameable, ABC):
             RequirementCannotBeMetException: if requirement cannot be met
 
         """
-        raise NotImplementedError
 
 
 class AbstractExecutionTarget(Nameable, ABC):
@@ -59,7 +57,6 @@ class AbstractExecutionTarget(Nameable, ABC):
     @abstractmethod
     def execute(self, context: TaskExecutionContext) -> bool:
         """Execute action."""
-        raise NotImplementedError
 
 
 class Task(Nameable):  # noqa: WPS214

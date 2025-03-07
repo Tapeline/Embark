@@ -44,7 +44,7 @@ class AbstractLoggerFrame(ABC):
 
     @abstractmethod
     def log(self, level, message: str, *args):
-        raise NotImplementedError
+        """Basic log function."""
 
 
 @dataclass
@@ -62,11 +62,11 @@ class ProgressMixin:
     @property
     @abstractmethod
     def log_component(self):
-        raise NotImplementedError
+        """Get logging component."""
 
     @abstractmethod
     def default_inform(self, message, *args):
-        raise NotImplementedError
+        """Inform progress w/text."""
 
     def start_progress(self, uid: str, title: str):
         frame = CTkFrame(self.log_component)

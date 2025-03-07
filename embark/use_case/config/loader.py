@@ -43,7 +43,6 @@ class AbstractTaskLoader(ABC):
             and "Task Name" will be provided as task_name
 
         """
-        raise NotImplementedError
 
 
 class AbstractTaskLoaderRepository(ABC):
@@ -70,4 +69,7 @@ class AbstractTaskLoaderRepository(ABC):
             std.copy here is the loader_name
 
         """
-        raise NotImplementedError
+
+    @abstractmethod
+    def set_playbook_root(self, path: str) -> None:
+        """Set root of playbook."""

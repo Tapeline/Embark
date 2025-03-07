@@ -1,4 +1,5 @@
 """Provides function for loading yaml playbook."""
+import os.path
 from pathlib import Path
 
 import yaml
@@ -30,6 +31,7 @@ def load_playbook_from_file(
     """
     with open(path, encoding=encoding) as config_file:
         config_data = yaml.safe_load(config_file)
+    loader_repo.set_playbook_root(str(Path(path).absolute().parent))
     variables = _load_variables(encoding, path)
     playbook_config = models.load_playbook_config(config_data)
     playbook_config.variables = variables | playbook_config.variables

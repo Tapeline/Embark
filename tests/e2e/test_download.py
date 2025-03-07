@@ -7,7 +7,7 @@ _TARGET: Final = "tests/fixtures/gpl3.txt"
 _ORIGINAL: Final = "tests/fixtures/gpl-3.0-original.txt"
 
 
-def _test_download_task():
+def test_download_task():
     """Test that std.download works."""
     proc = run_embark("tests/fixtures/test_download.yml")
     assert proc.returncode == 0, (proc.stdout, proc.stderr)
@@ -15,7 +15,7 @@ def _test_download_task():
         assert Path(_TARGET).read_text() == Path(_ORIGINAL).read_text()
 
 
-def _test_download_task_overwrite():
+def test_download_task_overwrite():
     """Test that std.download with overwrite works."""
     Path(_TARGET).write_text("Some text")
     proc = run_embark("tests/fixtures/test_download_overwrite.yml")

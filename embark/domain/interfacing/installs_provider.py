@@ -57,9 +57,7 @@ class InstallationsInterface[Install_T: Installation](ABC):
             admin: bool = False
     ) -> None:
         """Try to install quietly."""
-        raise NotImplementedError
 
     @abstractmethod
     def install(self, installer_path: str, *, admin: bool = False) -> None:
         """Try to install."""
-        raise NotImplementedError

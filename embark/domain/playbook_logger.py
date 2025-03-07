@@ -4,23 +4,23 @@ from abc import ABC, abstractmethod
 class AbstractLogger(ABC):
     @abstractmethod
     def info(self, message, *args):
-        raise NotImplementedError
+        """Info level log."""
 
     @abstractmethod
     def warning(self, message, *args):
-        raise NotImplementedError
+        """Warning level log."""
 
     @abstractmethod
     def error(self, message, *args):
-        raise NotImplementedError
+        """Error level log."""
 
     @abstractmethod
     def exception(self, message, *args):
-        raise NotImplementedError
+        """Exception log."""
 
     @abstractmethod
     def start_progress(self, uid: str, title: str):
-        raise NotImplementedError
+        """Start progress bar."""
 
     @abstractmethod
     def set_progress(self, uid: str, progress: float):
@@ -29,21 +29,20 @@ class AbstractLogger(ABC):
         :param uid: progress id
         :param progress: [0;1]
         """
-        raise NotImplementedError
 
     @abstractmethod
     def finish_progress(self, uid: str):
-        raise NotImplementedError
+        """Mark progress as finished."""
 
 
 class AbstractTaskLogger(AbstractLogger, ABC):
     @abstractmethod
     def task_started(self) -> None:
-        raise NotImplementedError
+        """Notify task started."""
 
     @abstractmethod
     def task_skipped(self) -> None:
-        raise NotImplementedError
+        """Notify task skipped."""
 
     @abstractmethod
     def task_ended(
@@ -52,13 +51,13 @@ class AbstractTaskLogger(AbstractLogger, ABC):
             is_successful: bool,
             error_message: str | None = None
     ) -> None:
-        raise NotImplementedError
+        """Notify task ended with status."""
 
 
 class AbstractPlaybookLogger(AbstractLogger, ABC):
     @abstractmethod
     def playbook_started(self) -> None:
-        raise NotImplementedError
+        """Notify playbook started."""
 
     @abstractmethod
     def playbook_ended(
@@ -67,8 +66,8 @@ class AbstractPlaybookLogger(AbstractLogger, ABC):
             is_successful: bool,
             error_message: str | None = None
     ) -> None:
-        raise NotImplementedError
+        """Notify playbook ended."""
 
     @abstractmethod
     def create_child_task_logger(self, task) -> AbstractTaskLogger:
-        raise NotImplementedError
+        """Create logger for task."""

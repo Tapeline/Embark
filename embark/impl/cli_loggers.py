@@ -18,7 +18,7 @@ class CommonCLILogger(AbstractLogger):
     @property
     @abstractmethod
     def logger(self) -> logging.Logger:
-        raise NotImplementedError
+        """Get logger."""
 
     def info(self, message, *args) -> None:
         self.logger.info(message, *args)

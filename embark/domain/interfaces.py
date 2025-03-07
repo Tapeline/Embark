@@ -10,4 +10,3 @@ class Nameable(Protocol):
     @abstractmethod
     def get_display_name(self) -> str:
         """Should return display name. Not a unique id."""
-        raise NotImplementedError

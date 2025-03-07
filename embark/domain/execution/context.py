@@ -18,21 +18,18 @@ class AbstractPlaybookExecutionContext(ABC):
     @abstractmethod
     def playbook(self) -> "Playbook":
         """Get the playbook."""
-        raise NotImplementedError
 
     @abstractmethod
     def ask_should_proceed(self, text: str) -> bool:
         """Blocking function which prompts user if he wants to proceed."""
-        raise NotImplementedError
 
     @abstractmethod
     def file_path(self, path) -> str:
         """Resolve file path (with placeholders)."""
-        raise NotImplementedError
 
     @abstractmethod
     def create_logger(self) -> AbstractPlaybookLogger:
-        raise NotImplementedError
+        """Create logger for this playbook."""
 
     def variables[T](self, target_obj: T) -> T:  # noqa: WPS111
         """Format object with variables."""
@@ -70,7 +67,6 @@ class AbstractContextFactory(ABC):
             playbook: "Playbook"
     ) -> AbstractPlaybookExecutionContext:
         """Create context for provided playbook."""
-        raise NotImplementedError
 
     @abstractmethod
     def create_task_context(
@@ -79,4 +75,3 @@ class AbstractContextFactory(ABC):
             task: "Task"
     ) -> TaskExecutionContext:
         """Create context for provided task."""
-        raise NotImplementedError

@@ -1,0 +1,6 @@
+name: Test
+tasks:
+  - name: Custom
+    test_custom_task.test:
+      file: custom_task.out
+      message: "Hello, World!"
