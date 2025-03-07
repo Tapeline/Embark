@@ -186,7 +186,7 @@ class InstallTarget(AbstractExecutionTarget):
                 "$$installer$$",
                 params.installer
             )
-            success = subprocess.call(cmd_install) == 0
+            _ = subprocess.call(cmd_install) == 0
         else:
             try:
                 repo.install_quietly(

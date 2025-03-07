@@ -53,4 +53,9 @@ def run_after(*cmd: str):
     try:
         yield
     finally:
-        subprocess.run(cmd)
+        subprocess.run(
+            cmd,
+            text=True,
+            universal_newlines=True,
+            shell=True,
+        )

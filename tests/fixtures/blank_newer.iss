@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "BlankInnoSetupProgram"
-#define MyAppVersion "1.0"
+#define MyAppVersion "1.5"
 #define MyAppPublisher "Embark"
 #define MyAppURL "https://embark.tapeline.dev"
 
@@ -17,13 +17,13 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName=C:\Program Files\{#MyAppName}
+DefaultDirName={autopf}\{#MyAppName}
 DisableDirPage=yes
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
-OutputBaseFilename=blankinnosetup
+OutputBaseFilename=blankinnosetup_newer
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -32,6 +32,6 @@ WizardStyle=modern
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "installres\test.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "installres\test_upd.txt"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
