@@ -46,3 +46,11 @@ def remove_after(*paths: str):
                 shutil.rmtree(path)
             else:
                 os.remove(path)
+
+
+@contextmanager
+def run_after(*cmd: str):
+    try:
+        yield
+    finally:
+        subprocess.run(cmd)

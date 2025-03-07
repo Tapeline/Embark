@@ -155,35 +155,32 @@ class InstallTarget(AbstractExecutionTarget):
     ) -> bool:
         """Uninstall old installation"""
         logger.info("Uninstalling %s", old_installation)
-        success = False
         if params.cmd_uninstall is not None:
             cmd_uninstall = params.cmd_uninstall.replace(
                 "$$uninstaller$$",
                 old_installation.uninstaller or ""
             )
-            success = subprocess.call(cmd_uninstall) == 0
+            if subprocess.call(cmd_uninstall) != 0:
+                logger.error("Uninstall failed")
+                return False
         else:
             try:
-                success = repo.uninstall_quietly(old_installation)
+                repo.uninstall_quietly(old_installation)
             except CannotUninstallQuietlyException:
                 logger.error(
                     "Quiet uninstall failed. Trying regular uninstall"
                 )
                 logger.warning("User action required!")
                 try:  # noqa: WPS505
-                    success = repo.uninstall(old_installation)
+                    repo.uninstall(old_installation)
                 except CannotUninstallException:
                     logger.error("Uninstall failed")
                     return False
-        if not success:  # noqa: WPS504
-            logger.error("Uninstall failed")
-            return False
         return True
 
     def _install(self, params, repo, logger) -> bool:
         """Install program"""
         logger.info("Installing %s", params.version)
-        success = False
         if params.cmd_install is not None:
             cmd_install = params.cmd_install.replace(
                 "$$installer$$",
@@ -192,7 +189,7 @@ class InstallTarget(AbstractExecutionTarget):
             success = subprocess.call(cmd_install) == 0
         else:
             try:
-                success = repo.install_quietly(
+                repo.install_quietly(
                     params.installer,
                     params.msi_admin
                 )
@@ -200,13 +197,10 @@ class InstallTarget(AbstractExecutionTarget):
                 logger.error("Quiet install failed. Trying regular install")
                 logger.warning("User action required!")
                 try:  # noqa: WPS505
-                    success = repo.install(params.installer, params.msi_admin)
+                    repo.install(params.installer, params.msi_admin)
                 except CannotInstallException:
                     logger.error("Install failed")
                     return False
-        if not success:
-            logger.error("Install failed")
-            return False
         return True
 
     def get_display_name(self) -> str:

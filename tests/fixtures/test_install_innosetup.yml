@@ -1,0 +1,8 @@
+name: Test
+tasks:
+  - name: Install
+    std.install:
+      name: BlankInnoSetupProgram
+      version: "1.0"
+      publisher: Embark
+      installer: output\\blankinnosetup.exe

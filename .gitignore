@@ -3,7 +3,7 @@ dist/
 build/
 poetry.lock
 playbook.yml
-*.exe
+vlc.exe
 htmlcov
 coverage.xml
 .coverage
