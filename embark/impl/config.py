@@ -1,5 +1,4 @@
 """Provides function for loading yaml playbook."""
-import os.path
 from pathlib import Path
 
 import yaml
