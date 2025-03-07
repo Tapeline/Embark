@@ -13,3 +13,17 @@ playbooks are intended to modify your apps and system, thus these permissions
 are needed.
 
 When you double-click the file, a screen will appear:
+
+![embark_ui_selector_en.png](embark_ui_selector_en.png)
+
+Click on the desired playbook button. The main screen will appear.
+
+![embark_ui_main_en.png](embark_ui_main_en.png)
+
+On the right, you can see how the playbook execution is going:
+- ✅ - task is done
+- ⌛ - task is running
+- ❔ - task is pending
+- ❌ - task has failed
+- ⏩ - task was skipped
+

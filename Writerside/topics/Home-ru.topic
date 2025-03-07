@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       title="Домашняя страница" id="Home-ru" help-id="Welcome">
+<section-starting-page>
+    <title>Embark</title>
+    <description>
+        Автоматизируйте утомительную работу ручной установки
+        ПО во время настройки рабочих станций
+    </description>
+
+    <spotlight>
+        <a href="Быстрый-старт.topic"
+           summary="Узнайте, как пользоваться Embark"
+           type="start"/>
+        <a href="Готовые-плейбуки.md"
+           summary="Узнайте, как запускать плейбуки, которые уже собраны для вас"
+           type="case"/>
+    </spotlight>
+
+    <primary>
+        <title>Первые шаги</title>
+        <a href="Поток-выполнения.topic"
+           summary="Изучите, как работает Embark"
+            type="branch"/>
+        <a href="Конфигурация.topic"
+           summary="Узнайте, как сконфигурировать свой собственный плейбук"
+            type="file"/>
+        <a href="Встроенные-задачи.topic"
+           summary="Откройте для себя библиотеку задач Embark"
+            type="tools"/>
+    </primary>
+
+    <secondary>
+        <title>Запуск</title>
+        <a href="Использование-с-графическим-интерфейсом.topic"
+           summary="Используйте Embark с наглядной визуализацией процессов"
+            type="presentation"/>
+        <a href="Использование-в-терминале.topic"
+           summary="Используйте Embark максимально эффективно через терминал"
+            type="development"/>
+        ...
+    </secondary>
+
+    <misc>
+        <cards>
+            <title>Продвинутое использование</title>
+        <a href="Собственные-задачи.topic"
+           summary="Узнайте, как создать собственные типы задач, если вам
+не хватило встроенных"
+            type="settings"/>
+        ...
+        </cards>
+    </misc>
+</section-starting-page>
+</topic>

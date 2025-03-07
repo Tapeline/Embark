@@ -2,13 +2,18 @@
 <buildprofiles xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/build-profiles.xsd"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-    <variables></variables>
     <build-profile instance="docs">
         <variables>
             <offline-docs>false</offline-docs>
             <noindex-content>true</noindex-content>
             <header-logo>logo.png</header-logo>
+            <primary-color>forest</primary-color>
         </variables>
+        <footer>
+            <link href="https://embark.tapeline.dev">Website</link>
+            <link href="https://github.com/Tapeline/Embark">GitHub</link>
+            <copyright>2024-2025 Tapeline (I.Solin)</copyright>
+        </footer>
     </build-profile>
 
 </buildprofiles>

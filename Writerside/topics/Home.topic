@@ -23,16 +23,34 @@
     <primary>
         <title>First steps</title>
         <a href="Execution-flow.topic"
-           summary="A quick introduction into Embark terminology"/>
+           summary="A quick introduction into Embark terminology"
+           type="branch"/>
         <a href="Configuration-guide.topic"
-           summary="Learn how to configure playbooks"/>
+           summary="Learn how to configure playbooks"
+            type="file"/>
+        <a href="Builtin-tasks.topic"
+           summary="Discover standard Embark task library"
+            type="tools"/>
     </primary>
 
     <secondary>
-        <title>For developers</title>
-        <a href="Custom-tasks.topic"
-           summary="Learn how to create your own tasks"/>
-        ...
+        <title>Launch</title>
+        <a href="UI-mode-usage.topic"
+           summary="Use Embark with neat visualisation of all processes"
+            type="presentation"/>
+        <a href="Command-line-usage.topic"
+           summary="Use Embark the most effective way with terminal"
+            type="development"/>
     </secondary>
+
+    <misc>
+        <cards>
+            <title>For developers</title>
+        <a href="Custom-tasks.topic"
+           summary="Learn how to create your own tasks in case if you need
+more"
+            type="settings"/>
+        </cards>
+    </misc>
 </section-starting-page>
 </topic>
