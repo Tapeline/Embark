@@ -1,7 +1,7 @@
 """Main file"""
 
-import logging
 import argparse
+import logging
 import sys
 
 from embark import log_config
@@ -12,9 +12,9 @@ log_config.setup_default_handlers(logging.getLogger())
 
 # cannot put imports before logging config
 from embark.commands import (  # noqa: E402 (import not on top)
-    cmd_run,
     cmd_dev_list_installs,
-    cmd_dev_query_install
+    cmd_dev_query_install,
+    cmd_run,
 )
 
 
@@ -83,5 +83,5 @@ def main():
         args.func(args)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

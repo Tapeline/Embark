@@ -2,8 +2,11 @@
 
 from pydantic import BaseModel
 
-from embark.domain.tasks.task import (Task, AbstractExecutionTarget,
-                                      TaskExecutionContext)
+from embark.domain.tasks.task import (
+    AbstractExecutionTarget,
+    Task,
+    TaskExecutionContext,
+)
 from embark.output import write_out
 from embark.use_case.config.loader import AbstractTaskLoader
 

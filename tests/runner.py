@@ -38,6 +38,7 @@ def run_embark(
 
 @contextmanager
 def remove_after(*paths: str):
+    """Remove files finally."""
     try:
         yield
     finally:
@@ -50,12 +51,13 @@ def remove_after(*paths: str):
 
 @contextmanager
 def run_after(*cmd: str):
+    """Run a console command finally."""
     try:
         yield
     finally:
         subprocess.run(
             cmd,
             text=True,
-            universal_newlines=True,
             shell=True,
+            check=False,
         )

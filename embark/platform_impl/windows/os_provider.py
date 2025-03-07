@@ -1,8 +1,13 @@
 import subprocess
 from collections.abc import Sequence
 
-from embark.domain.interfacing.os_provider import OSInterface, ConsoleCommandResult
-from embark.platform_impl.windows.installs_provider import WindowsInstallationsInterface
+from embark.domain.interfacing.os_provider import (
+    ConsoleCommandResult,
+    OSInterface,
+)
+from embark.platform_impl.windows.installs_provider import (
+    WindowsInstallationsInterface,
+)
 
 
 class WindowsInterface(OSInterface[WindowsInstallationsInterface]):
@@ -44,7 +49,10 @@ class WindowsInterface(OSInterface[WindowsInstallationsInterface]):
             is_shell=False,
         )
 
-    def _run_impl(
+    def get_install_interface(self) -> WindowsInstallationsInterface:
+        return WindowsInstallationsInterface(self)
+
+    def _run_impl(  # noqa: WPS211
             self,
             command: str | Sequence[str],
             *,
@@ -54,21 +62,17 @@ class WindowsInterface(OSInterface[WindowsInstallationsInterface]):
             env: dict | None = None,
             cwd: str | None = None,
     ) -> ConsoleCommandResult:
-        proc = subprocess.run(
+        proc = subprocess.run(  # noqa: S603
             command,
             input=stdin,
             timeout=timeout,
             env=env,
             cwd=cwd,
             text=True,
-            universal_newlines=True,
-            shell=is_shell,
+            shell=is_shell, check=False,
         )
         return ConsoleCommandResult(
             stdout=proc.stdout,
             stderr=proc.stderr,
             return_code=proc.returncode
         )
-
-    def get_install_interface(self) -> WindowsInstallationsInterface:
-        return WindowsInstallationsInterface(self)

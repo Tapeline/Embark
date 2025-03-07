@@ -3,6 +3,7 @@
 import ctypes
 import locale
 import os
+from typing import ClassVar
 
 _CURRENT_LOCALE: str | None = None
 _DEFAULT_LOCALE = "en"
@@ -23,15 +24,18 @@ def get_selected_locale() -> "I18N":
     """Get selected locale considering env and os settings."""
     loc = get_locale(_DEFAULT_LOCALE)
     loc = get_locale(get_windows_locale()) or loc
-    if "UI_LOCALE" in os.environ:
-        loc = get_locale(os.environ["UI_LOCALE"]) or loc
+    ui_locale_name = os.environ.get("UI_LOCALE")
+    if ui_locale_name:
+        loc = get_locale(ui_locale_name) or loc
+    if loc is None:
+        raise ValueError("Failed to set locale")
     return loc
 
 
 class I18N:
     """Base i18n class."""
 
-    locales: dict[str, "I18N"] = {}
+    locales: ClassVar[dict[str, "I18N"]] = {}
 
     name = ""
 

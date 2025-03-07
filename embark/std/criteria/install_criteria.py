@@ -13,6 +13,7 @@ class ProgramNotInstalledCriteria(AbstractExecutionCriteria):
             name: str,
             version: str | None,
             publisher: str | None,
+            *,
             ignore_version: bool = False
     ) -> None:
         """Create criteria."""
@@ -27,7 +28,9 @@ class ProgramNotInstalledCriteria(AbstractExecutionCriteria):
         publisher = context.playbook_context.variables(self.publisher)
         repo = context.playbook_context.os_provider.get_install_interface()
         return not any(
-            install.matches(name, version, publisher, self.ignore_version)
+            install.matches(
+                name, version, publisher, ignore_version=self.ignore_version
+            )
             for install in repo.get_all_installs()
         )
 

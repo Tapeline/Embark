@@ -1,19 +1,19 @@
 """Provides objects for task execution."""
 
 from abc import ABC, abstractmethod
-from typing import Sequence
+from collections.abc import Sequence
 
 from embark.domain.execution.context import (
-    TaskExecutionContext,
     AbstractContextFactory,
-    AbstractPlaybookExecutionContext
+    AbstractPlaybookExecutionContext,
+    TaskExecutionContext,
 )
 from embark.domain.interfaces import Nameable
-from embark.domain.tasks.exception import (
-    TaskExecutionException,
-    RequirementCannotBeMetException,
-)
 from embark.domain.playbook_logger import AbstractTaskLogger
+from embark.domain.tasks.exception import (
+    RequirementCannotBeMetException,
+    TaskExecutionException,
+)
 
 
 class AbstractExecutionCriteria(Nameable, ABC):
@@ -48,6 +48,7 @@ class AbstractExecutionRequirement(Nameable, ABC):
 
         Throws:
             RequirementCannotBeMetException: if requirement cannot be met
+
         """
         raise NotImplementedError
 
@@ -135,8 +136,8 @@ class Task(Nameable):  # noqa: WPS214
         try:  # noqa: WPS229
             for requirement in self.requirements:
                 requirement.ensure_requirement_met(self.task_context)
-            return True
-        except RequirementCannotBeMetException as exc:
+            return True  # noqa: TRY300
+        except RequirementCannotBeMetException:
             self.logger.task_ended(
                 is_successful=False,
                 error_message=(
@@ -150,7 +151,7 @@ class Task(Nameable):  # noqa: WPS214
                 self.logger.warning("Cancelled, playbook continues")
                 return True
             self.logger.error("Cannot proceed. Playbook cancelled")
-            raise exc
+            raise
 
     def _try_to_execute_target(self) -> tuple[bool, bool]:
         """Try to execute target."""
@@ -174,14 +175,14 @@ class Task(Nameable):  # noqa: WPS214
         except TaskExecutionException as exc:
             self.logger.task_ended(
                 is_successful=False,
-                error_message="Unknown exception occurred: %s" % str(exc)
+                error_message=f"Unknown exception occurred: {exc!s}"
             )
             should_proceed = self.playbook_context.ask_should_proceed(
-                f"Task failed to execute:\n{str(exc)}.\nProceed playbook?"
+                f"Task failed to execute:\n{exc!s}.\nProceed playbook?"
             )
             if should_proceed:
                 self.logger.warning("Cancelled, playbook continues")
                 return True, cancel
             self.logger.error("Cannot proceed. Playbook cancelled")
-            raise exc
+            raise
         return True, False

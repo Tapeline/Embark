@@ -6,9 +6,11 @@ from tkinter import messagebox
 
 from embark.domain.interfacing.os_provider import OSInterface
 from embark.domain.playbook_logger import AbstractPlaybookLogger
-from embark.domain.tasks.task import (AbstractContextFactory,
-                                      TaskExecutionContext,
-                                      AbstractPlaybookExecutionContext)
+from embark.domain.tasks.task import (
+    AbstractContextFactory,
+    AbstractPlaybookExecutionContext,
+    TaskExecutionContext,
+)
 from embark.localization.i18n import L
 from embark.platform_impl.windows.os_provider import WindowsInterface
 from embark.ui.logger_frame.ui_loggers import GUIPlaybookLogger

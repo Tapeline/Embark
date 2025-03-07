@@ -48,6 +48,7 @@ class AbstractTaskLogger(AbstractLogger, ABC):
     @abstractmethod
     def task_ended(
             self,
+            *,
             is_successful: bool,
             error_message: str | None = None
     ) -> None:
@@ -62,6 +63,7 @@ class AbstractPlaybookLogger(AbstractLogger, ABC):
     @abstractmethod
     def playbook_ended(
             self,
+            *,
             is_successful: bool,
             error_message: str | None = None
     ) -> None:

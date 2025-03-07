@@ -2,10 +2,10 @@
 
 from pydantic import BaseModel
 
-from embark.use_case.config.loader import AbstractTaskLoader
-from embark.domain.tasks.task import Task, AbstractContextFactory
+from embark.domain.tasks.task import AbstractContextFactory, Task
 from embark.std.requirement.privileges import AdminPrivilegesRequirement
 from embark.std.target.exec_tasks import RunCommandTarget
+from embark.use_case.config.loader import AbstractTaskLoader
 
 
 class TaskModel(BaseModel):

@@ -1,6 +1,5 @@
 """Provides targets and tools for executing various commands."""
 
-import subprocess
 
 from embark.domain.tasks.task import (
     AbstractExecutionTarget,

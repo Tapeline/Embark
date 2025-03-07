@@ -4,9 +4,9 @@ from abc import abstractmethod
 from embark import log_config
 from embark.domain.execution.playbook import Playbook
 from embark.domain.playbook_logger import (
+    AbstractLogger,
     AbstractPlaybookLogger,
     AbstractTaskLogger,
-    AbstractLogger
 )
 from embark.domain.tasks.task import Task
 
@@ -59,6 +59,7 @@ class CLIPlaybookLogger(AbstractPlaybookLogger, CommonCLILogger):
 
     def playbook_ended(
             self,
+            *,
             is_successful: bool,
             error_message: str | None = None
     ) -> None:
@@ -91,6 +92,7 @@ class CLITaskLogger(AbstractTaskLogger, CommonCLILogger):
 
     def task_ended(
             self,
+            *,
             is_successful: bool,
             error_message: str | None = None
     ) -> None:

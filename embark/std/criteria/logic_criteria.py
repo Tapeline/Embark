@@ -2,7 +2,7 @@
 
 from embark.domain.tasks.task import (
     AbstractExecutionCriteria,
-    TaskExecutionContext
+    TaskExecutionContext,
 )
 
 

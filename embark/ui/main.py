@@ -1,8 +1,7 @@
 """Main UI file."""
 
-from embark.ui.playbook_choose_frame.frame import ask_for_playbook
 from embark.ui.logger_frame.frame import LoggerFrame
-
+from embark.ui.playbook_choose_frame.frame import ask_for_playbook
 
 DEFAULT_ENCODING = "UTF-8"
 

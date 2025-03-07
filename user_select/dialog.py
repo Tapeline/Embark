@@ -1,10 +1,14 @@
 import os
 from tkinter import StringVar
 
-from customtkinter import CTk, CTkLabel, CTkComboBox, CTkButton
+from customtkinter import CTk, CTkButton, CTkComboBox, CTkLabel
 
 from embark.domain.config.loader import AbstractTaskLoader
-from embark.domain.tasks.task import Task, AbstractExecutionTarget, TaskExecutionContext
+from embark.domain.tasks.task import (
+    AbstractExecutionTarget,
+    Task,
+    TaskExecutionContext,
+)
 
 
 class SelectUserTaskLoader(AbstractTaskLoader):
@@ -54,10 +58,13 @@ class SelectUserTarget(AbstractExecutionTarget):
         root.mainloop()
 
         selected_path = os.path.join(users_dir, variable.get())
-        context.playbook_context.set_variable("SELECTED_USER_DIR", selected_path)
+        context.playbook_context.set_variable(
+            "SELECTED_USER_DIR", selected_path
+        )
         return ok_pressed.value
 
     def get_display_name(self) -> str:
+        """Get display name of task."""
         return "Select target user task"
 
 

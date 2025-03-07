@@ -1,9 +1,14 @@
+# This file should be kept as small as possible, because all
+# WPS checks are disabled here
+
 import winreg
 
 from attrs import frozen
 
 from embark.domain.interfacing.installs_provider import Installation
-from embark.platform_impl.windows.utils import determine_quiet_uninstall_command
+from embark.platform_impl.windows.utils import (
+    determine_quiet_uninstall_command,
+)
 
 
 @frozen

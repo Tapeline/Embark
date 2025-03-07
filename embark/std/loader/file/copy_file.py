@@ -2,19 +2,19 @@
 
 from pydantic import BaseModel
 
-from embark.use_case.config.loader import AbstractTaskLoader
 from embark.domain.tasks.task import (
-    Task,
     AbstractContextFactory,
-    AbstractExecutionCriteria
+    AbstractExecutionCriteria,
+    Task,
 )
 from embark.std.criteria.file_criteria import (
     FileDoesNotExistCriteria,
-    FileExistsCriteria
+    FileExistsCriteria,
 )
 from embark.std.criteria.logic_criteria import AndCriteria
 from embark.std.requirement.privileges import AdminPrivilegesRequirement
 from embark.std.target.file_tasks import CopyFileTarget
+from embark.use_case.config.loader import AbstractTaskLoader
 
 
 class TaskModel(BaseModel):

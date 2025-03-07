@@ -6,8 +6,7 @@ import traceback
 
 from embark.domain.execution.variables import VariablesEnv
 from embark.domain.tasks.exception import TaskExecutionException
-from embark.domain.tasks.task import Task, AbstractContextFactory
-
+from embark.domain.tasks.task import AbstractContextFactory, Task
 
 type IsSuccessful = bool
 
@@ -43,7 +42,7 @@ class Playbook:
         """Run all tasks and catch exceptions."""
         try:  # noqa: WPS229 (too long try)
             self.run_tasks()
-            return True
+            return True  # noqa: TRY300
         except TaskExecutionException as exception:
             str_ex = io.StringIO()
             traceback.print_exception(exception, limit=0, file=str_ex)
@@ -52,7 +51,7 @@ class Playbook:
             self.logger.playbook_ended(
                 is_successful=False,
                 error_message=(
-                        "Playbook failed: \n%s" % exception_content +
+                        f"Playbook failed: \n{exception_content}" +
                         "\nPlaybook exited with error"
                 ),
             )

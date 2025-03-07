@@ -12,7 +12,7 @@ def command(args):
             args.name,
             args.publisher,
             args.version,
-            args.ignore_version
+            ignore_version=args.ignore_version
         ):
             write_out(f"Name:      {install.name}")
             write_out(f"Version:   {install.version}")

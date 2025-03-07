@@ -1,10 +1,12 @@
 from pathlib import Path
 from typing import Final
 
-from tests.runner import run_embark, run_after
+from tests.runner import run_after, run_embark
 
-_INSTALLED_INNO: Final = "C:\\Program Files\\BlankInnoSetupProgram\\{0}"
-_INSTALLED_INNOx86: Final = "C:\\Program Files (x86)\\BlankInnoSetupProgram\\{0}"
+_INSTALLED_INNO: Final = r"C:\Program Files\BlankInnoSetupProgram\{0}"
+_INSTALLED_INNOx86: Final = (
+    r"C:\Program Files (x86)\BlankInnoSetupProgram\{0}"
+)
 
 
 def _read_one_of(*paths: str) -> str:

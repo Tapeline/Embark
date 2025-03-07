@@ -6,8 +6,8 @@ import os
 from pydantic import ValidationError
 from yaml import YAMLError
 
-from embark.impl import config
 from embark.domain.tasks.task import AbstractContextFactory
+from embark.impl import config
 from embark.output import write_err
 from embark.use_case.config.exceptions import ConfigLoadingException
 from embark.use_case.config.loader import AbstractTaskLoaderRepository
@@ -38,9 +38,9 @@ def execute_playbook_file(
     except YAMLError as exception:
         write_err("Error while parsing YAML file:")
         if (
-                hasattr(exception, 'problem_mark') and
-                hasattr(exception, 'context') and
-                hasattr(exception, 'problem')
+                hasattr(exception, "problem_mark") and
+                hasattr(exception, "context") and
+                hasattr(exception, "problem")
         ):
             write_err(
                 f"{exception.problem_mark}\n  "

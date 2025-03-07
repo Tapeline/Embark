@@ -16,11 +16,16 @@ class GUIPlaybookLogger(CLIPlaybookLogger):
 
     def playbook_ended(
             self,
+            *,
             is_successful: bool,
             error_message: str | None = None
     ):
-        super().playbook_ended(is_successful, error_message)
-        self.logger_frame.notify_ended(is_successful, error_message)
+        super().playbook_ended(
+            is_successful=is_successful, error_message=error_message
+        )
+        self.logger_frame.notify_ended(
+            is_successful=is_successful, error_message=error_message
+        )
 
     def info(self, message, *args):
         super().info(message, *args)
@@ -71,11 +76,16 @@ class GUITaskLogger(CLITaskLogger):
 
     def task_ended(
             self,
+            *,
             is_successful: bool,
             error_message: str | None = None
     ) -> None:
-        super().task_ended(is_successful, error_message)
-        self.logger_frame.notify_ended(is_successful, error_message)
+        super().task_ended(
+            is_successful=is_successful, error_message=error_message
+        )
+        self.logger_frame.notify_ended(
+            is_successful=is_successful, error_message=error_message
+        )
 
     def info(self, message, *args):
         super().info(message, *args)

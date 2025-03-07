@@ -6,12 +6,12 @@ from typing import TYPE_CHECKING, Final
 
 from embark.domain.execution.playbook import Playbook
 from embark.domain.interfacing.os_provider import OSInterface
+from embark.domain.playbook_logger import AbstractPlaybookLogger
 from embark.domain.tasks.task import (
     AbstractContextFactory,
-    TaskExecutionContext,
     AbstractPlaybookExecutionContext,
+    TaskExecutionContext,
 )
-from embark.domain.playbook_logger import AbstractPlaybookLogger
 from embark.impl.cli_loggers import CLIPlaybookLogger
 from embark.platform_impl.windows.os_provider import WindowsInterface
 

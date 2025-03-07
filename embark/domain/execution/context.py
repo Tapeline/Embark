@@ -64,6 +64,7 @@ class TaskExecutionContext:
 class AbstractContextFactory(ABC):
     """Factory for contexts."""
 
+    @abstractmethod
     def create_playbook_context(
             self,
             playbook: "Playbook"
@@ -71,6 +72,7 @@ class AbstractContextFactory(ABC):
         """Create context for provided playbook."""
         raise NotImplementedError
 
+    @abstractmethod
     def create_task_context(
             self,
             playbook_context: AbstractPlaybookExecutionContext,

@@ -3,24 +3,25 @@
 import logging
 import os
 from importlib import util as import_util
+from typing import ClassVar
 
 from embark import log_config
-from embark.use_case.config.loader import (
-    AbstractTaskLoaderRepository,
-    AbstractTaskLoader,
-)
 from embark.impl import pip_pkg
 from embark.std.loader.echo_loader import EchoTaskLoader
+from embark.std.loader.exec.cmd import CmdTaskLoader
 from embark.std.loader.file.copy_file import CopyFileTaskLoader
 from embark.std.loader.install.install import InstallTaskLoader
-from embark.std.loader.exec.cmd import CmdTaskLoader
 from embark.std.loader.web.download_file import DownloadFileTaskLoader
+from embark.use_case.config.loader import (
+    AbstractTaskLoader,
+    AbstractTaskLoaderRepository,
+)
 
 
 class TaskLoaderRepository(AbstractTaskLoaderRepository):
     """Task loader repo implementation."""
 
-    loaders: list[AbstractTaskLoader] = []
+    loaders: ClassVar[list[AbstractTaskLoader]] = []
 
     def __init__(self) -> None:
         """Create loader repo"""
@@ -39,7 +40,8 @@ class TaskLoaderRepository(AbstractTaskLoaderRepository):
             loader_name: str
     ) -> AbstractTaskLoader | None:
         """Try to load a custom loader from a .py file."""
-        loader_path = "{0}.py".format(loader_name.replace(".", "/"))
+        slashed_path = loader_name.replace(".", "/")
+        loader_path = f"{slashed_path}.py"
         self._install_loader_requirements_if_needed(loader_path)
         module = self._load_py_module(loader_path)
         if module is None:

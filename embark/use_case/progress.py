@@ -1,10 +1,11 @@
-from typing import Self, Any
+from typing import Any, Self
 
 from embark.domain.playbook_logger import AbstractLogger
 
 
 class ProgressReporter:
     """Context manager for progress reporting."""
+
     def __init__(self, logger: AbstractLogger, uid: str, title: str):
         """Create reporter."""
         self._uid = uid

@@ -6,7 +6,7 @@ import os
 from embark.domain.tasks.exception import RequirementCannotBeMetException
 from embark.domain.tasks.task import (
     AbstractExecutionRequirement,
-    TaskExecutionContext
+    TaskExecutionContext,
 )
 
 
