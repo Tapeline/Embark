@@ -1,12 +1,12 @@
 """dev_query_install subcommand."""
 
 from embark.output import write_out
-from embark.std.target.install.installs_repo import WindowsInstallsRepository
+from embark.platform_impl.windows.os_provider import WindowsInterface
 
 
 def command(args):
     """Subcommand impl"""
-    repo = WindowsInstallsRepository()
+    repo = WindowsInterface().get_install_interface()
     for install in repo.get_all_installs():
         if install.matches(
             args.name,

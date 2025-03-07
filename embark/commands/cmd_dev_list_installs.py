@@ -1,11 +1,11 @@
 """dev_list_installs subcommand."""
 from embark.output import write_out
-from embark.std.target.install.installs_repo import WindowsInstallsRepository
+from embark.platform_impl.windows.os_provider import WindowsInterface
 
 
 def command(args):
     """Subcommand impl."""
-    repo = WindowsInstallsRepository()
+    repo = WindowsInterface().get_install_interface()
     for index, install in enumerate(repo.get_all_installs()):
         write_out(f"--- {index + 1} ---")
         write_out(f"Name:      {install.name}")

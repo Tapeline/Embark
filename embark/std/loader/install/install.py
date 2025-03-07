@@ -9,7 +9,7 @@ from embark.use_case.config.loader import AbstractTaskLoader
 from embark.domain.tasks.task import Task, AbstractContextFactory
 from embark.std.criteria.install_criteria import ProgramNotInstalledCriteria
 from embark.std.requirement.privileges import AdminPrivilegesRequirement
-from embark.std.target.install.install_tasks import (
+from embark.std.target.install_tasks import (
     InstallTarget,
     InstallTargetParams
 )

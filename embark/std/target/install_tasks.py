@@ -5,19 +5,15 @@ import re
 import subprocess
 from dataclasses import dataclass
 
+from embark.domain.interfacing.installs_provider import InstallationsInterface
 from embark.domain.tasks.task import (
     AbstractExecutionTarget,
     TaskExecutionContext
 )
-from embark.std.target.install.installs_repo import (
-    WindowsInstallsRepository,
-    CannotUninstallQuietlyException,
-    CannotUninstallException,
-    CannotInstallQuietlyException,
-    CannotInstallException,
-    WindowsInstallation,
-    determine_quiet_uninstall_command
-)
+from embark.platform_impl.windows.exceptions import CannotUninstallQuietlyException, CannotUninstallException, \
+    CannotInstallQuietlyException, CannotInstallException
+from embark.platform_impl.windows.installs_provider import WindowsInstallation
+from embark.platform_impl.windows.utils import determine_quiet_uninstall_command
 
 
 @dataclass
@@ -45,7 +41,7 @@ class InstallTarget(AbstractExecutionTarget):
     def execute(self, context: TaskExecutionContext) -> bool:
         logger = context.task.logger
         params = self._create_params(context)
-        repo = WindowsInstallsRepository()
+        repo = context.playbook_context.os_provider.get_install_interface()
         if not params.no_remove:
             success = self._remove_existing_if_present(params, repo, logger)
             if not success:
@@ -66,7 +62,7 @@ class InstallTarget(AbstractExecutionTarget):
     def _remove_existing_if_present(
             self,
             params: InstallTargetParams,
-            repo: WindowsInstallsRepository,
+            repo: InstallationsInterface,
             logger
     ) -> bool:
         """Remove existing installation if present."""

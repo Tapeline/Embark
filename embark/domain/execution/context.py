@@ -3,6 +3,7 @@
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 
+from embark.domain.interfacing.os_provider import OSInterface
 from embark.domain.playbook_logger import AbstractPlaybookLogger
 
 if TYPE_CHECKING:
@@ -40,6 +41,11 @@ class AbstractPlaybookExecutionContext(ABC):
     def set_variable(self, name: str, obj: Any) -> None:
         """Set variable for playbook."""
         self.playbook.variables.vars[name] = obj
+
+    @property
+    @abstractmethod
+    def os_provider(self) -> OSInterface:
+        """Get OS interface."""
 
 
 class TaskExecutionContext:
