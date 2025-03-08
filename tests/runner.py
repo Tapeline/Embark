@@ -24,6 +24,7 @@ def run_embark(
         shell=True,
         cwd=".",
         env=proc_env,
+        errors="ignore",
         **kwargs
     )
     while proc.poll() is None:

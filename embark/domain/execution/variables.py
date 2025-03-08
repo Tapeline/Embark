@@ -33,6 +33,8 @@ class VariablesEnv:
             if not in_var:
                 formatted += string[i]
             i += 1
+        if in_var:
+            return formatted + string[start:]
         return formatted
 
     def get_value_or_leave_as_is(self, var_str: str) -> str:

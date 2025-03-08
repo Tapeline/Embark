@@ -1,0 +1,5 @@
+name: Test
+tasks:
+  - name: Cmd
+    std.cmd:
+      cmd: echo Hello, World! > "cmd.out"
