@@ -1,14 +1,12 @@
 import os
-from contextlib import contextmanager
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from multiprocessing import Process
 
 import pytest
-import requests
 
 
 class Server(BaseHTTPRequestHandler):
-    def do_GET(self):
+    def do_GET(self):  # noqa: N802
         try:
             path = os.path.join("tests\\fixtures", self.path[1:])
             with open(path) as req_f:
@@ -18,11 +16,11 @@ class Server(BaseHTTPRequestHandler):
             data = "File not found"
             self.send_response(404)
         self.end_headers()
-        self.wfile.write(bytes(data, 'utf-8'))
+        self.wfile.write(bytes(data, "utf-8"))
 
 
 def run_server():
-    httpd = HTTPServer(('localhost', 8080), Server)
+    httpd = HTTPServer(("localhost", 8080), Server)
     httpd.serve_forever()
 
 

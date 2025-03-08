@@ -90,11 +90,8 @@ ignore = [
     "DTZ",
     # time has no impact on the project
 
-    "TRY400", "TRY401", "PLE1205"
+    "TRY400", "TRY401", "PLE1205", "PT003"
     # project-specific issues of compatibility
-
-
-
 ]
 
 

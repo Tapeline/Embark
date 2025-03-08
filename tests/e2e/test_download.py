@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import Final
 
 from tests.runner import remove_after, run_embark
-from tests.server import serve_fixture_files
 
 _TARGET: Final = "tests/fixtures/gpl3.txt"
 _ORIGINAL: Final = "tests/fixtures/gpl-3.0-original.txt"
