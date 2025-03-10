@@ -3,7 +3,7 @@ from tkinter import StringVar
 
 from customtkinter import CTk, CTkButton, CTkComboBox, CTkLabel
 
-from embark.domain.config.loader import AbstractTaskLoader
+from embark.use_case.config.loader import AbstractTaskLoader
 from embark.domain.tasks.task import (
     AbstractExecutionTarget,
     Task,
