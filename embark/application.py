@@ -2,9 +2,8 @@
 Application declaration
 """
 from embark.domain.interfacing.os_provider import OSInterface
+
 # pylint: disable=too-few-public-methods
-
-
 from embark.impl import action
 from embark.impl.context_factory import CLIContextFactory
 from embark.impl.task_loader_repo import TaskLoaderRepository

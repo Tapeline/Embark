@@ -16,7 +16,6 @@ from embark.commands.cmd_dev_query_install import DevQueryInstallCommand
 from embark.commands.cmd_run import RunCommand
 from embark.platform_impl.windows.os_provider import WindowsInterface
 
-
 os_interface = WindowsInterface()
 
 

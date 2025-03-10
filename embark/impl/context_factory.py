@@ -13,7 +13,6 @@ from embark.domain.tasks.task import (
     TaskExecutionContext,
 )
 from embark.impl.cli_loggers import CLIPlaybookLogger
-from embark.platform_impl.windows.os_provider import WindowsInterface
 
 if TYPE_CHECKING:
     from embark.domain.tasks.task import Task

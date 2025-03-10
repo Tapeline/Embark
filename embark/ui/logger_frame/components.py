@@ -7,9 +7,10 @@ from tkinter import LEFT
 from customtkinter import (
     CTkFont,
     CTkFrame,
+    CTkImage,
     CTkLabel,
     CTkProgressBar,
-    CTkScrollableFrame, CTkImage,
+    CTkScrollableFrame,
 )
 from PIL import Image
 
@@ -29,7 +30,13 @@ class LogMessageComponent(CTkLabel):
             message = f"! {message}"
         if log_level in {"error", "exception"}:
             message = f"X {message}"
-        super().__init__(root, text=message, font=CTkFont(*_LOG_FONT))
+        super().__init__(
+            root,
+            text=message,
+            font=CTkFont(*_LOG_FONT),
+            anchor="nw",
+            justify="left"
+        )
 
 
 class AbstractLoggerFrame(ABC):
@@ -239,22 +246,38 @@ class LoaderState(Enum):
 
 _LOADER_ANIMATIONS = {
     LoaderState.UNKNOWN: [
-        CTkImage(light_image=Image.open(get_resource("embark/ui/res/icon_unknown.png")))
+        CTkImage(light_image=Image.open(
+            get_resource("embark/ui/res/icon_unknown.png")
+        ))
     ],
     LoaderState.LOADING: [
-        CTkImage(light_image=Image.open(get_resource("embark/ui/res/icon_wait_0.png"))),
-        CTkImage(light_image=Image.open(get_resource("embark/ui/res/icon_wait_1.png"))),
-        CTkImage(light_image=Image.open(get_resource("embark/ui/res/icon_wait_2.png"))),
-        CTkImage(light_image=Image.open(get_resource("embark/ui/res/icon_wait_3.png")))
+        CTkImage(light_image=Image.open(
+            get_resource("embark/ui/res/icon_wait_0.png")
+        )),
+        CTkImage(light_image=Image.open(
+            get_resource("embark/ui/res/icon_wait_1.png")
+        )),
+        CTkImage(light_image=Image.open(
+            get_resource("embark/ui/res/icon_wait_2.png")
+        )),
+        CTkImage(light_image=Image.open(
+            get_resource("embark/ui/res/icon_wait_3.png")
+        ))
     ],
     LoaderState.SKIPPED: [
-        CTkImage(light_image=Image.open(get_resource("embark/ui/res/icon_skip.png")))
+        CTkImage(light_image=Image.open(
+            get_resource("embark/ui/res/icon_skip.png")
+        ))
     ],
     LoaderState.FAILED: [
-        CTkImage(light_image=Image.open(get_resource("embark/ui/res/icon_err.png")))
+        CTkImage(light_image=Image.open(
+            get_resource("embark/ui/res/icon_err.png")
+        ))
     ],
     LoaderState.OK: [
-        CTkImage(light_image=Image.open(get_resource("embark/ui/res/icon_ok.png")))
+        CTkImage(light_image=Image.open(
+            get_resource("embark/ui/res/icon_ok.png")
+        ))
     ],
 }
 

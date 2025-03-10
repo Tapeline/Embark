@@ -1,7 +1,6 @@
 import sys
 from typing import Any
 
-
 _stdout = sys.stdout
 _stderr = sys.stderr
 

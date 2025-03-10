@@ -12,7 +12,6 @@ from embark.domain.tasks.task import (
     TaskExecutionContext,
 )
 from embark.localization.i18n import L
-from embark.platform_impl.windows.os_provider import WindowsInterface
 from embark.ui.logger_frame.ui_loggers import GUIPlaybookLogger
 
 

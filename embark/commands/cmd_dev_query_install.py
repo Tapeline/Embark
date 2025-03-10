@@ -6,7 +6,6 @@ from attrs import frozen
 
 from embark.commands.base import AbstractCommand
 from embark.output import write_out
-from embark.platform_impl.windows.os_provider import WindowsInterface
 
 
 @final

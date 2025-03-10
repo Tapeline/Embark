@@ -1,16 +1,23 @@
 import sys
+from collections.abc import Sequence
 from contextlib import contextmanager
-from typing import Sequence, Final, final
+from typing import Final, assert_never, final
 
 from attrs import frozen
 
 from embark import output
-from embark.domain.interfacing.installs_provider import InstallationsInterface, Installation
-from embark.domain.interfacing.os_provider import OSInterface, ConsoleCommandResult
+from embark.domain.interfacing.installs_provider import (
+    Installation,
+    InstallationsInterface,
+)
+from embark.domain.interfacing.os_provider import (
+    ConsoleCommandResult,
+    OSInterface,
+)
 
 
 class MockInstall(Installation):
-    ...
+    """Mock install."""
 
 
 _INSTALLS: Final = (
@@ -26,16 +33,18 @@ class MockInstallInterface(InstallationsInterface[MockInstall]):
         return _INSTALLS
 
     def uninstall_quietly(self, installation: MockInstall) -> None:
-        pass
+        assert_never(...)
 
     def uninstall(self, installation: MockInstall) -> None:
-        pass
+        assert_never(...)
 
-    def install_quietly(self, installer_path: str, *, admin: bool = False) -> None:
-        pass
+    def install_quietly(
+            self, installer_path: str, *, admin: bool = False
+    ) -> None:
+        assert_never(...)
 
     def install(self, installer_path: str, *, admin: bool = False) -> None:
-        pass
+        assert_never(...)
 
 
 class MockOSInterface(OSInterface):
@@ -48,7 +57,7 @@ class MockOSInterface(OSInterface):
             env: dict | None = None,
             cwd: str | None = None
     ) -> ConsoleCommandResult:
-        pass
+        return assert_never(...)
 
     def run(
             self,
@@ -59,7 +68,7 @@ class MockOSInterface(OSInterface):
             env: dict | None = None,
             cwd: str | None = None
     ) -> ConsoleCommandResult:
-        pass
+        return assert_never(...)
 
     def get_install_interface(self) -> MockInstallInterface:
         return MockInstallInterface(self)
@@ -73,7 +82,7 @@ class MockWriteStream:
         self._text += text
 
     @property
-    def value(self):
+    def value(self):  # noqa: WPS110
         return self._text
 
     def flush(self) -> None:
@@ -91,8 +100,8 @@ class Streams:
 def mock_streams() -> Streams:
     stdout = MockWriteStream()
     stderr = MockWriteStream()
-    output._stderr = stderr
-    output._stdout = stdout
+    output._stderr = stderr  # noqa: SLF001
+    output._stdout = stdout  # noqa: SLF001
     yield Streams(stdout, stderr)
-    output._stdout = sys.stdout
-    output._stderr = sys.stderr
+    output._stdout = sys.stdout  # noqa: SLF001
+    output._stderr = sys.stderr  # noqa: SLF001

@@ -1,6 +1,7 @@
 pyinstaller ^
     --onefile ^
     --add-data "icon.ico;." ^
+    --add-data "embark/ui/res;embark/ui/res" ^
     --paths .\.venv\Lib\site-packages ^
     --hiddenimport tkinter.ttk ^
     --hiddenimport tkkthemes ^
