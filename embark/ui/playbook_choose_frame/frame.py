@@ -18,14 +18,13 @@ class PlaybookChooseFrame(CTk):
     def __init__(self, encoding):
         super().__init__()
         self.title("Embark UI")
-        self.geometry("600x600")
         self.resizable(width=False, height=False)
         self.iconbitmap(get_resource("icon.ico"))
-        utils.center(self)
         self._font = CTkFont("TkDefaultFont", 16, "bold")
         self._controller = Controller(encoding)
         self._setup_ui()
         self._selected_file = None
+        utils.center(self, 600, 600)
 
     def _setup_ui(self):
         """Create and place UI components"""

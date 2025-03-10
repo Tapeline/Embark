@@ -1,16 +1,19 @@
 import sys
 from typing import Any
 
+_stdout = sys.stdout
+_stderr = sys.stderr
+
 
 def write_out(*args: Any, sep: str = " ") -> None:
     """Print to stdout."""
-    sys.stdout.write(sep.join(map(str, args)))
-    sys.stdout.write("\n")
-    sys.stdout.flush()
+    _stdout.write(sep.join(map(str, args)))
+    _stdout.write("\n")
+    _stdout.flush()
 
 
 def write_err(*args: Any, sep: str = " ") -> None:
     """Print to stderr."""
-    sys.stderr.write(sep.join(map(str, args)))
-    sys.stderr.write("\n")
-    sys.stderr.flush()
+    _stderr.write(sep.join(map(str, args)))
+    _stderr.write("\n")
+    _stderr.flush()

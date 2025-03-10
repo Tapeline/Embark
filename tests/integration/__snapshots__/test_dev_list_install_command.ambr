@@ -1,0 +1,22 @@
+# serializer version: 1
+# name: test_dqi_command
+  '''
+  --- 1 ---
+  Name:      NameA
+  Version:   1.0
+  Publisher: PubA
+  --- 2 ---
+  Name:      NameB
+  Version:   1.1
+  Publisher: PubA
+  --- 3 ---
+  Name:      NameC
+  Version:   1.2
+  Publisher: PubB
+  --- 4 ---
+  Name:      NameD
+  Version:   1.3
+  Publisher: PubB
+  
+  '''
+# ---

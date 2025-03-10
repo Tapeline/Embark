@@ -2,6 +2,6 @@ name: Test
 tasks:
   - name: Download
     std.download:
-      url: https://www.gnu.org/licenses/gpl-3.0.txt
+      url: http://localhost:8080/gpl-3.0-original.txt
       dst: gpl3.txt
       overwrite: true

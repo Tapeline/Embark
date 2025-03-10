@@ -51,7 +51,7 @@ class TaskExecutionContext:
     def __init__(
             self,
             playbook_context: AbstractPlaybookExecutionContext,
-            task: "Task"
+            task: "Task",
     ) -> None:
         """Create task execution context."""
         self.playbook_context = playbook_context

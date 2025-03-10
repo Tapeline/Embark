@@ -16,7 +16,7 @@ class RunCommandTarget(AbstractExecutionTarget):
 
     def execute(self, context: TaskExecutionContext) -> bool:
         cmd = context.playbook_context.playbook.variables.format(self.cmd)
-        run_result = context.playbook_context.os_provider.run(cmd)
+        run_result = context.playbook_context.os_provider.run_console(cmd)
         return run_result.is_successful
 
     def get_display_name(self) -> str:

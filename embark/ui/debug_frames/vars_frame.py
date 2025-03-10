@@ -18,12 +18,11 @@ class DebugVariablesFrame(CTk):
         super().__init__()
         self._playbook = playbook
         self.title(L("UI.debug_vars"))
-        self.geometry("500x600")
         self.resizable(width=False, height=False)
         self.iconbitmap(get_resource("icon.ico"))
-        utils.center(self)
         self._font = CTkFont("Consolas", _FONT_SIZE, "normal")
         self._setup_ui()
+        utils.center(self, 500, 600)
 
     def _setup_ui(self):
         """Create and place UI components"""

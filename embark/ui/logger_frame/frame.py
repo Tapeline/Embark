@@ -4,13 +4,15 @@ Logger UI frame
 
 import os
 import threading
-from tkinter import BOTTOM, DISABLED, messagebox
+import tkinter
+from tkinter import DISABLED, messagebox
 
 from customtkinter import CTk, CTkButton, CTkFont, CTkFrame, CTkLabel
 
 from embark.impl import action
 from embark.impl.task_loader_repo import TaskLoaderRepository
 from embark.localization.i18n import L
+from embark.platform_impl.windows.os_provider import WindowsInterface
 from embark.resources import get_resource
 from embark.ui import utils
 from embark.ui.debug_frames import exec_frame, vars_frame
@@ -26,20 +28,17 @@ class LoggerFrame(CTk):
         self._encoding = encoding
         self._playbook_path = playbook_path
         self.title("Embark UI")
-        self.geometry("1000x700")
-        self.resizable(width=False, height=False)
         self.iconbitmap(get_resource("icon.ico"))
-        utils.center(self)
         self._font = CTkFont("TkDefaultFont", 16, "bold")
         self._setup_ui()
-        self._ctx_factory = GUIContextFactory(self._logger_frame)
+        self._ctx_factory = GUIContextFactory(
+            self._logger_frame, WindowsInterface()
+        )
         self._loader_repo = TaskLoaderRepository()
+        utils.center(self, 1000, 700)
 
     def _setup_ui(self):
         """Create and place UI components"""
-        self.rowconfigure(index=0, weight=1)
-        self.columnconfigure(index=0, weight=1)
-        self.columnconfigure(index=1, weight=5)
         self._left_pane = CTkFrame(self)
         self._lp_title = CTkLabel(
             self._left_pane,
@@ -66,19 +65,30 @@ class LoggerFrame(CTk):
             text=L("UI.debug_exec"),
             command=self._debug_eval_cmd
         )
-        self._lp_title.pack(padx=8, pady=8, fill="x")
-        self._lp_subtitle.pack(fill="x")
-        self._lp_stop_btn.pack(padx=8, pady=8, fill="x")
-        self._lp_debug_title.pack(padx=8, pady=8, fill="x")
-        self._lp_debug_vars_btn.pack(padx=8, pady=8, fill="x")
-        self._lp_debug_eval_btn.pack(padx=8, pady=8, fill="x")
-        self._lp_copyright = CTkLabel(self._left_pane, text="© Tapeline 2024")
-        self._lp_copyright.pack(side=BOTTOM)
+        self._lp_title.pack(side=tkinter.LEFT, padx=12, pady=8, fill="y")
+        self._lp_stop_btn.pack(
+            side=tkinter.LEFT, padx=12, pady=8, fill="y"
+        )
+        self._lp_debug_title.pack(
+            side=tkinter.LEFT, padx=12, pady=8, fill="y"
+        )
+        self._lp_debug_vars_btn.pack(
+            side=tkinter.LEFT, padx=12, pady=8, fill="y"
+        )
+        self._lp_debug_eval_btn.pack(
+            side=tkinter.LEFT, padx=12, pady=8, fill="y"
+        )
+        self._lp_copyright = CTkLabel(
+            self._left_pane, text="© Tapeline 2024-2025"
+        )
+        self._lp_copyright.pack(side=tkinter.RIGHT, padx=12, pady=8)
 
         self._logger_frame = GUILoggerFrame(self)
 
-        self._left_pane.grid(row=0, column=0, sticky="nswe", pady=8)
-        self._logger_frame.grid(row=0, column=1, sticky="nswe", padx=8, pady=8)
+        self._left_pane.pack(side=tkinter.TOP, fill="x", pady=12, padx=12)
+        self._logger_frame.pack(
+            side=tkinter.TOP, fill="both", expand=True, pady=12, padx=12
+        )
         self.configure(bg_color="#FFFF00")
 
     def _stop_playbook_cmd(self):

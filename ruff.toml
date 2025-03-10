@@ -90,11 +90,8 @@ ignore = [
     "DTZ",
     # time has no impact on the project
 
-    "TRY400", "TRY401", "PLE1205"
+    "TRY400", "TRY401", "PLE1205", "PT003"
     # project-specific issues of compatibility
-
-
-
 ]
 
 
@@ -105,9 +102,12 @@ ignore = [
     "S404", # subprocess calls are for tests
     "S603", # do not require `shell=True`
     "S607", # partial executable paths
+    "F401", # fixtures
+    "F811", # fixtures
 ]
 "user_select/*.py" = ["E", "PTH", "FBT", "D"]
 "project_scripts.py" = ["S", "D", "E", "PLR"]
 "embark/resources.py" = ["SLF001"]
 "embark/platform_impl/windows/install_loader.py" = ["PERF203"]
 "embark/localization/i18n.py" = ["PLW0603"]
+"embark/main.py" = ["E402"]
