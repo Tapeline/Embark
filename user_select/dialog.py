@@ -3,12 +3,12 @@ from tkinter import StringVar
 
 from customtkinter import CTk, CTkButton, CTkComboBox, CTkLabel
 
-from embark.use_case.config.loader import AbstractTaskLoader
 from embark.domain.tasks.task import (
     AbstractExecutionTarget,
     Task,
     TaskExecutionContext,
 )
+from embark.use_case.config.loader import AbstractTaskLoader
 
 
 class SelectUserTaskLoader(AbstractTaskLoader):
