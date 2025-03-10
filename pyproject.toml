@@ -12,6 +12,7 @@ pydantic = "^2.9.2"
 PyYAML = "^6.0.2"
 customtkinter = "^5.2.2"
 requests = "^2.32.3"
+pillow = "^11.1.0"
 
 [tool.poetry.group.dev.dependencies]
 pylint = "^3.3.1"

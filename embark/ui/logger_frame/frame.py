@@ -42,7 +42,7 @@ class LoggerFrame(CTk):
         """Create and place UI components"""
         self.rowconfigure(index=0, weight=1)
         self.columnconfigure(index=0, weight=1)
-        self.columnconfigure(index=1, weight=5)
+        self.columnconfigure(index=1, weight=8)
         self._left_pane = CTkFrame(self)
         self._lp_title = CTkLabel(
             self._left_pane,
@@ -69,19 +69,19 @@ class LoggerFrame(CTk):
             text=L("UI.debug_exec"),
             command=self._debug_eval_cmd
         )
-        self._lp_title.pack(padx=8, pady=8, fill="x")
+        self._lp_title.pack(padx=12, pady=8, fill="x")
         self._lp_subtitle.pack(fill="x")
-        self._lp_stop_btn.pack(padx=8, pady=8, fill="x")
-        self._lp_debug_title.pack(padx=8, pady=8, fill="x")
-        self._lp_debug_vars_btn.pack(padx=8, pady=8, fill="x")
-        self._lp_debug_eval_btn.pack(padx=8, pady=8, fill="x")
+        self._lp_stop_btn.pack(padx=12, pady=8, fill="x")
+        self._lp_debug_title.pack(padx=12, pady=8, fill="x")
+        self._lp_debug_vars_btn.pack(padx=12, pady=8, fill="x")
+        self._lp_debug_eval_btn.pack(padx=12, pady=8, fill="x")
         self._lp_copyright = CTkLabel(self._left_pane, text="© Tapeline 2024")
-        self._lp_copyright.pack(side=BOTTOM)
+        self._lp_copyright.pack(side=BOTTOM, pady=8)
 
         self._logger_frame = GUILoggerFrame(self)
 
-        self._left_pane.grid(row=0, column=0, sticky="nswe", pady=8)
-        self._logger_frame.grid(row=0, column=1, sticky="nswe", padx=8, pady=8)
+        self._left_pane.grid(row=0, column=0, sticky="nswe", pady=12, padx=12)
+        self._logger_frame.grid(row=0, column=1, sticky="nswe", padx=12, pady=12)
         self.configure(bg_color="#FFFF00")
 
     def _stop_playbook_cmd(self):

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime
+from enum import Enum
 from tkinter import LEFT
 
 from customtkinter import (
@@ -8,10 +9,12 @@ from customtkinter import (
     CTkFrame,
     CTkLabel,
     CTkProgressBar,
-    CTkScrollableFrame,
+    CTkScrollableFrame, CTkImage,
 )
+from PIL import Image
 
 from embark.localization.i18n import L
+from embark.resources import get_resource
 
 _LOG_FONT = ("Consolas", 14, "normal")
 _HEADER_FONT = ("TkDefaultFont", 16, "bold")
@@ -112,23 +115,21 @@ class GUILoggerFrame(CTkFrame, ProgressMixin, AbstractLoggerFrame):
         self._progresses: dict[str, Progress] = {}
         self._header_pane = CTkFrame(self)
         self._logs_pane = CTkScrollableFrame(self)
-        self._playbook_status = CTkLabel(
+        self._playbook_status = LoaderIcon(
             self._header_pane,
-            text="⌛",
-            font=_HEADER_FONT
         )
         self._playbook_header = CTkLabel(
             self._header_pane,
             text=L("UI.waiting_for_playbook"),
             font=_HEADER_FONT
         )
-        self._playbook_status.pack(anchor="w", side=LEFT, padx=5, pady=2)
+        self._playbook_status.pack(anchor="w", side=LEFT, padx=8, pady=8)
         self._playbook_header.pack(
             anchor="w",
             fill="x",
             side=LEFT,
-            padx=2,
-            pady=2
+            padx=8,
+            pady=8
         )
         self._header_pane.pack(fill="x")
         self._logs_pane.pack(fill="both", expand=True)
@@ -140,15 +141,16 @@ class GUILoggerFrame(CTkFrame, ProgressMixin, AbstractLoggerFrame):
             require_redraw=True,
             text=playbook.name
         )
+        self._playbook_status.set_state(LoaderState.LOADING)
         self.inform(L("UI.playbook_started"))
 
     def notify_ended(
             self, *, is_successful: bool, error_message: str | None
     ) -> None:
         if is_successful:
-            self._playbook_status.configure(require_redraw=True, text="✅")
+            self._playbook_status.set_state(LoaderState.OK)
         else:
-            self._playbook_status.configure(require_redraw=True, text="❌")
+            self._playbook_status.set_state(LoaderState.FAILED)
             self.error(error_message)
         self.inform(L("UI.playbook_ended"))
 
@@ -179,10 +181,8 @@ class TaskLoggerFrame(CTkFrame, ProgressMixin, AbstractLoggerFrame):
         ProgressMixin.__init__(self)
         self.task = task
         self._header_pane = CTkFrame(self)
-        self._task_status = CTkLabel(
+        self._task_status = LoaderIcon(
             self._header_pane,
-            text="❔",
-            font=_HEADER_FONT
         )
         self._task_header = CTkLabel(
             self._header_pane,
@@ -197,21 +197,23 @@ class TaskLoggerFrame(CTkFrame, ProgressMixin, AbstractLoggerFrame):
             padx=5,
             pady=5
         )
-        self._header_pane.pack(fill="x")
+        self._header_pane.pack(fill="x", padx=8, pady=8)
 
     def notify_started(self):
-        self._task_status.configure(require_redraw=True, text="⏳")
+        self._task_status.set_state(LoaderState.LOADING)
         self.inform(L("UI.task_started"))
 
     def notify_skipped(self):
-        self._task_status.configure(require_redraw=True, text="⏩")
+        self._task_status.set_state(LoaderState.SKIPPED)
         self.inform(L("UI.task_skipped"))
 
-    def notify_ended(self, *, is_successful: bool, error_message: str | None):
+    def notify_ended(
+            self, *, is_successful: bool, error_message: str | None = None
+    ):
         if is_successful:
-            self._task_status.configure(require_redraw=True, text="✅")
+            self._task_status.set_state(LoaderState.OK)
         else:
-            self._task_status.configure(require_redraw=True, text="❌")
+            self._task_status.set_state(LoaderState.FAILED)
             self.error(error_message)
         self.inform(L("UI.task_ended"))
 
@@ -227,10 +229,75 @@ class TaskLoggerFrame(CTkFrame, ProgressMixin, AbstractLoggerFrame):
         self.inform(message, *args)
 
 
+class LoaderState(Enum):
+    UNKNOWN = 0
+    LOADING = 1
+    SKIPPED = 2
+    FAILED = 3
+    OK = 4
+
+
+_LOADER_ANIMATIONS = {
+    LoaderState.UNKNOWN: [
+        CTkImage(light_image=Image.open(get_resource("embark/ui/res/icon_unknown.png")))
+    ],
+    LoaderState.LOADING: [
+        CTkImage(light_image=Image.open(get_resource("embark/ui/res/icon_wait_0.png"))),
+        CTkImage(light_image=Image.open(get_resource("embark/ui/res/icon_wait_1.png"))),
+        CTkImage(light_image=Image.open(get_resource("embark/ui/res/icon_wait_2.png"))),
+        CTkImage(light_image=Image.open(get_resource("embark/ui/res/icon_wait_3.png")))
+    ],
+    LoaderState.SKIPPED: [
+        CTkImage(light_image=Image.open(get_resource("embark/ui/res/icon_skip.png")))
+    ],
+    LoaderState.FAILED: [
+        CTkImage(light_image=Image.open(get_resource("embark/ui/res/icon_err.png")))
+    ],
+    LoaderState.OK: [
+        CTkImage(light_image=Image.open(get_resource("embark/ui/res/icon_ok.png")))
+    ],
+}
+
+
+class LoaderIcon(CTkLabel):
+    _ANIMATE_DELAY_MS: int = 200
+
+    def __init__(self, parent):
+        self._state = LoaderState.UNKNOWN
+        self._current = 0
+        self._current_anim = _LOADER_ANIMATIONS[self._state]
+        super().__init__(
+            parent,
+            image=self._current_anim[self._current],
+            text=""
+        )
+        self.after(self._ANIMATE_DELAY_MS, self._animate)
+
+    def set_state(self, new_state: LoaderState) -> None:
+        self._current = 0
+        self._state = new_state
+        self._update()
+
+    def _update(self):
+        self._current_anim = _LOADER_ANIMATIONS[self._state]
+        self.configure(
+            image=self._current_anim[self._current],
+            require_redraw=True
+        )
+
+    def _animate(self) -> None:
+        if self._current + 1 >= len(self._current_anim):
+            self._current = 0
+        else:
+            self._current += 1
+        self._update()
+        self.after(self._ANIMATE_DELAY_MS, self._animate)
+
+
 def _format(message: str, *args):
     return (
         "[" +
-        datetime.now().strftime("%d/%m/%Y %H:%M:%S") +
+        datetime.now().strftime("%H:%M:%S") +
         "] " +
         message % args
     )
