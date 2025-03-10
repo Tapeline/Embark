@@ -11,11 +11,13 @@ logging.basicConfig(level=logging.INFO)
 log_config.setup_default_handlers(logging.getLogger())
 
 # cannot put imports before logging config
-from embark.commands import (  # noqa: E402 (import not on top)
-    cmd_dev_list_installs,
-    cmd_dev_query_install,
-    cmd_run,
-)
+from embark.commands.cmd_dev_list_installs import DevListInstallsCommand
+from embark.commands.cmd_dev_query_install import DevQueryInstallCommand
+from embark.commands.cmd_run import RunCommand
+from embark.platform_impl.windows.os_provider import WindowsInterface
+
+
+os_interface = WindowsInterface()
 
 
 def _configure_arg_parser():  # noqa: WPS213 (too many expressions)
@@ -36,14 +38,16 @@ def _configure_arg_parser():  # noqa: WPS213 (too many expressions)
         default=None,
         help="Config file encoding"
     )
-    parser_run.set_defaults(func=cmd_run.command)
+    parser_run.set_defaults(func=RunCommand(os_interface))
 
     parser_dev_list_installs = sub_parsers.add_parser(
         "dev_list_installs",
         aliases=("dli",),
         help="List all installations exactly as Embark sees them"
     )
-    parser_dev_list_installs.set_defaults(func=cmd_dev_list_installs.command)
+    parser_dev_list_installs.set_defaults(
+        func=DevListInstallsCommand(os_interface)
+    )
 
     parser_dev_query_install = sub_parsers.add_parser(
         "dev_query_install",
@@ -70,7 +74,9 @@ def _configure_arg_parser():  # noqa: WPS213 (too many expressions)
         help="Accept any version",
         default=False
     )
-    parser_dev_query_install.set_defaults(func=cmd_dev_query_install.command)
+    parser_dev_query_install.set_defaults(
+        func=DevQueryInstallCommand(os_interface)
+    )
     return parser
 
 

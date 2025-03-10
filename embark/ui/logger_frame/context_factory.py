@@ -19,9 +19,12 @@ from embark.ui.logger_frame.ui_loggers import GUIPlaybookLogger
 class GUIPlaybookExecutionContext(AbstractPlaybookExecutionContext):
     """Implementation of playbook execution context"""
 
-    def __init__(self, playbook, logger_frame):
+    def __init__(
+            self, playbook, logger_frame, os_interface: OSInterface
+    ) -> None:
         self._playbook = playbook
         self._logger_frame = logger_frame
+        self._os_interface = os_interface
 
     def ask_should_proceed(self, text: str) -> bool:
         return messagebox.askyesno(L("UI.ask_header"), text)
@@ -38,20 +41,23 @@ class GUIPlaybookExecutionContext(AbstractPlaybookExecutionContext):
 
     @property
     def os_provider(self) -> OSInterface:
-        return WindowsInterface()
+        return self._os_interface
 
 
 class GUIContextFactory(AbstractContextFactory):
     """Implementation of context factory"""
 
-    def __init__(self, logger_frame):
+    def __init__(self, logger_frame, os_interface: OSInterface):
         self._logger_frame = logger_frame
+        self._os_interface = os_interface
 
     def create_playbook_context(
             self,
             playbook
     ) -> AbstractPlaybookExecutionContext:
-        return GUIPlaybookExecutionContext(playbook, self._logger_frame)
+        return GUIPlaybookExecutionContext(
+            playbook, self._logger_frame, self._os_interface
+        )
 
     def create_task_context(
             self,

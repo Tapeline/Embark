@@ -11,6 +11,7 @@ from customtkinter import CTk, CTkButton, CTkFont, CTkFrame, CTkLabel
 from embark.impl import action
 from embark.impl.task_loader_repo import TaskLoaderRepository
 from embark.localization.i18n import L
+from embark.platform_impl.windows.os_provider import WindowsInterface
 from embark.resources import get_resource
 from embark.ui import utils
 from embark.ui.debug_frames import exec_frame, vars_frame
@@ -32,7 +33,9 @@ class LoggerFrame(CTk):
         utils.center(self)
         self._font = CTkFont("TkDefaultFont", 16, "bold")
         self._setup_ui()
-        self._ctx_factory = GUIContextFactory(self._logger_frame)
+        self._ctx_factory = GUIContextFactory(
+            self._logger_frame, WindowsInterface()
+        )
         self._loader_repo = TaskLoaderRepository()
 
     def _setup_ui(self):

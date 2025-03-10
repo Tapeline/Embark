@@ -1,0 +1,42 @@
+# serializer version: 1
+# name: test_dqi_command[.*-.*-version3]
+  '''
+  Name:      NameA
+  Version:   1.0
+  Publisher: PubA
+  Name:      NameB
+  Version:   1.1
+  Publisher: PubA
+  Name:      NameC
+  Version:   1.2
+  Publisher: PubB
+  Name:      NameD
+  Version:   1.3
+  Publisher: PubB
+  
+  '''
+# ---
+# name: test_dqi_command[.*-PubB-1.2]
+  '''
+  Name:      NameC
+  Version:   1.2
+  Publisher: PubB
+  
+  '''
+# ---
+# name: test_dqi_command[NameA-PubA-1.0]
+  '''
+  Name:      NameA
+  Version:   1.0
+  Publisher: PubA
+  
+  '''
+# ---
+# name: test_dqi_command[NameB-PubA-version1]
+  '''
+  Name:      NameB
+  Version:   1.1
+  Publisher: PubA
+  
+  '''
+# ---

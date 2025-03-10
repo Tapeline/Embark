@@ -110,3 +110,4 @@ ignore = [
 "embark/resources.py" = ["SLF001"]
 "embark/platform_impl/windows/install_loader.py" = ["PERF203"]
 "embark/localization/i18n.py" = ["PLW0603"]
+"embark/main.py" = ["E402"]

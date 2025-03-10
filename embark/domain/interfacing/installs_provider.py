@@ -28,7 +28,10 @@ class Installation:
         """Check if this installation matches the parameters."""
         return (
             re.fullmatch(name or "", self.name) is not None  # noqa: WPS222
-            and (self.publisher == publisher or self.publisher is None)
+            and (
+                re.fullmatch(publisher or "", self.publisher)
+                or self.publisher is None
+            )
             and (self.version == version or ignore_version)
         )
 

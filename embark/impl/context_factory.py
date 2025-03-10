@@ -25,10 +25,10 @@ LOGGER_WAIT_SECONDS: Final[float] = 0.2
 class CLIPlaybookExecutionContext(AbstractPlaybookExecutionContext):
     """Implementation of playbook execution context."""
 
-    def __init__(self, playbook: Playbook) -> None:
+    def __init__(self, playbook: Playbook, os_interface: OSInterface) -> None:
         """Create context."""
         self._playbook = playbook
-        self._os_provider = WindowsInterface()
+        self._os_provider = os_interface
 
     def ask_should_proceed(self, text: str) -> bool:
         time.sleep(LOGGER_WAIT_SECONDS)
@@ -54,11 +54,14 @@ class CLIPlaybookExecutionContext(AbstractPlaybookExecutionContext):
 class CLIContextFactory(AbstractContextFactory):
     """Implementation of context factory"""
 
+    def __init__(self, os_interface: OSInterface) -> None:
+        self.os_interface = os_interface
+
     def create_playbook_context(
             self,
             playbook: Playbook
     ) -> AbstractPlaybookExecutionContext:
-        return CLIPlaybookExecutionContext(playbook)
+        return CLIPlaybookExecutionContext(playbook, self.os_interface)
 
     def create_task_context(
             self,

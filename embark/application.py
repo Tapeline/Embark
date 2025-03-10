@@ -1,6 +1,7 @@
 """
 Application declaration
 """
+from embark.domain.interfacing.os_provider import OSInterface
 # pylint: disable=too-few-public-methods
 
 
@@ -12,9 +13,14 @@ from embark.impl.task_loader_repo import TaskLoaderRepository
 class Application:
     """App class"""
 
-    def __init__(self, config_file: str, file_encoding=None):
+    def __init__(
+            self,
+            os_interface: OSInterface,
+            config_file: str,
+            file_encoding=None
+    ) -> None:
         self.config_file = config_file
-        self.context_factory = CLIContextFactory()
+        self.context_factory = CLIContextFactory(os_interface)
         self.loader_repo = TaskLoaderRepository()
         self.file_encoding = file_encoding
 
