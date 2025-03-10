@@ -29,7 +29,8 @@ class Installation:
         return (
             re.fullmatch(name or "", self.name) is not None  # noqa: WPS222
             and (
-                re.fullmatch(publisher or "", self.publisher)
+                publisher == self.publisher or
+                re.fullmatch(publisher or "", self.publisher or "")
                 or self.publisher is None
             )
             and (self.version == version or ignore_version)
