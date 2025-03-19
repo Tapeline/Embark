@@ -1,11 +1,6 @@
-cleanbuild: clean build
-
-
 clean:
-	rm -r build
-	rm -r dist
-	mkdir build
-	mkdir dist
+	del /S /q dist
+	del /S /q build
 
 
 build:
@@ -24,3 +19,6 @@ lint:
 
 
 all: test lint cleanbuild
+
+
+.PHONY: all test clean lint build
