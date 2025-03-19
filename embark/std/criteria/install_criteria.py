@@ -29,7 +29,10 @@ class ProgramNotInstalledCriteria(AbstractExecutionCriteria):
         repo = context.playbook_context.os_provider.get_install_interface()
         return not any(
             install.matches(
-                name, version, publisher, ignore_version=self.ignore_version
+                name=name,
+                version=version,
+                publisher=publisher,
+                ignore_version=self.ignore_version
             )
             for install in repo.get_all_installs()
         )

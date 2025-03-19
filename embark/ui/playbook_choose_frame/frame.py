@@ -74,7 +74,7 @@ class PlaybookChooseFrame(CTk):
                 self, text=name,
                 command=lambda *_, f=file: self._choose_playbook(f)
             )
-            button.grid(row=row, column=0, padx=(16, 16), sticky="we")
+            button.grid(row=row, column=0, padx=(16, 16), pady=8, sticky="we")
             button.configure(font=self._font, width=50)
             self._buttons.append(button)
             row += 1
@@ -101,7 +101,7 @@ class Controller:
         # pylint: disable=missing-function-docstring
         playbooks = {}
         for filename in os.listdir(self._base_dir):
-            if not filename.endswith("book.yml"):
+            if not filename.endswith(".yml"):
                 continue
             try:
                 playbook = os.path.join(self._base_dir, filename)

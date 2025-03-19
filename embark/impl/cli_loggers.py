@@ -77,7 +77,7 @@ class CLITaskLogger(AbstractTaskLogger, CommonCLILogger):
         super().__init__()
         self.playbook = playbook
         self.task = task
-        self._logger = logging.getLogger(playbook.name)
+        self._logger = logging.getLogger(task.name)
         log_config.setup_default_handlers(self._logger)
 
     @property

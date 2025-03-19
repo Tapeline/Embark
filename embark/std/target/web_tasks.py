@@ -23,7 +23,7 @@ class DownloadFileTarget(AbstractExecutionTarget):
         self.dst_file = dst_file
         self.timeout_s = timeout_s
 
-    def execute(self, context: TaskExecutionContext) -> bool:  # noqa: WPS210
+    def execute(self, context: TaskExecutionContext) -> None:  # noqa: WPS210
         variables = context.playbook_context.playbook.variables
         url = variables.format(self.url)
         dst = variables.format(self.dst_file)
@@ -40,7 +40,7 @@ class DownloadFileTarget(AbstractExecutionTarget):
             total_length_str = response.headers.get("content-length")
             if total_length_str is None:
                 target_file.write(response.content)
-                return True
+                return
             total_length = int(total_length_str)
             dl = 0
             prev_progress: float = -1
@@ -51,7 +51,6 @@ class DownloadFileTarget(AbstractExecutionTarget):
                 if int(progress * 100) != int(prev_progress * 100):
                     reporter.set_progress(progress)
                 prev_progress = progress
-        return True
 
     def get_display_name(self) -> str:
         return f"Download {self.url} -> {self.dst_file}"

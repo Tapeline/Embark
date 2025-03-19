@@ -55,7 +55,7 @@ class AbstractExecutionTarget(Nameable, ABC):
     """Represents a target (action) which must be executed."""
 
     @abstractmethod
-    def execute(self, context: TaskExecutionContext) -> bool:
+    def execute(self, context: TaskExecutionContext) -> None:
         """Execute action."""
 
 
@@ -84,24 +84,24 @@ class Task(Nameable):  # noqa: WPS214
     def playbook_context(self) -> AbstractPlaybookExecutionContext:
         if self._playbook_context is not None:
             return self._playbook_context
-        raise ValueError("Playbook context is None", self)
+        raise AssertionError("Playbook context should not be None")
 
     @property
     def task_context(self) -> TaskExecutionContext:
         if self._task_context is not None:
             return self._task_context
-        raise ValueError("Task context is None", self)
+        raise AssertionError("Task context should not be None")
 
     @property
     def logger(self) -> AbstractTaskLogger:
         if self._logger is not None:
             return self._logger
-        raise ValueError("Logger is None", self)
+        raise AssertionError("Logger should not be None")
 
     def get_display_name(self):
         return self.name
 
-    def execute(self, context: AbstractPlaybookExecutionContext) -> bool:
+    def execute(self, context: AbstractPlaybookExecutionContext) -> None:
         """Execute this task"""
         self._playbook_context = context
         self._task_context = self.context_factory.create_task_context(
@@ -111,30 +111,35 @@ class Task(Nameable):  # noqa: WPS214
         should_execute = self.criteria.should_execute(self.task_context)
         if not should_execute:
             self.logger.task_skipped()
-            return True
+            return
         self.logger.task_started()
-        should_proceed = self._check_requirements()
-        if not should_proceed:
-            return False
-        self.logger.info("Executing task")
-        should_proceed = self._check_requirements()
-        if not should_proceed:
-            return False
-        is_successful, is_cancelled = self._try_to_execute_target()
-        if not is_successful:
-            return False
-        if is_cancelled:
-            raise TaskExecutionException(self.task_context, "Cancel")
-        self.logger.task_ended(is_successful=True)
-        return True
+        try:
+            self._check_requirements_and_execute()
+        except TaskExecutionException as exc:
+            self.logger.task_ended(is_successful=False)
+            if exc.proceed:
+                self.logger.exception(
+                    "Exception occurred while task execution: \n%s\n"
+                    "Playbook continues",
+                    exc.message
+                )
+            else:
+                raise
 
-    def _check_requirements(self) -> bool:
+    def _check_requirements_and_execute(self) -> None:
+        """Check task requirements and execute if possible."""
+        self._check_requirements()
+        self.logger.info("Executing task")
+        self._try_to_execute_target()
+        self.logger.task_ended(is_successful=True)
+
+    def _check_requirements(self) -> None:
         """Check task requirements."""
         try:  # noqa: WPS229
             for requirement in self.requirements:
                 requirement.ensure_requirement_met(self.task_context)
-            return True  # noqa: TRY300
-        except RequirementCannotBeMetException:
+            return  # noqa: TRY300
+        except RequirementCannotBeMetException as exc:
             self.logger.task_ended(
                 is_successful=False,
                 error_message=(
@@ -142,44 +147,36 @@ class Task(Nameable):  # noqa: WPS214
                 )
             )
             should_proceed = self.playbook_context.ask_should_proceed(
-                "Task failed to execute. Proceed playbook?"
+                f"Task failed to execute: "
+                f"{exc.message}.\n"
+                f"Proceed playbook?"
             )
             if should_proceed:
                 self.logger.warning("Cancelled, playbook continues")
-                return True
+                raise TaskExecutionException(
+                    self.task_context, exc.message, proceed=True
+                ) from exc
             self.logger.error("Cannot proceed. Playbook cancelled")
             raise
 
-    def _try_to_execute_target(self) -> tuple[bool, bool]:
+    def _try_to_execute_target(self) -> None:
         """Try to execute target."""
-        cancel = False
-        # TODO: refactor
-        try:  # noqa: WPS229
-            success = self.target.execute(self.task_context)
-            if not success:
-                self.logger.task_ended(
-                    is_successful=False,
-                    error_message="Task was not executed successfully"
-                )
-                should_proceed = self.playbook_context.ask_should_proceed(
-                    "Proceed playbook?"
-                )
-                if should_proceed:
-                    self.logger.warning("Cancelled, playbook continues")
-                    return True, cancel
-                self.logger.error("Cannot proceed. Playbook cancelled")
-                cancel = True
+        try:
+            self.target.execute(self.task_context)
         except TaskExecutionException as exc:
+            err_msg = (
+                f"Task was not executed successfully due to:\n"
+                f"{exc!s}"
+            )
             self.logger.task_ended(
                 is_successful=False,
-                error_message=f"Unknown exception occurred: {exc!s}"
+                error_message=err_msg
             )
             should_proceed = self.playbook_context.ask_should_proceed(
-                f"Task failed to execute:\n{exc!s}.\nProceed playbook?"
+                f"{err_msg}.\nProceed playbook?"
             )
             if should_proceed:
                 self.logger.warning("Cancelled, playbook continues")
-                return True, cancel
+                exc.proceed = True
             self.logger.error("Cannot proceed. Playbook cancelled")
             raise
-        return True, False

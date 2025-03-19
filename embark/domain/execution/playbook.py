@@ -26,7 +26,7 @@ class Playbook:
         self.tasks = tasks
         self.context_factory = context_factory
         self.variables: VariablesEnv = (
-                variables or VariablesEnv({}, os.environ)
+            variables or VariablesEnv({}, os.environ)
         )
         self.context = context_factory.create_playbook_context(self)
         self.logger = self.context.create_logger()
@@ -40,9 +40,8 @@ class Playbook:
 
     def run(self) -> IsSuccessful:
         """Run all tasks and catch exceptions."""
-        try:  # noqa: WPS229 (too long try)
+        try:
             self.run_tasks()
-            return True  # noqa: TRY300
         except TaskExecutionException as exception:
             str_ex = io.StringIO()
             traceback.print_exception(exception, limit=0, file=str_ex)
@@ -56,3 +55,4 @@ class Playbook:
                 ),
             )
             return False
+        return True

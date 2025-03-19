@@ -15,11 +15,15 @@ class TaskExecutionException(Exception):
     def __init__(
             self,
             task_context: "TaskExecutionContext",
-            message: str
+            message: str,
+            *,
+            proceed: bool = False
     ) -> None:
         """Create exception."""
         super().__init__()
         self.task_context = task_context
+        self.proceed = proceed
+        self.message = message
         self.add_note(message)
 
 

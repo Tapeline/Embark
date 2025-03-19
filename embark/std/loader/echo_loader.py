@@ -45,9 +45,8 @@ class PrintMessageTarget(AbstractExecutionTarget):
         """Create target."""
         self.message = message
 
-    def execute(self, context: TaskExecutionContext) -> bool:
+    def execute(self, context: TaskExecutionContext) -> None:
         write_out(self.message)
-        return True
 
     def get_display_name(self) -> str:
         return "Print task"

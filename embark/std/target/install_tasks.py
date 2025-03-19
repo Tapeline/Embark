@@ -5,6 +5,7 @@ import re
 from dataclasses import dataclass
 
 from embark.domain.interfacing.installs_provider import InstallationsInterface
+from embark.domain.tasks.exception import TaskExecutionException
 from embark.domain.tasks.task import (
     AbstractExecutionTarget,
     TaskExecutionContext,
@@ -36,7 +37,6 @@ class InstallTargetParams:
     no_remove: bool = False
 
 
-# TODO: refactor class in future
 class InstallTarget(AbstractExecutionTarget):  # noqa: WPS214
     """Target for installing."""
 
@@ -44,15 +44,13 @@ class InstallTarget(AbstractExecutionTarget):  # noqa: WPS214
         """Create target."""
         self.params = params
 
-    def execute(self, context: TaskExecutionContext) -> bool:
+    def execute(self, context: TaskExecutionContext):
         logger = context.task.logger
         params = self._create_params(context)
         repo = context.playbook_context.os_provider.get_install_interface()
         if not params.no_remove:
-            success = self._remove_existing_if_present(params, repo, logger)
-            if not success:
-                return False
-        return self._install(params, repo, logger)
+            self._remove_existing_if_present(params, repo, logger, context)
+        self._install(params, repo, logger, context)
 
     def get_display_name(self) -> str:
         return f"Install {self.params.name} {self.params.version}"
@@ -72,8 +70,9 @@ class InstallTarget(AbstractExecutionTarget):  # noqa: WPS214
             self,
             params: InstallTargetParams,
             repo: InstallationsInterface,
-            logger
-    ) -> bool:
+            logger,
+            context,
+    ) -> None:
         """Remove existing installation if present."""
         old_installation = None
         logger.info("Preferring path lookup")
@@ -90,9 +89,9 @@ class InstallTarget(AbstractExecutionTarget):  # noqa: WPS214
             old_installation = self._get_existing_installation(params, repo)
         if old_installation is None:
             logger.info("Old installation not found")
-            return True
+            return
         logger.info("Found old installation, removing")
-        return self._uninstall(params, repo, logger, old_installation)
+        self._uninstall(params, repo, logger, old_installation, context)
 
     def _try_to_match_lookup_path(  # noqa: WPS231
             self,
@@ -152,59 +151,90 @@ class InstallTarget(AbstractExecutionTarget):  # noqa: WPS214
             None
         )
 
-    def _uninstall(
+    def _uninstall(  # noqa: WPS231
             self,
             params,
             repo,
             logger,
-            old_installation: WindowsInstallation
-    ) -> bool:
+            old_installation: WindowsInstallation,
+            context: TaskExecutionContext
+    ) -> None:
         """Uninstall old installation"""
         logger.info("Uninstalling %s", old_installation)
         if params.cmd_uninstall is None:
+            logger.info(
+                "Trying quiet uninstall. Full command: \n%s",
+                old_installation.quiet_uninstaller
+            )
             try:
                 repo.uninstall_quietly(old_installation)
             except CannotUninstallQuietlyException:
                 logger.error(
-                    "Quiet uninstall failed. Trying regular uninstall"
+                    "Quiet uninstall failed. Trying regular uninstall. "
+                    "Full command: \n%s",
+                    old_installation.uninstaller
                 )
                 logger.warning("User action required!")
                 try:  # noqa: WPS505
                     repo.uninstall(old_installation)
-                except CannotUninstallException:
-                    logger.error("Uninstall failed")
-                    return False
+                except CannotUninstallException as exc:
+                    raise TaskExecutionException(
+                        context, f"Uninstall failed. Detail: \n{exc!s}"
+                    ) from exc
         else:
             cmd_uninstall = params.cmd_uninstall.replace(
                 "$$uninstaller$$",
                 old_installation.uninstaller or ""
             )
-            if not repo.os_interface.run(cmd_uninstall).is_successful:
-                logger.error("Uninstall failed")
-                return False
-        return True
+            logger.info(
+                "Trying custom uninstall command: \n%s",
+                cmd_uninstall
+            )
+            result = repo.os_interface.run(cmd_uninstall)
+            if not result.is_successful:
+                raise TaskExecutionException(
+                    context,
+                    f"Uninstall failed, return code: {result.return_code}"
+                )
 
-    def _install(self, params, repo, logger) -> bool:
+    def _install(self, params, repo, logger, context) -> None:  # noqa: WPS231
         """Install program"""
         logger.info("Installing %s", params.version)
         if params.cmd_install is None:
+            logger.info(
+                "Trying quiet install. Full command: \n%s",
+                params.installer
+            )
             try:
                 repo.install_quietly(
                     params.installer,
                     admin=params.msi_admin
                 )
             except CannotInstallQuietlyException:
-                logger.error("Quiet install failed. Trying regular install")
+                logger.error(
+                    "Quiet install failed. Trying regular install. "
+                    "Full command: \n%s",
+                    params.installer
+                )
                 logger.warning("User action required!")
                 try:  # noqa: WPS505
                     repo.install(params.installer, admin=params.msi_admin)
-                except CannotInstallException:
-                    logger.error("Install failed")
-                    return False
+                except CannotInstallException as exc:
+                    raise TaskExecutionException(
+                        context, f"Install failed. Detail: \n{exc!s}"
+                    ) from exc
         else:
             cmd_install = params.cmd_install.replace(
                 "$$installer$$",
                 params.installer
             )
-            return repo.os_interface.run_console(cmd_install).is_successful
-        return True
+            logger.info(
+                "Trying custom install command: \n%s",
+                cmd_install
+            )
+            result = repo.os_interface.run(cmd_install)
+            if not result.is_successful:
+                raise TaskExecutionException(
+                    context,
+                    f"Install failed, return code: {result.return_code}"
+                )

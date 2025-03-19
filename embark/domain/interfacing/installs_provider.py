@@ -36,6 +36,10 @@ class Installation:
             and (self.version == version or ignore_version)
         )
 
+    def __str__(self) -> str:
+        """Convert to readable representation."""
+        return f"{self.publisher}/{self.name}:{self.version}"
+
 
 class InstallationsInterface[Install_T: Installation](ABC):
     def __init__(self, os_interface: "OSInterface") -> None:
