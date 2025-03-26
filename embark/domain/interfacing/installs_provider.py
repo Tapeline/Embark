@@ -1,7 +1,7 @@
 import re
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 from attrs import frozen
 
@@ -11,6 +11,8 @@ if TYPE_CHECKING:
 
 @frozen
 class Installation:
+    """Represents a software installation in the system."""
+
     name: str
     version: str
     publisher: str
@@ -42,7 +44,10 @@ class Installation:
 
 
 class InstallationsInterface[Install_T: Installation](ABC):
-    def __init__(self, os_interface: "OSInterface") -> None:
+    """Provides methods for working with installations."""
+
+    def __init__(self, os_interface: "OSInterface[Self]") -> None:
+        """Create interface."""
         self.os_interface = os_interface
 
     @abstractmethod

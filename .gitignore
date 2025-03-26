@@ -8,3 +8,5 @@ htmlcov
 coverage.xml
 .coverage
 *.log
+embark_report.tmp
+.import_linter_cache

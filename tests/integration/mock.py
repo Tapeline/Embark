@@ -1,5 +1,5 @@
 import sys
-from collections.abc import Sequence
+from collections.abc import Generator, Sequence
 from contextlib import contextmanager
 from typing import Final, assert_never, final
 
@@ -29,25 +29,34 @@ _INSTALLS: Final = (
 
 
 class MockInstallInterface(InstallationsInterface[MockInstall]):
+    """Mock installs."""
+
     def get_all_installs(self) -> Sequence[MockInstall]:
+        """Get all installs."""
         return _INSTALLS
 
     def uninstall_quietly(self, installation: MockInstall) -> None:
+        """Should never happen."""
         assert_never(...)
 
     def uninstall(self, installation: MockInstall) -> None:
+        """Should never happen in testing."""
         assert_never(...)
 
     def install_quietly(
             self, installer_path: str, *, admin: bool = False
     ) -> None:
+        """Should never happen in testing."""
         assert_never(...)
 
     def install(self, installer_path: str, *, admin: bool = False) -> None:
+        """Should never happen in testing."""
         assert_never(...)
 
 
 class MockOSInterface(OSInterface):
+    """Mock OS."""
+
     def run_console(
             self,
             command: str | Sequence[str],
@@ -57,6 +66,7 @@ class MockOSInterface(OSInterface):
             env: dict | None = None,
             cwd: str | None = None
     ) -> ConsoleCommandResult:
+        """Should never happen."""
         return assert_never(...)
 
     def run(
@@ -68,36 +78,46 @@ class MockOSInterface(OSInterface):
             env: dict | None = None,
             cwd: str | None = None
     ) -> ConsoleCommandResult:
+        """Should never happen."""
         return assert_never(...)
 
     def get_install_interface(self) -> MockInstallInterface:
+        """Get install interface."""
         return MockInstallInterface(self)
 
 
 class MockWriteStream:
+    """Mocked stream."""
+
     def __init__(self):
+        """Init mocked stream."""
         self._text = ""
 
     def write(self, text: str) -> None:
+        """Write text."""
         self._text += text
 
     @property
     def value(self):  # noqa: WPS110
+        """Get text."""
         return self._text
 
     def flush(self) -> None:
-        ...
+        """Flush."""
 
 
 @final
 @frozen
 class Streams:
+    """Mocked streams."""
+
     stdout: MockWriteStream
     stderr: MockWriteStream
 
 
 @contextmanager
-def mock_streams() -> Streams:
+def mock_streams() -> Generator[Streams]:
+    """Intercept stdout and stderr."""
     stdout = MockWriteStream()
     stderr = MockWriteStream()
     output._stderr = stderr  # noqa: SLF001

@@ -1,5 +1,7 @@
 line-length = 79
 
+extend-exclude = ["stubs"]
+
 [lint]
 
 # from WPS
@@ -81,9 +83,6 @@ ignore = [
     "PTH",
     # TODO: refactor in future
 
-    "D",
-    # TODO: refactor in future,
-
     "ICN001",
     # WTF? pls don't teach me how I should name tkinter
 
@@ -111,3 +110,4 @@ ignore = [
 "embark/platform_impl/windows/install_loader.py" = ["PERF203"]
 "embark/localization/i18n.py" = ["PLW0603"]
 "embark/main.py" = ["E402"]
+

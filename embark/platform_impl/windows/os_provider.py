@@ -19,9 +19,10 @@ class WindowsInterface(OSInterface[WindowsInstallationsInterface]):
             *,
             stdin: str | None = None,
             timeout: float | None = None,
-            env: dict | None = None,
+            env: dict[str, str] | None = None,
             cwd: str | None = None,
     ) -> ConsoleCommandResult:
+        """Run using shell."""
         return self._run_impl(
             command,
             stdin=stdin,
@@ -37,9 +38,10 @@ class WindowsInterface(OSInterface[WindowsInstallationsInterface]):
             *,
             stdin: str | None = None,
             timeout: float | None = None,
-            env: dict | None = None,
+            env: dict[str, str] | None = None,
             cwd: str | None = None,
     ) -> ConsoleCommandResult:
+        """Run command."""
         return self._run_impl(
             command,
             stdin=stdin,
@@ -50,6 +52,7 @@ class WindowsInterface(OSInterface[WindowsInstallationsInterface]):
         )
 
     def get_install_interface(self) -> WindowsInstallationsInterface:
+        """Get installations interface."""
         return WindowsInstallationsInterface(self)
 
     def _run_impl(  # noqa: WPS211
@@ -59,7 +62,7 @@ class WindowsInterface(OSInterface[WindowsInstallationsInterface]):
             is_shell: bool,
             stdin: str | None = None,
             timeout: float | None = None,
-            env: dict | None = None,
+            env: dict[str, str] | None = None,
             cwd: str | None = None,
     ) -> ConsoleCommandResult:
         proc = subprocess.run(  # noqa: S603

@@ -3,10 +3,8 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from embark.domain.tasks.task import (
-        AbstractExecutionRequirement,
-        TaskExecutionContext,
-    )
+    from embark.domain.execution.context import TaskExecutionContext
+    from embark.domain.tasks.task import AbstractExecutionRequirement
 
 
 class TaskExecutionException(Exception):

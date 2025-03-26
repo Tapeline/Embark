@@ -1,16 +1,17 @@
 import os
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from multiprocessing import Process
+from pathlib import Path
 
 import pytest
 
 
-class Server(BaseHTTPRequestHandler):
+class _Server(BaseHTTPRequestHandler):
     def do_GET(self):  # noqa: N802
+        """Handle GET."""
         try:
             path = os.path.join("tests\\fixtures", self.path[1:])
-            with open(path) as req_f:
-                data = req_f.read()
+            data = Path(path).read_text()
             self.send_response(200)
         except FileNotFoundError:
             data = "File not found"
@@ -19,20 +20,21 @@ class Server(BaseHTTPRequestHandler):
         self.wfile.write(bytes(data, "utf-8"))
 
 
-def run_server():
-    httpd = HTTPServer(("localhost", 8080), Server)
+def _run_server():
+    httpd = HTTPServer(("localhost", 8080), _Server)
     httpd.serve_forever()
 
 
-def run_server_in_separate_proc():
-    proc = Process(target=run_server, args=())
+def _run_server_in_separate_proc():
+    proc = Process(target=_run_server, args=())
     proc.start()
     return proc
 
 
 @pytest.fixture(scope="function")
 def serve_fixture_files():
-    proc = run_server_in_separate_proc()
+    """Serve files located in tests/fixtures."""
+    proc = _run_server_in_separate_proc()
     try:
         yield
     finally:

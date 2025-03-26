@@ -3,8 +3,8 @@ from pathlib import Path
 
 import yaml
 
+from embark.domain.execution.context import AbstractContextFactory
 from embark.domain.execution.playbook import Playbook
-from embark.domain.tasks.task import AbstractContextFactory
 from embark.use_case import models, playbook_loader
 from embark.use_case.config.loader import AbstractTaskLoaderRepository
 
@@ -33,7 +33,11 @@ def load_playbook_from_file(
     loader_repo.set_playbook_root(str(Path(path).absolute().parent))
     variables = _load_variables(encoding, path)
     playbook_config = models.load_playbook_config(config_data)
-    playbook_config.variables = variables | playbook_config.variables
+    playbook_config = models.PlaybookConfig(
+        playbook_config.name,
+        variables | playbook_config.variables,
+        playbook_config.tasks
+    )
     return playbook_loader.load_playbook_from_config(
         context_factory,
         loader_repo,

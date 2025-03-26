@@ -2,6 +2,7 @@
 # WPS checks are disabled here
 
 import winreg
+from typing import Any
 
 from attrs import frozen
 
@@ -13,6 +14,8 @@ from embark.platform_impl.windows.utils import (
 
 @frozen
 class WindowsInstallation(Installation):
+    """Represents an installation on Windows machines."""
+
     uninstaller: str | None = None
     quiet_uninstaller: str | None = None
 
@@ -23,29 +26,21 @@ def get_installation_from_registry(
     """Create from registry entry."""
     reg = winreg.ConnectRegistry(None, reg_base)
     software_key = winreg.OpenKey(reg, reg_path)
-    software_name: str = _get_reg_value_or_none(
-        software_key, "DisplayName"
-    )
-    software_publisher: str = _get_reg_value_or_none(
-        software_key, "Publisher"
-    )
-    software_version = _get_reg_value_or_none(
-        software_key, "Version"
-    )
+    software_name = _get_reg_str(software_key, "DisplayName")
+    software_publisher = _get_reg_str(software_key, "Publisher")
+    software_version = _get_reg_str(software_key, "Version")
     if software_version is None:
-        software_version = _get_reg_value_or_none(
-            software_key, "DisplayVersion"
-        )
-    software_major_version: int | None = _get_reg_value_or_none(
+        software_version = _get_reg_str(software_key, "DisplayVersion")
+    software_major_version = _get_reg_value_or_none(
         software_key, "VersionMajor"
     )
-    software_minor_version: int | None = _get_reg_value_or_none(
+    software_minor_version = _get_reg_value_or_none(
         software_key, "VersionMinor"
     )
-    software_uninstall: str | None = _get_reg_value_or_none(
+    software_uninstall = _get_reg_str(
         software_key, "UninstallString"
     )
-    software_quiet_uninstall: str | None = _get_reg_value_or_none(
+    software_quiet_uninstall = _get_reg_str(
         software_key, "QuietUninstallString"
     )
     index = 0
@@ -78,19 +73,29 @@ def get_installation_from_registry(
             software_uninstall, software_quiet_uninstall
         )
     return WindowsInstallation(
-        name=software_name,
+        name=str(software_name),
         version=str(software_version),
         major_version=software_major_version,
         minor_version=software_minor_version,
-        publisher=software_publisher,
+        publisher=str(software_publisher),
         quiet_uninstaller=software_quiet_uninstall,
         uninstaller=software_uninstall
     )
 
 
-def _get_reg_value_or_none(key, name):
-    """Wrapper for winreg function"""
+def _get_reg_value_or_none(
+        key: int | winreg.HKEYType,
+        name: str
+) -> Any | None:
+    """Wrapper for winreg function."""
     try:
         return winreg.QueryValueEx(key, name)[0]
     except Exception:
         return None
+
+
+def _get_reg_str(key: int | winreg.HKEYType, name: str) -> str | None:
+    reg_val = _get_reg_value_or_none(key, name)
+    if not reg_val:
+        return None
+    return str(reg_val)

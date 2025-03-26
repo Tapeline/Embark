@@ -21,6 +21,7 @@ class WindowsInstallationsInterface(
     """Implementation of Windows software installer interactions."""
 
     def uninstall_quietly(self, installation: WindowsInstallation) -> None:
+        """Uninstall software quietly."""
         if installation.quiet_uninstaller is None:
             raise InstallationCommandNotProvidedException
         result = self.os_interface.run(installation.quiet_uninstaller)
@@ -28,6 +29,7 @@ class WindowsInstallationsInterface(
             raise CannotUninstallQuietlyException
 
     def uninstall(self, installation: WindowsInstallation) -> None:
+        """Uninstall software."""
         if installation.uninstaller is None:
             raise InstallationCommandNotProvidedException
         result = self.os_interface.run(installation.uninstaller)
@@ -37,6 +39,7 @@ class WindowsInstallationsInterface(
     def install_quietly(
             self, installer_path: str, *, admin: bool = False
     ) -> None:
+        """Install software quietly."""
         cmd = determine_quiet_install_command(installer_path, admin=admin)
         if cmd is None:
             raise InstallationCommandNotProvidedException
@@ -45,6 +48,7 @@ class WindowsInstallationsInterface(
             raise CannotInstallQuietlyException
 
     def install(self, installer_path: str, *, admin: bool = False) -> None:
+        """Install software."""
         cmd = installer_path
         if installer_path.endswith(".msi"):
             cmd = f"msiexec {('/a' if admin else '/i')} {installer_path}"
@@ -55,6 +59,7 @@ class WindowsInstallationsInterface(
     def get_all_installs(self) -> Sequence[WindowsInstallation]:
         """
         Get all existing installations.
+
         Windows installations are located under different paths:
         - HKLM/SOFTWARE/WOW6432Node/Microsoft/Windows/CurrentVersion/Uninstall
         - HKLM/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall

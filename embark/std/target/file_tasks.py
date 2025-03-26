@@ -2,11 +2,9 @@
 
 import shutil
 
+from embark.domain.execution.context import TaskExecutionContext
 from embark.domain.tasks.exception import TaskExecutionException
-from embark.domain.tasks.task import (
-    AbstractExecutionTarget,
-    TaskExecutionContext,
-)
+from embark.domain.tasks.task import AbstractExecutionTarget
 
 
 class CopyFileTarget(AbstractExecutionTarget):
@@ -18,10 +16,10 @@ class CopyFileTarget(AbstractExecutionTarget):
         self.dst_file = dst_file
 
     def execute(self, context: TaskExecutionContext) -> None:
-        src = context.playbook_context.playbook.variables.format(self.src_file)
-        dst = context.playbook_context.playbook.variables.format(self.dst_file)
-        src = context.playbook_context.file_path(src)
-        dst = context.playbook_context.file_path(dst)
+        """Run target."""
+        formatter = context.playbook_context.playbook.variables.format
+        src = context.playbook_context.file_path(formatter(self.src_file))
+        dst = context.playbook_context.file_path(formatter(self.dst_file))
         try:
             shutil.copy(src, dst)
         except Exception as exc:
@@ -31,4 +29,5 @@ class CopyFileTarget(AbstractExecutionTarget):
             ) from exc
 
     def get_display_name(self) -> str:
+        """Get human-readable name."""
         return f"Copy {self.src_file} -> {self.dst_file}"

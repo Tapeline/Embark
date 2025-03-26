@@ -11,16 +11,21 @@ from embark.use_case.config.loader import AbstractTaskLoader
 
 
 class TestTaskParams(BaseModel):
+    """Params for test loader."""
+
     message: str
     file: str
 
 
 class TaskLoader(AbstractTaskLoader):
+    """Test loader."""
+
     name = "test_custom_task.test"
 
     def load_task(
             self, context_factory, task_name: str, task_config: dict
     ) -> Task:
+        """Load task."""
         criteria = None
         requirements = []
         target = TestTarget(TestTaskParams(**task_config))
@@ -30,10 +35,14 @@ class TaskLoader(AbstractTaskLoader):
 
 
 class TestTarget(AbstractExecutionTarget):
+    """Test."""
+
     def __init__(self, params: TestTaskParams):
+        """Create target."""
         self.params = params
 
     def execute(self, context: TaskExecutionContext) -> bool:
+        """Run target."""
         Path(self.params.file).write_text(self.params.message)
         return True
 

@@ -1,4 +1,5 @@
-"""Variables debug UI frame"""
+"""Variables debug UI frame."""
+
 from typing import Final
 
 from customtkinter import CTk, CTkFont, CTkLabel, CTkScrollableFrame
@@ -7,14 +8,16 @@ from embark.domain.execution.playbook import Playbook
 from embark.localization.i18n import L
 from embark.resources import get_resource
 from embark.ui import utils
+from embark.ui.constants import UTIL_WIN_SIZE
 
 _FONT_SIZE: Final = 14
 
 
 class DebugVariablesFrame(CTk):
-    """Main UI frame"""
+    """Main UI frame."""
 
-    def __init__(self, playbook: Playbook):
+    def __init__(self, playbook: Playbook) -> None:
+        """Create frame."""
         super().__init__()
         self._playbook = playbook
         self.title(L("UI.debug_vars"))
@@ -22,10 +25,10 @@ class DebugVariablesFrame(CTk):
         self.iconbitmap(get_resource("icon.ico"))
         self._font = CTkFont("Consolas", _FONT_SIZE, "normal")
         self._setup_ui()
-        utils.center(self, 500, 600)
+        utils.center(self, *UTIL_WIN_SIZE)
 
-    def _setup_ui(self):
-        """Create and place UI components"""
+    def _setup_ui(self) -> None:  # noqa: WPS210
+        """Create and place UI components."""
         variables = self._playbook.variables.vars.items()
         envs = self._playbook.variables.envs.items()
         self._scrollable1 = CTkScrollableFrame(self)
@@ -33,8 +36,8 @@ class DebugVariablesFrame(CTk):
             self._scrollable1,
             orientation="horizontal"
         )
-        for i in range(len(variables) + len(envs) + 2):
-            self._scrollable.rowconfigure(index=i, weight=1)
+        for index in range(len(variables) + len(envs) + 2):
+            self._scrollable.rowconfigure(index=index, weight=1)
         self._scrollable.columnconfigure(index=0, weight=1)
         self._scrollable.columnconfigure(index=1, weight=1)
         self._vars_title = CTkLabel(
@@ -57,6 +60,7 @@ class DebugVariablesFrame(CTk):
         self._scrollable1.pack(fill="both", expand=True)
 
 
-def show(playbook):
+def show(playbook: Playbook) -> None:
+    """Show vars frame."""
     win = DebugVariablesFrame(playbook)
     win.mainloop()

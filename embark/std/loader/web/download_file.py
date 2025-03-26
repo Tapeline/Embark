@@ -1,8 +1,10 @@
 """Provides loader and tools for ``std.download``."""
+from typing import Any
 
 from pydantic import BaseModel
 
-from embark.domain.tasks.task import AbstractContextFactory, Task
+from embark.domain.execution.context import AbstractContextFactory
+from embark.domain.tasks.task import Task
 from embark.std.criteria.file_criteria import FileDoesNotExistCriteria
 from embark.std.target.web_tasks import DownloadFileTarget
 from embark.use_case.config.loader import AbstractTaskLoader
@@ -26,8 +28,9 @@ class DownloadFileTaskLoader(AbstractTaskLoader):
             self,
             context_factory: AbstractContextFactory,
             task_name: str,
-            task_config: dict
+            task_config: dict[Any, Any]
     ) -> Task:
+        """Load task."""
         model = TaskModel(**task_config)
 
         criteria = None

@@ -4,19 +4,18 @@ import os
 import re
 from dataclasses import dataclass
 
+from embark.domain.execution.context import TaskExecutionContext
 from embark.domain.interfacing.installs_provider import InstallationsInterface
+from embark.domain.playbook_logger import AbstractTaskLogger
 from embark.domain.tasks.exception import TaskExecutionException
-from embark.domain.tasks.task import (
-    AbstractExecutionTarget,
-    TaskExecutionContext,
-)
+from embark.domain.tasks.task import AbstractExecutionTarget
 from embark.platform_impl.windows.exceptions import (
     CannotInstallException,
     CannotInstallQuietlyException,
     CannotUninstallException,
     CannotUninstallQuietlyException,
 )
-from embark.platform_impl.windows.installs_provider import WindowsInstallation
+from embark.platform_impl.windows.install_loader import WindowsInstallation
 from embark.platform_impl.windows.utils import (
     determine_quiet_uninstall_command,
 )
@@ -44,15 +43,19 @@ class InstallTarget(AbstractExecutionTarget):  # noqa: WPS214
         """Create target."""
         self.params = params
 
-    def execute(self, context: TaskExecutionContext):
+    def execute(self, context: TaskExecutionContext) -> None:
+        """Run target."""
         logger = context.task.logger
         params = self._create_params(context)
-        repo = context.playbook_context.os_provider.get_install_interface()
+        repo: InstallationsInterface[WindowsInstallation] = (
+            context.playbook_context.os_provider.get_install_interface()
+        )
         if not params.no_remove:
             self._remove_existing_if_present(params, repo, logger, context)
         self._install(params, repo, logger, context)
 
     def get_display_name(self) -> str:
+        """Get human-readable name."""
         return f"Install {self.params.name} {self.params.version}"
 
     def _create_params(
@@ -69,9 +72,9 @@ class InstallTarget(AbstractExecutionTarget):  # noqa: WPS214
     def _remove_existing_if_present(
             self,
             params: InstallTargetParams,
-            repo: InstallationsInterface,
-            logger,
-            context,
+            repo: InstallationsInterface[WindowsInstallation],
+            logger: AbstractTaskLogger,
+            context: TaskExecutionContext,
     ) -> None:
         """Remove existing installation if present."""
         old_installation = None
@@ -113,10 +116,10 @@ class InstallTarget(AbstractExecutionTarget):  # noqa: WPS214
     def _get_installation_by_path(
             self,
             params: InstallTargetParams,
-            logger,
+            logger: AbstractTaskLogger,
             matched_path: str,
-            old_installation
-    ):
+            old_installation: WindowsInstallation | None
+    ) -> WindowsInstallation | None:
         # pylint: disable=missing-function-docstring
         logger.info("Path matched: %s", matched_path)
         uninstaller = None
@@ -137,8 +140,12 @@ class InstallTarget(AbstractExecutionTarget):  # noqa: WPS214
             logger.info("Uninstaller found")
         return old_installation
 
-    def _get_existing_installation(self, params, repo):
-        """Seek for existing installations of any version"""
+    def _get_existing_installation(
+            self,
+            params: InstallTargetParams,
+            repo: InstallationsInterface[WindowsInstallation]
+    ) -> WindowsInstallation | None:
+        """Seek for existing installations of any version."""
         return next(
             (
                 install for install in repo.get_all_installs()
@@ -153,13 +160,13 @@ class InstallTarget(AbstractExecutionTarget):  # noqa: WPS214
 
     def _uninstall(  # noqa: WPS231
             self,
-            params,
-            repo,
-            logger,
+            params: InstallTargetParams,
+            repo: InstallationsInterface[WindowsInstallation],
+            logger: AbstractTaskLogger,
             old_installation: WindowsInstallation,
             context: TaskExecutionContext
     ) -> None:
-        """Uninstall old installation"""
+        """Uninstall old installation."""
         logger.info("Uninstalling %s", old_installation)
         if params.cmd_uninstall is None:
             logger.info(
@@ -197,8 +204,14 @@ class InstallTarget(AbstractExecutionTarget):  # noqa: WPS214
                     f"Uninstall failed, return code: {result.return_code}"
                 )
 
-    def _install(self, params, repo, logger, context) -> None:  # noqa: WPS231
-        """Install program"""
+    def _install(  # noqa: WPS231
+            self,
+            params: InstallTargetParams,
+            repo: InstallationsInterface[WindowsInstallation],
+            logger: AbstractTaskLogger,
+            context: TaskExecutionContext
+    ) -> None:
+        """Install program."""
         logger.info("Installing %s", params.version)
         if params.cmd_install is None:
             logger.info(

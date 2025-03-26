@@ -5,6 +5,8 @@ from embark.output import write_out
 
 
 class DevListInstallsCommand(AbstractCommand[NoArgs]):
+    """dev_list_installs command."""
+
     _args_type = NoArgs
 
     def _run(self, args: NoArgs) -> int:

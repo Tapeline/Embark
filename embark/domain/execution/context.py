@@ -24,7 +24,7 @@ class AbstractPlaybookExecutionContext(ABC):
         """Blocking function which prompts user if he wants to proceed."""
 
     @abstractmethod
-    def file_path(self, path) -> str:
+    def file_path(self, path: str) -> str:
         """Resolve file path (with placeholders)."""
 
     @abstractmethod

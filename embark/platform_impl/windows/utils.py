@@ -1,12 +1,10 @@
-"""
-Provides utils for installations
-"""
+"""Provides utils for installations."""
 
 import subprocess
 
 
-def get_current_sid():
-    """Get current Windows user SID"""
+def get_current_sid() -> str:
+    """Get current Windows user SID."""
     sid = next(
         c
         for c in subprocess.check_output("whoami /User")  # noqa
@@ -21,9 +19,9 @@ def determine_quiet_uninstall_command(
         quiet_uninstall: str | None
 ) -> str | None:
     """
-    Tries to determine quiet uninstallation command
-    from regular uninstallation command.
-    At the moment supports MSI, NSIS and Inno Setup uninstallers
+    Tries to determine quiet uninstallation command from regular command.
+
+    At the moment supports MSI, NSIS and Inno Setup uninstallers.
     """
     if quiet_uninstall is not None and "msiexec" not in uninstall.lower():
         return quiet_uninstall
@@ -47,8 +45,10 @@ def determine_quiet_uninstall_command(
 
 def _is_inno_setup(installer: str) -> bool:
     """
+    Check if is Inno Setup installer.
+
     Check if exe was packed with Inno Setup by looking
-    for "Inno Setup" string marker in exe
+    for "Inno Setup" string marker in exe.
     """
     with open(installer, "rb") as installer_f:
         data = installer_f.read()  # noqa: WPS110
@@ -57,7 +57,9 @@ def _is_inno_setup(installer: str) -> bool:
 
 def _is_nullsoft_installer(installer: str) -> bool:
     """
-    Check if exe was packed with NSIS by looking
+    Check if NSIS installer.
+
+    Checks if exe was packed with NSIS by looking
     for "Nullsoft Install System" string marker in exe
     """
     with open(installer, "rb") as installer_f:
@@ -71,9 +73,9 @@ def determine_quiet_install_command(
         admin: bool = False
 ) -> str | None:
     """
-    Tries to determine quiet installation command
-    from regular installation command.
-    At the moment supports MSI, NSIS and Inno Setup uninstallers
+    Tries to determine quiet installation command from regular command.
+
+    At the moment supports MSI, NSIS and Inno Setup uninstallers.
     """
     if installer.endswith(".msi"):
         return (

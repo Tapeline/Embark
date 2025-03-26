@@ -1,8 +1,10 @@
-"""Provides classes for task loading and functions for config loading"""
+"""Provides classes for task loading and functions for config loading."""
 
 from abc import ABC, abstractmethod
+from typing import Any
 
-from embark.domain.tasks.task import AbstractContextFactory, Task
+from embark.domain.execution.context import AbstractContextFactory
+from embark.domain.tasks.task import Task
 
 
 class AbstractTaskLoader(ABC):
@@ -21,7 +23,7 @@ class AbstractTaskLoader(ABC):
             self,
             context_factory: AbstractContextFactory,
             task_name: str,
-            task_config: dict
+            task_config: dict[Any, Any]
     ) -> Task:
         """
         Loads a task from yaml.

@@ -1,4 +1,4 @@
-"""Main file"""
+"""Main file."""
 
 import argparse
 import logging
@@ -19,8 +19,8 @@ from embark.platform_impl.windows.os_provider import WindowsInterface
 os_interface = WindowsInterface()
 
 
-def _configure_arg_parser():  # noqa: WPS213 (too many expressions)
-    """Configures CLI arguments and subcommands"""
+def _configure_arg_parser() -> argparse.ArgumentParser:  # noqa: WPS213
+    """Configures CLI arguments and subcommands."""
     parser = argparse.ArgumentParser(
         prog="embark",
         description="Embark playbook executor"
@@ -36,6 +36,12 @@ def _configure_arg_parser():  # noqa: WPS213 (too many expressions)
         "--encoding",
         default=None,
         help="Config file encoding"
+    )
+    parser_run.add_argument(
+        "--report",
+        action="store_true",
+        default=False,
+        help="Save short report"
     )
     parser_run.set_defaults(func=RunCommand(os_interface))
 
@@ -79,8 +85,8 @@ def _configure_arg_parser():  # noqa: WPS213 (too many expressions)
     return parser
 
 
-def main():
-    """Main function"""
+def main() -> None:
+    """Entrypoint."""
     if len(sys.argv) == 1:
         ui_main.main()
     else:

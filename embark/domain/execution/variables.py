@@ -6,7 +6,11 @@ from typing import Any
 class VariablesEnv:
     """Variables: envs + user-defined vars in ``variables`` section."""
 
-    def __init__(self, variables: dict, envs) -> None:
+    def __init__(
+            self,
+            variables: dict[str, Any],
+            envs: dict[str, Any]
+    ) -> None:
         """Create variable environment."""
         self.vars = variables
         self.envs = envs
@@ -26,7 +30,7 @@ class VariablesEnv:
                 continue
             if (i < len(string) - 1 and in_var and
                     string[i] == "}" and string[i + 1] == "}"):
-                formatted += self.get_value_or_leave_as_is(string[start:i+2])
+                formatted += self.get_value_or_leave_as_is(string[start:i + 2])
                 i += 2
                 in_var = False
                 continue

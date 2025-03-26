@@ -2,10 +2,8 @@
 
 import os
 
-from embark.domain.tasks.task import (
-    AbstractExecutionCriteria,
-    TaskExecutionContext,
-)
+from embark.domain.execution.context import TaskExecutionContext
+from embark.domain.tasks.task import AbstractExecutionCriteria
 
 
 class FileCriteria(AbstractExecutionCriteria):
@@ -17,12 +15,14 @@ class FileCriteria(AbstractExecutionCriteria):
         self.should_exist = should_exist
 
     def should_execute(self, context: TaskExecutionContext) -> bool:
+        """Check criteria."""
         file_path = context.playbook_context.variables(self.file_path)
         return os.path.exists(
             context.playbook_context.file_path(file_path)
         ) == self.should_exist
 
     def get_display_name(self) -> str:
+        """Get human-readable name."""
         exists_label = "exists" if self.should_exist else "does not exist"
         return f"File {self.file_path} {exists_label}"
 

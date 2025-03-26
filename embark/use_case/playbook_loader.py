@@ -4,9 +4,10 @@ import logging
 import os
 
 from embark import log_config
+from embark.domain.execution.context import AbstractContextFactory
 from embark.domain.execution.playbook import Playbook
 from embark.domain.execution.variables import VariablesEnv
-from embark.domain.tasks.task import AbstractContextFactory, Task
+from embark.domain.tasks.task import Task
 from embark.use_case.config.exceptions import LoaderNotFoundException
 from embark.use_case.config.loader import (
     AbstractTaskLoader,
@@ -23,7 +24,7 @@ def load_playbook_from_config(  # noqa: WPS210
     """Loads playbook from config which was created from yaml file."""
     logger = logging.getLogger("playbook_loader")
     log_config.setup_default_handlers(logger)
-    variables = VariablesEnv(playbook_config.variables, os.environ)
+    variables = VariablesEnv(playbook_config.variables, dict(os.environ))
     tasks = []
     for task in playbook_config.tasks:
         loaded_task, loader = _load_task(

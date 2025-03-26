@@ -39,7 +39,8 @@ class I18N:
 
     name = ""
 
-    def __init_subclass__(cls):
+    def __init_subclass__(cls) -> None:
+        """Register language subclass."""
         super().__init_subclass__()
         I18N.locales[cls.name] = cls()
 
@@ -67,7 +68,7 @@ def localize(message_code: str) -> str:
             return "Translation not found"
 
 
-def _get_message(lang_node, message_code: str) -> str:
+def _get_message(lang_node: I18N | None, message_code: str) -> str:
     if lang_node is None:
         return "Translation not found"
     for attr in message_code.split("."):

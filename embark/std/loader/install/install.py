@@ -1,14 +1,14 @@
 """Provides loader and tools for ``std.install``."""
 
-from typing import Optional
+from typing import Any, Optional, Self
 
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
-from embark.domain.tasks.task import AbstractContextFactory, Task
+from embark.domain.execution.context import AbstractContextFactory
+from embark.domain.tasks.task import Task
 from embark.std.criteria.install_criteria import ProgramNotInstalledCriteria
 from embark.std.requirement.privileges import AdminPrivilegesRequirement
 from embark.std.target.install_tasks import InstallTarget, InstallTargetParams
-from embark.use_case.config.exceptions import InvalidConfigException
 from embark.use_case.config.loader import AbstractTaskLoader
 
 
@@ -26,6 +26,19 @@ class TaskModel(BaseModel):
     no_remove: bool = False
     ignore_version: bool = False
 
+    @model_validator(mode="after")
+    def check_install_can_be_found(self) -> Self:
+        """Check that enough info provided to find the installation."""
+        if (
+            (self.publisher is None or self.version is None)
+            and self.lookup_paths is None
+        ):
+            raise ValueError(
+                "Either publisher and version "
+                "should be provided or lookup_paths"
+            )
+        return self
+
 
 class InstallTaskLoader(AbstractTaskLoader):
     """Task loader impl for ``std.install``."""
@@ -36,17 +49,10 @@ class InstallTaskLoader(AbstractTaskLoader):
             self,
             context_factory: AbstractContextFactory,
             task_name: str,
-            task_config: dict
+            task_config: dict[Any, Any]
     ) -> Task:
+        """Load task."""
         model = TaskModel(**task_config)
-        if (  # TODO: move to model validator
-                (model.publisher is None or model.version is None)
-                and model.lookup_paths is None
-        ):
-            raise InvalidConfigException(
-                "Either publisher and version "
-                "should be provided or lookup_paths"
-            )
 
         criteria = ProgramNotInstalledCriteria(
             model.name, model.version, model.publisher,

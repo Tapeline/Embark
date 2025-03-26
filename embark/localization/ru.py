@@ -9,6 +9,8 @@ class RuI18N(I18N):
     name = "ru"
 
     class UI:  # noqa: WPS431
+        """Localization for UI."""
+
         playbooks_found_title = (
             "Следующие плейбуки были найдены в данном расположении:"
         )

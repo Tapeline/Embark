@@ -1,8 +1,6 @@
 """Provides criteria which account installed programs."""
-from embark.domain.tasks.task import (
-    AbstractExecutionCriteria,
-    TaskExecutionContext,
-)
+from embark.domain.execution.context import TaskExecutionContext
+from embark.domain.tasks.task import AbstractExecutionCriteria
 
 
 class ProgramNotInstalledCriteria(AbstractExecutionCriteria):
@@ -23,6 +21,7 @@ class ProgramNotInstalledCriteria(AbstractExecutionCriteria):
         self.ignore_version = ignore_version
 
     def should_execute(self, context: TaskExecutionContext) -> bool:
+        """Check criteria."""
         name = context.playbook_context.variables(self.name)
         version = context.playbook_context.variables(self.version)
         publisher = context.playbook_context.variables(self.publisher)
@@ -38,6 +37,7 @@ class ProgramNotInstalledCriteria(AbstractExecutionCriteria):
         )
 
     def get_display_name(self) -> str:
+        """Get human-readable name."""
         return (
             f"Program {self.name} {self.version} "
             f"by {self.publisher} not installed"

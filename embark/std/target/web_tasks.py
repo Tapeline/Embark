@@ -5,10 +5,10 @@ from typing import Final
 
 import requests
 
-from embark.domain.tasks.task import (
-    AbstractExecutionTarget,
+from embark.domain.execution.context import (
     TaskExecutionContext,
 )
+from embark.domain.tasks.task import AbstractExecutionTarget
 from embark.use_case.progress import ProgressReporter
 
 _CHUNK_SIZE: Final = 4096
@@ -24,6 +24,7 @@ class DownloadFileTarget(AbstractExecutionTarget):
         self.timeout_s = timeout_s
 
     def execute(self, context: TaskExecutionContext) -> None:  # noqa: WPS210
+        """Run target."""
         variables = context.playbook_context.playbook.variables
         url = variables.format(self.url)
         dst = variables.format(self.dst_file)
@@ -53,4 +54,5 @@ class DownloadFileTarget(AbstractExecutionTarget):
                 prev_progress = progress
 
     def get_display_name(self) -> str:
+        """Get human-readable name."""
         return f"Download {self.url} -> {self.dst_file}"

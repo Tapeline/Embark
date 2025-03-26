@@ -3,7 +3,8 @@
 import logging
 import os
 from importlib import util as import_util
-from typing import ClassVar
+from types import ModuleType
+from typing import ClassVar, cast
 
 from embark import log_config
 from embark.impl import pip_pkg
@@ -24,16 +25,18 @@ class TaskLoaderRepository(AbstractTaskLoaderRepository):
     loaders: ClassVar[list[AbstractTaskLoader]] = []
 
     def __init__(self) -> None:
-        """Create loader repo"""
+        """Create loader repo."""
         super().__init__()
         self.logger = logging.getLogger("task_loader")
         self.base_path = os.getcwd()
         log_config.setup_default_handlers(self.logger)
 
     def set_playbook_root(self, path: str) -> None:
+        """Set cwd."""
         self.base_path = path
 
     def get_task_loader(self, loader_name: str) -> AbstractTaskLoader | None:
+        """Get task loader by name."""
         for loader in self.loaders:
             if loader.name == loader_name:
                 return loader
@@ -53,9 +56,9 @@ class TaskLoaderRepository(AbstractTaskLoaderRepository):
         is_valid = self._validate_loader_module(module, loader_name)
         if not is_valid:
             return None
-        return module.__embark_loader__
+        return cast(AbstractTaskLoader, module.__embark_loader__)
 
-    def _load_py_module(self, filename: str):
+    def _load_py_module(self, filename: str) -> ModuleType | None:
         """Load python module."""
         if not os.path.exists(filename):
             return None
@@ -81,7 +84,11 @@ class TaskLoaderRepository(AbstractTaskLoaderRepository):
         if return_code != 0:
             self.logger.error("Pip install of %s failed!", requirements_file)
 
-    def _validate_loader_module(self, module, loader_name: str) -> bool:
+    def _validate_loader_module(
+            self,
+            module: ModuleType,
+            loader_name: str
+    ) -> bool:
         """Check that loader module provides loader."""
         if not hasattr(module, "__embark_loader__"):
             self.logger.warning(
@@ -98,7 +105,6 @@ class TaskLoaderRepository(AbstractTaskLoaderRepository):
         return True
 
 
-# TODO: add on class extension
 TaskLoaderRepository.loaders.append(DownloadFileTaskLoader())
 TaskLoaderRepository.loaders.append(CopyFileTaskLoader())
 TaskLoaderRepository.loaders.append(InstallTaskLoader())

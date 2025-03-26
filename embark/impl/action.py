@@ -6,13 +6,12 @@ import os
 from pydantic import ValidationError
 from yaml import YAMLError
 
-from embark.domain.tasks.task import AbstractContextFactory
+from embark.domain.execution.context import AbstractContextFactory
+from embark.domain.execution.playbook import PlaybookReport
 from embark.impl import config
 from embark.output import write_err
 from embark.use_case.config.exceptions import ConfigLoadingException
 from embark.use_case.config.loader import AbstractTaskLoaderRepository
-
-type IsSuccessful = bool
 
 
 def execute_playbook_file(
@@ -20,7 +19,7 @@ def execute_playbook_file(
         loader_repo: AbstractTaskLoaderRepository,
         path: str,
         file_encoding: str | None = None
-) -> IsSuccessful:
+) -> PlaybookReport:
     """Execute a playbook."""
     try:
         playbook = config.load_playbook_from_file(
@@ -31,10 +30,10 @@ def execute_playbook_file(
         )
     except ValidationError as exception:
         logging.getLogger("Config loader").error(str(exception))
-        return False
+        return PlaybookReport([], is_successful=False)
     except ConfigLoadingException as exception:
         logging.getLogger("Config loader").error(str(exception))
-        return False
+        return PlaybookReport([], is_successful=False)
     except YAMLError as exception:
         write_err("Error while parsing YAML file:")
         if (
@@ -49,6 +48,6 @@ def execute_playbook_file(
             )
         else:
             write_err("Something went wrong while parsing yaml file")
-        return False
+        return PlaybookReport([], is_successful=False)
     os.chdir(os.path.dirname(os.path.abspath(path)))
     return playbook.run()

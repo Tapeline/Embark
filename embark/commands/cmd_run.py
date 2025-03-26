@@ -16,9 +16,12 @@ class RunCommandArgs:
 
     filename: str
     encoding: str | None = None
+    report: bool = False
 
 
 class RunCommand(AbstractCommand[RunCommandArgs]):
+    """run command."""
+
     _args_type = RunCommandArgs
 
     def _run(self, args: RunCommandArgs) -> int:
@@ -26,6 +29,6 @@ class RunCommand(AbstractCommand[RunCommandArgs]):
         app = Application(
             self.os_interface, args.filename, file_encoding=args.encoding
         )
-        exit_code = app.run()
+        exit_code = app.run(save_report=args.report)
         time.sleep(0.5)
         return exit_code

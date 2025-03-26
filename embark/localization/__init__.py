@@ -1,4 +1,4 @@
-"""Provides localization files"""
+"""Provides localization files."""
 
 from embark.localization import en, i18n, ru
 

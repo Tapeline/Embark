@@ -20,10 +20,12 @@ class DevQueryInstallCommandArgs:
 
 
 class DevQueryInstallCommand(AbstractCommand[DevQueryInstallCommandArgs]):
+    """dev_query_install command."""
+
     _args_type = DevQueryInstallCommandArgs
 
     def _run(self, args: DevQueryInstallCommandArgs) -> int:
-        """Subcommand impl"""
+        """Subcommand impl."""
         repo = self.os_interface.get_install_interface()
         for install in repo.get_all_installs():
             if install.matches(

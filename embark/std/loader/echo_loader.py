@@ -1,11 +1,15 @@
 """Loader for std.echo."""
+from typing import Any
 
 from pydantic import BaseModel
 
+from embark.domain.execution.context import (
+    AbstractContextFactory,
+    TaskExecutionContext,
+)
 from embark.domain.tasks.task import (
     AbstractExecutionTarget,
     Task,
-    TaskExecutionContext,
 )
 from embark.output import write_out
 from embark.use_case.config.loader import AbstractTaskLoader
@@ -24,10 +28,11 @@ class EchoTaskLoader(AbstractTaskLoader):
 
     def load_task(
             self,
-            context_factory,
+            context_factory: AbstractContextFactory,
             task_name: str,
-            task_config: dict
+            task_config: dict[Any, Any]
     ) -> Task:
+        """Load task."""
         model = TaskModel(**task_config)
         return Task(
             context_factory,
@@ -46,7 +51,9 @@ class PrintMessageTarget(AbstractExecutionTarget):
         self.message = message
 
     def execute(self, context: TaskExecutionContext) -> None:
+        """Execute target."""
         write_out(self.message)
 
     def get_display_name(self) -> str:
+        """Get human-readable name."""
         return "Print task"

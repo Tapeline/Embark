@@ -1,12 +1,10 @@
 """Provides loader and tools for ``std.copy``."""
+from typing import Any
 
 from pydantic import BaseModel
 
-from embark.domain.tasks.task import (
-    AbstractContextFactory,
-    AbstractExecutionCriteria,
-    Task,
-)
+from embark.domain.execution.context import AbstractContextFactory
+from embark.domain.tasks.task import AbstractExecutionCriteria, Task
 from embark.std.criteria.file_criteria import (
     FileDoesNotExistCriteria,
     FileExistsCriteria,
@@ -36,8 +34,9 @@ class CopyFileTaskLoader(AbstractTaskLoader):
             self,
             context_factory: AbstractContextFactory,
             task_name: str,
-            task_config: dict
+            task_config: dict[Any, Any]
     ) -> Task:
+        """Load task."""
         model = TaskModel(**task_config)
 
         criteria: AbstractExecutionCriteria | None = None

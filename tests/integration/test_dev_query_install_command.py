@@ -16,6 +16,7 @@ from tests.integration.mock import MockOSInterface, mock_streams
     ]
 )
 def test_dqi_command(name, publisher, version, snapshot):
+    """Test that embark dqi works."""
     with mock_streams() as streams:
         command = DevQueryInstallCommand(MockOSInterface())
         ret_code = command(Namespace(

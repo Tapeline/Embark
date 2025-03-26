@@ -18,7 +18,7 @@ lint:
 	poetry run flake8 embark tests
 
 
-all: test lint cleanbuild
+all: test lint clean build
 
 
 .PHONY: all test clean lint build

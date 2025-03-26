@@ -1,6 +1,8 @@
 """Provides DTOs and function for loading config from dict."""
+from typing import Any
 
 import pydantic
+from attrs import frozen
 
 from embark.use_case.config.exceptions import InvalidConfigException
 
@@ -9,30 +11,30 @@ class PlaybookModel(pydantic.BaseModel):
     """Pydantic model for playbook."""
 
     name: str
-    variables: dict = {}
-    tasks: list[dict]
+    variables: dict[Any, Any] = {}
+    tasks: list[dict[Any, Any]]
 
 
+@frozen
 class TaskConfig:
     """Task DTO."""
 
-    def __init__(self, task_name: str, target_type: str, target_data: dict):
-        self.task_name = task_name
-        self.target_type = target_type
-        self.target_data = target_data
+    task_name: str
+    target_type: str
+    target_data: dict[Any, Any]
 
 
+@frozen
 class PlaybookConfig:
     """Playbook DTO."""
 
-    def __init__(self, name: str, variables: dict, tasks: list[TaskConfig]):
-        self.name = name
-        self.variables = variables
-        self.tasks: list[TaskConfig] = tasks
+    name: str
+    variables: dict[Any, Any]
+    tasks: list[TaskConfig]
 
 
 def get_task_from_dict(  # noqa: WPS231, WPS238
-        task_dict: dict
+        task_dict: dict[Any, Any]
 ) -> TaskConfig:
     """Create task DTO from dict and also perform validation."""
     if not isinstance(task_dict.get("name"), str):
@@ -47,7 +49,7 @@ def get_task_from_dict(  # noqa: WPS231, WPS238
     raise InvalidConfigException("Target object not found")
 
 
-def load_playbook_config(playbook_obj: dict) -> PlaybookConfig:
+def load_playbook_config(playbook_obj: dict[Any, Any]) -> PlaybookConfig:
     """Load playbook DTO from dict and also perform validation."""
     if not isinstance(playbook_obj, dict):
         raise InvalidConfigException("Playbook must be an object")
