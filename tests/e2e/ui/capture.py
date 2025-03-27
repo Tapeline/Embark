@@ -1,7 +1,9 @@
+import os
 import time
 from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
+from subprocess import Popen
 
 import imagehash
 import pywinauto
@@ -21,11 +23,18 @@ def wait_for_win(
 
 def capture(window: pywinauto.WindowSpecification) -> Image:
     """Screenshot the window."""
+    return ImageGrab.grab(bbox=_clean_win_rect(window))
+
+
+def _clean_win_rect(
+        window: pywinauto.WindowSpecification
+) -> tuple[int, int, int, int]:
     rect = window.rectangle()
-    return ImageGrab.grab(
-        bbox=(
-            rect.left + 8, rect.top, rect.right - 8, rect.bottom - 8
-        )
+    return (
+        rect.left + 8,    # crop pywinauto margin
+        rect.top + 32,    # crop windows titlebar
+        rect.right - 8,   # crop pywinauto margin
+        rect.bottom - 8,  # crop pywinauto margin
     )
 
 
@@ -53,3 +62,22 @@ def are_images_similar(
 def get_ui_fixt(name: str) -> ImageFile:
     """Get UI fixture file."""
     return Image.open(Path("tests", "fixtures", "ui_screenshots", name))
+
+
+def _main():  # pragma: no cover
+    """Util func for generating new screenshots."""
+    Popen(
+        "python -m embark",
+        shell=True,
+        env=os.environ | {
+            "UI_LOCALE": "en",
+            "UI_LIST_BASE_DIR": "tests/fixtures/test_playbook_list_ui",
+            "UI_THEME": "light"
+        }
+    )
+    with use_window() as window:
+        capture(window).save("scr.png")
+
+
+if __name__ == '__main__':  # pragma: no cover
+    _main()
