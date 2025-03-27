@@ -1,6 +1,5 @@
 """Logger UI frame."""
 
-import os
 import threading
 from tkinter import BOTH, DISABLED, LEFT, RIGHT, TOP, X, Y, messagebox
 from typing import Final

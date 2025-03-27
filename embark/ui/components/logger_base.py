@@ -7,7 +7,6 @@ from customtkinter import CTkLabel
 
 from embark.ui.constants import LOG_FONT
 
-
 test_mode: bool = False  # do not insert time so tests are reproducible
 
 

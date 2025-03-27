@@ -1,17 +1,12 @@
-import threading
-
 import customtkinter
-from customtkinter import CTk
 
 from embark.ui.components import logger_base
 from embark.ui.components.loader import LoaderIcon
 from embark.ui.components.playbook_logger import GUIPlaybookLoggerComponent
-from tests.integration.ui.test_loggers.playbook_fixtures import (
-    create_playbook
-)
+from tests.integration.ui.test_loggers.playbook_fixtures import create_playbook
 
 
-class LoggerTestWindowA(CTk):
+class LoggerTestWindowA(customtkinter.CTk):
     """Testing components."""
 
     def __init__(self) -> None:
@@ -52,7 +47,7 @@ class LoggerTestWindowA(CTk):
         self.mainloop()
 
 
-if __name__ == '__main__':  # pragma: no cover
+if __name__ == "__main__":  # pragma: no cover
     logger_base.test_mode = True
     customtkinter.set_appearance_mode("light")
     win = LoggerTestWindowA()

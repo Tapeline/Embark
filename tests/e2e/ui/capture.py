@@ -42,7 +42,7 @@ def _clean_win_rect(
 @contextmanager
 def use_window(
         window_name: str = "Embark UI",
-        extend_delay: float = 0.0
+        extend_delay: float = 0
 ) -> Generator[pywinauto.WindowSpecification]:
     """Wait for window, then close."""
     win = wait_for_win(window_name)
@@ -86,5 +86,5 @@ def _main():  # pragma: no cover
         capture(window).save(sys.argv[3])
 
 
-if __name__ == '__main__':  # pragma: no cover
+if __name__ == "__main__":  # pragma: no cover
     _main()
