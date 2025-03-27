@@ -32,7 +32,9 @@ jobs:
       - name: Install dependencies
         run: poetry install
       - name: Set screen resolution
-        run: Set-DisplayResolution -Width 1920 -Height 1080 -Force
+        run: |
+          Set-DisplayResolution -Width 1920 -Height 1080 -Force
+          sleep 10
       - name: Run tests
         id: tests
         run: poetry run coverage run -m pytest tests
