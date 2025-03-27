@@ -105,8 +105,9 @@ class PlaybookChooseFrame(CTk):
 class Controller:
     """Main frame controller."""
 
-    def __init__(self, encoding: str | None, base_dir: str = "") -> None:
+    def __init__(self, encoding: str | None) -> None:
         """Create controller."""
+        base_dir = os.environ.get("UI_LIST_BASE_DIR") or ""
         self._base_dir = os.path.abspath(base_dir)
         self._encoding = encoding
 
@@ -125,10 +126,10 @@ class Controller:
             playbooks: dict[str, str]
     ) -> None:
         with suppress(yaml.YAMLError):
-            playbook = os.path.join(self._base_dir, filename)
-            config_obj = yaml.safe_load(Path(filename).read_text())
+            playbook = Path(self._base_dir, filename)
+            config_obj = yaml.safe_load(playbook.read_text())
             if "name" in config_obj and "tasks" in config_obj:  # noqa: WPS529
-                playbooks[playbook] = config_obj["name"]
+                playbooks[str(playbook)] = config_obj["name"]
 
 
 def ask_for_playbook(encoding: str | None) -> str | None:

@@ -25,6 +25,9 @@ syrupy = "^4.8.1"
 pytest-cov = "^6.0.0"
 #types-PyYAML = "^6.0.12.20241230"
 #types-requests = "^2.32.0.20241016"
+pywinauto = "^0.6.9"
+numpy = "^2.2.4"
+imagehash = "^4.3.2"
 
 [tool.poetry.scripts]
 cleanbuild = "project_scripts:clean_build"
