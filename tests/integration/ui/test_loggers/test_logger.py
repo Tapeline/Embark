@@ -20,7 +20,9 @@ def test_ui_logger():
         }
     )
     with use_window("Logger test", extend_delay=1.5) as window:
+        win_cap = capture(window)
+        win_cap.save("tests/captured/log.png")
         assert are_images_similar(
-            capture(window),
+            win_cap,
             get_ui_fixt("loggers.png")
         )

@@ -10,3 +10,4 @@ coverage.xml
 *.log
 embark_report.tmp
 .import_linter_cache
+tests/captured/*.png

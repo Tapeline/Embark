@@ -32,7 +32,19 @@ jobs:
       - name: Install dependencies
         run: poetry install
       - name: Run tests
+        id: tests
         run: poetry run coverage run -m pytest tests
+        continue-on-error: true
+      - name: Upload screenshot test artifacts for debugging purposes
+        if: steps.tests.outcome != 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: tests/captured
+          retention-days: 1
+      - name: Exit if tests failed
+        if: steps.tests.outcome != 'success'
+        run: exit 1
       - name: Install types
         run: poetry add types-PyYAML types-requests
       - name: Check MyPy

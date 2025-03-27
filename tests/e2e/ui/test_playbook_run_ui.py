@@ -19,7 +19,9 @@ def test_playbook_run():
         }
     )
     with use_window(extend_delay=2) as window:
+        win_cap = capture(window)
+        win_cap.save("tests/captured/run.png")
         assert are_images_similar(
-            capture(window),
+            win_cap,
             get_ui_fixt("runner.png")
         )
