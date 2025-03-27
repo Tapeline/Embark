@@ -14,4 +14,3 @@ def center(win: tkinter.Tk, width: int, height: int) -> None:  # noqa: WPS210
     x = win.winfo_screenwidth() // 2 - win_width // 2  # noqa: WPS111
     y = win.winfo_screenheight() // 2 - win_height // 2  # noqa: WPS111
     win.geometry(f"{width}x{height}+{x}+{y}")
-    win.deiconify()

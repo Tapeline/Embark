@@ -8,9 +8,14 @@ from customtkinter import CTkLabel
 from embark.ui.constants import LOG_FONT
 
 
+test_mode: bool = False  # do not insert time so tests are reproducible
+
+
 def log_format(message: str, *args: Any) -> str:
     """Format log message."""
-    return (
+    if test_mode:  # pragma: no cover
+        return message % args
+    return (  # pragma: no cover
             "[" +
             datetime.now().strftime("%H:%M:%S") +
             "] " +

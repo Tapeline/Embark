@@ -77,6 +77,7 @@ class LoaderIcon(CTkLabel):
     """Component for displaying states."""
 
     _animate_delay_ms: int = 200
+    no_anim: bool = False
 
     def __init__(self, parent: Widget) -> None:
         """Create component."""
@@ -114,5 +115,7 @@ class LoaderIcon(CTkLabel):
             self._current = 0
         else:
             self._current += 1
+        if self.no_anim:  # pragma: no cover
+            self._current = 0
         self._update()
         self.after(self._animate_delay_ms, self._animate)

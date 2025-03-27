@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 from collections.abc import Generator
 from contextlib import contextmanager
@@ -40,12 +41,16 @@ def _clean_win_rect(
 
 @contextmanager
 def use_window(
-        window_name: str = "Embark UI"
+        window_name: str = "Embark UI",
+        extend_delay: float = 0.0
 ) -> Generator[pywinauto.WindowSpecification]:
     """Wait for window, then close."""
     win = wait_for_win(window_name)
-    yield win
-    win.close()
+    time.sleep(extend_delay)
+    try:
+        yield win
+    finally:
+        win.close()
 
 
 def are_images_similar(
@@ -67,16 +72,18 @@ def get_ui_fixt(name: str) -> ImageFile:
 def _main():  # pragma: no cover
     """Util func for generating new screenshots."""
     Popen(
-        "python -m embark",
+        f"python -m {sys.argv[1]}",
         shell=True,
         env=os.environ | {
             "UI_LOCALE": "en",
-            "UI_LIST_BASE_DIR": "tests/fixtures/test_playbook_list_ui",
             "UI_THEME": "light"
         }
     )
-    with use_window() as window:
-        capture(window).save("scr.png")
+    ext_delay = 1.5
+    if len(sys.argv) == 5:
+        ext_delay = float(sys.argv[4])
+    with use_window(sys.argv[2], extend_delay=ext_delay) as window:
+        capture(window).save(sys.argv[3])
 
 
 if __name__ == '__main__':  # pragma: no cover

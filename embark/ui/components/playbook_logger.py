@@ -56,7 +56,7 @@ class GUIPlaybookLoggerComponent(CTkFrame, ProgressMixin, AbstractLoggerFrame):
         self.inform(L("UI.playbook_started"))
 
     def notify_ended(
-            self, *, is_successful: bool, error_message: str | None
+            self, *, is_successful: bool, error_message: str | None = None
     ) -> None:
         """Notify playbook ended."""
         if is_successful:

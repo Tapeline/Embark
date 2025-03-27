@@ -40,14 +40,14 @@ class ProgressMixin:
         label = CTkLabel(frame, text=title, font=SUBHEADER_FONT())
         label.pack(anchor="nw", padx=8, pady=4)
         progressbar = CTkProgressBar(frame, mode="indeterminate")
-        progressbar.pack(anchor="nw", padx=8, pady=8, fill="x")
+        progressbar.pack(anchor="nw", padx=8, pady=(0, 8), fill="x")
         progress = Progress(
             uid=uid,
             title=title,
             progress=-1,
             progressbar=progressbar
         )
-        frame.pack(fill="x", padx=10)
+        frame.pack(fill="x", padx=10, pady=(0, 8))
         self._progresses[uid] = progress
 
     def set_progress(self, uid: str, progress: float) -> None:

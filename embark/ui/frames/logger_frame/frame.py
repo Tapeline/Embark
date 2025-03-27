@@ -117,7 +117,6 @@ class LoggerFrame(CTk):  # noqa: WPS214
     def _launch_app(self) -> None:
         if self._ctx_factory is None:
             raise AssertionError("Context factory not created")
-        os.chdir(os.path.dirname(os.path.abspath(self._playbook_path)))
         action.execute_playbook_file(
             self._ctx_factory, self._loader_repo,
             self._playbook_path, self._encoding
