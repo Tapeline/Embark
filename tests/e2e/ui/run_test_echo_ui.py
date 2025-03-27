@@ -10,4 +10,5 @@ if __name__ == "__main__":
     logger_base.test_mode = True
     customtkinter.set_appearance_mode("light")
     win = LoggerFrame("UTF-8", "tests/fixtures/test_echo.yml")
+    win.geometry("1000x600+0+0")
     win.run()

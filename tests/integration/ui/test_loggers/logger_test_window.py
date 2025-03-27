@@ -17,7 +17,7 @@ class LoggerTestWindowA(customtkinter.CTk):
         self.logger = GUIPlaybookLoggerComponent(self)
         self.playbook = create_playbook(self.logger)
         self.logger.pack(fill="both", expand=True)
-        self.geometry("800x800")
+        self.geometry("800x800+0+0")
 
     def run(self) -> None:
         """Run test scenario."""
