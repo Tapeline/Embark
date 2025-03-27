@@ -20,10 +20,11 @@ Click on the desired playbook button. The main screen will appear.
 
 ![embark_ui_main_en.png](embark_ui_main_en.png)
 
-On the right, you can see how the playbook execution is going:
+Here you can see how the playbook execution is going:
 - ✅ - task is done
 - ⌛ - task is running
 - ❔ - task is pending
 - ❌ - task has failed
 - ⏩ - task was skipped
 
+More info in [](UI-mode-usage.md)

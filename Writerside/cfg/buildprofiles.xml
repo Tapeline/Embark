@@ -12,6 +12,8 @@
         <footer>
             <link href="https://embark.tapeline.dev">Website</link>
             <link href="https://github.com/Tapeline/Embark">GitHub</link>
+            <link href="https://embark.tapeline.dev/docs/ru">🇬🇧 EN docs</link>
+            <link href="https://embark.tapeline.dev/docs/en">🇷🇺 RU docs</link>
             <copyright>2024-2025 Tapeline (I.Solin)</copyright>
         </footer>
     </build-profile>

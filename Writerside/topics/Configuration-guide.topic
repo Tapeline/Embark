@@ -162,9 +162,8 @@
             you can use <code>{{variable_name}}</code> syntax in a string
         </p>
         <p>
-            Variables are defined in two places: environment and optional
-            <code>variables</code> section in playbook and environment vars
-            have smaller priority.
+            Variables can be defined in three places: environment, optional
+            <code>variables</code> section in playbook and <code>.variables.yml</code> file.
         </p>
         <p>Example:</p>
         <code-block lang="yaml">

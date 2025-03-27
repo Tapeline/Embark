@@ -5,6 +5,7 @@
        xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
        title="Home" id="Home" help-id="Welcome">
 <section-starting-page>
+
     <title>Embark</title>
     <description>
         Automate tedious tasks of manual installation
@@ -13,7 +14,7 @@
 
     <spotlight>
         <a href="Quickstart.topic"
-           summary="Create your first Aisle diagram"
+           summary="Create your first Embark playbook"
            type="start"/>
         <a href="Prebuilt-playbooks.md"
            summary="Learn how to start playbooks that are prebuilt for you"
@@ -35,7 +36,7 @@
 
     <secondary>
         <title>Launch</title>
-        <a href="UI-mode-usage.topic"
+        <a href="UI-mode-usage.md"
            summary="Use Embark with neat visualisation of all processes"
             type="presentation"/>
         <a href="Command-line-usage.topic"
@@ -46,10 +47,13 @@
     <misc>
         <cards>
             <title>For developers</title>
-        <a href="Custom-tasks.topic"
-           summary="Learn how to create your own tasks in case if you need
-more"
-            type="settings"/>
+            <a href="Custom-tasks.topic"
+               summary="Learn how to create your own tasks in case if you need
+    more"
+                type="settings"/>
+            <a href="Contributing.md"
+               summary="Make a contribution to this project"
+                type="open-source"/>
         </cards>
     </misc>
 </section-starting-page>
