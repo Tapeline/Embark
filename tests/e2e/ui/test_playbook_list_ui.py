@@ -1,4 +1,5 @@
 import os
+import time
 from subprocess import Popen
 
 from tests.e2e.ui.capture import (
@@ -20,7 +21,8 @@ def test_playbook_list():
             "UI_THEME": "light"
         }
     )
-    with use_window(extend_delay=5) as window:
+    time.sleep(5)
+    with use_window() as window:
         assert are_images_similar(
             capture(window),
             get_ui_fixt("list_window.png")
