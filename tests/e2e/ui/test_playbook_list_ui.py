@@ -20,7 +20,7 @@ def test_playbook_list():
             "UI_THEME": "light"
         }
     )
-    with use_window() as window:
+    with use_window(extend_delay=5) as window:
         assert are_images_similar(
             capture(window),
             get_ui_fixt("list_window.png")

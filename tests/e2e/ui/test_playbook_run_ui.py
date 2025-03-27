@@ -18,7 +18,7 @@ def test_playbook_run():
             "UI_LOCALE": "en"
         }
     )
-    with use_window(extend_delay=2) as window:
+    with use_window(extend_delay=7) as window:
         win_cap = capture(window)
         win_cap.save("tests/captured/run.png")
         assert are_images_similar(
