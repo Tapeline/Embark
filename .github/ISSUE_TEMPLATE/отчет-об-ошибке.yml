@@ -1,0 +1,45 @@
+name: Отчет об ошибке
+description: Создайте отчет об ошибке, чтобы помочь проекту совершенствоваться
+labels: ["bug", "ru"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # Отчет об ошибке
+      
+  - type: textarea
+    id: descr
+    attributes:
+      label: Описание ошибки 
+      description: "Точное и понятное описание того, что происходит не так"
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Как повторить
+      description: "Шаги для получения этой ошибки"
+      placeholder: |
+        1. Открыть '...'
+        2. Нажать '....'
+        3. Получить ошибку
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Ожидаемое поведение
+      description: "Что должно было произойти вместо ошибки"
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Дополнительная информация
+    validations:
+      required: false
+
