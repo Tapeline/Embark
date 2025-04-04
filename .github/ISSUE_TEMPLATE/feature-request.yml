@@ -1,0 +1,25 @@
+name: Feature request
+description: Suggest an Embark feature
+labels: ["feature", "en"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # Feature request
+      
+  - type: textarea
+    id: descr
+    attributes:
+      label: Description
+      description: "What would you want to see in Embark?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: reasoning
+    attributes:
+      label: Reasoning
+      description: "Why do you think this feature will be important?"
+    validations:
+      required: true
