@@ -7,23 +7,16 @@ body:
     attributes:
       value: |
         # Предложение
-
-        ## Добавить
       
-  - type: input
+  - type: textarea
     id: descr
     attributes:
       label: Описание
       description: "Что бы вы хотели видеть в Embark?"
     validations:
       required: true
-      
-  - type: markdown
-    attributes:
-      value: |
-        ## Причины
 
-  - type: input
+  - type: textarea
     id: reasoning
     attributes:
       label: Причина
