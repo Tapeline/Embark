@@ -13,7 +13,7 @@ test_mode: bool = False  # do not insert time so tests are reproducible
 def log_format(message: str, *args: Any) -> str:
     """Format log message."""
     if not args:  # pragma: no cover
-        args = tuple()
+        args = ()
     if test_mode:  # pragma: no cover
         return message % args
     try:

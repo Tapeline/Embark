@@ -1,4 +1,4 @@
-name: test
+name: Test and build
 
 on:
   push:
@@ -13,7 +13,7 @@ permissions:
 
 
 jobs:
-  test:
+  test_minimal:
     runs-on: windows-latest
     strategy:
       fail-fast: false
@@ -64,3 +64,32 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: Tapeline/Embark
+
+  build:
+    needs:
+      - test_minimal
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python 3.13.2
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13.2"
+      - name: Install poetry
+        run: |
+          pip install -U pip
+          pip install poetry
+      - name: Install dependencies
+        run: poetry install
+      - name: Build
+        run: make build
+      - name: Save artifact with build results
+        uses: actions/upload-artifact@v4
+        with:
+          name: embark_win64
+          path: dist/embark.exe
+          retention-days: 7

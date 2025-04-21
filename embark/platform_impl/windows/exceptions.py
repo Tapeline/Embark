@@ -12,7 +12,7 @@ class WindowsPlatformException(Exception):
         self.stderr = stderr
         self.return_code = return_code
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Transform to string."""
         return (
             f"Platform exception (retcode={self.return_code}):\n"
