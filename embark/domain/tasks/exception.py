@@ -24,6 +24,10 @@ class TaskExecutionException(Exception):
         self.message = message
         self.add_note(message)
 
+    def __str__(self) -> str:
+        """Get message."""
+        return self.message
+
 
 class RequirementCannotBeMetException(TaskExecutionException):
     """Thrown when we tried, but anyway the requirement cannot be met."""
