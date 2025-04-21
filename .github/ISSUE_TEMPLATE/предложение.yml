@@ -1,0 +1,27 @@
+name: Предложение
+description: Предложите фичу в Embark
+labels: ["feature", "ru"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # Предложение
+      
+  - type: textarea
+    id: descr
+    attributes:
+      label: Описание
+      description: "Что бы вы хотели видеть в Embark?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: reasoning
+    attributes:
+      label: Причина
+      description: "Почему вы считаете, что это было бы нужно?"
+    validations:
+      required: true
+
+  
