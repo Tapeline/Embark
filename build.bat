@@ -1,4 +1,4 @@
-pyinstaller ^
+poetry run pyinstaller ^
     --onefile ^
     --add-data "icon.ico;." ^
     --add-data "embark/ui/res;embark/ui/res" ^
