@@ -1,0 +1,114 @@
+name: Пакет КЕГЭ/ОГЭ по информатике
+tasks:
+  - name: Select user
+    user_select.dialog: {}
+
+  # An example of how installers could be downloaded
+  # - name: Download Kumir
+  #   std.download:
+  #     url: "https://www.niisi.ru/kumir/kumir2-2.1.0-rc11-install.exe"
+  #     dst: assets/kumir-trunk-2237-win32-setup.exe
+
+  - name: Install Python
+    std.install:
+      name: "Python [\\d\\.]+ \\(...bit\\)"
+      publisher: Python Software Foundation
+      version: "3.13.1150.0"
+      installer: assets/python-3.13.1-amd64.exe
+      cmd_install: "\"$$installer$$\" /passive /log python-install.log InstallAllUsers=1 Include_dev=1 Include_exe=1 Include_doc=1 Include_pip=1 Include_tcltk=1 Shortcuts=1"
+      no_remove: true
+
+  - name: Install Kumir
+    std.install:
+      name: "Кумир 2.1.0-rc11"
+      publisher: ""
+      version: ""
+      ignore_version: true
+      #installer: assets/kumir-trunk-2237-win32-setup.exe
+      installer: assets/kumir2-2.1.0-rc11-install.exe
+
+  - name: Install PascalABC.NET
+    std.install:
+      name: PascalABC.NET
+      publisher: ""
+      version: ""
+      ignore_version: true
+      installer: assets/PascalABCNETSetup.exe
+
+  - name: Install LibreOffice
+    std.install:
+      name: "LibreOffice [0-9\\.]*"
+      publisher: The Document Foundation
+      version: "403177474"
+      installer: "assets\\LibreOffice_24.8.2_Win_x86-64.msi"
+      cmd_install: "msiexec /i $$installer$$ /l* LibreOffice_install.log /qn /norestart REGISTER_ALL_MSO_TYPES=1 ALLUSERS=1 CREATEDESKTOPLINK=1"
+
+  - name: Install LibreOffice RU Locale
+    std.cmd:
+      cmd: "msiexec /i assets\\LibreOffice_24.8.2_Win_x86-64_helppack_ru.msi /passive /norestart"
+
+  - name: Install CodeBlocks
+    std.install:
+      name: "CodeBlocks"
+      publisher: "The Code::Blocks Team"
+      version: "20.03"
+      installer: assets/codeblocks-20.03mingw-setup.exe
+
+  - name: Install Chrome
+    std.install:
+      name: "Google Chrome"
+      publisher: "Google LLC"
+      version: ""
+      ignore_version: true
+      installer: assets/chrome.exe
+      cmd_install: "$$installer$$ /silent /install"
+
+  - name: Install JDK
+    std.install:
+      name: "Java .* 23 (64-bit)"
+      publisher: "Oracle Corporation"
+      version: "23.0.0.0"
+      ignore_version: true
+      installer: "assets\\jdk-23_windows-x64_bin.msi"
+
+  - name: Install PyCharm
+    std.install:
+      name: "PyCharm .*"
+      publisher: "JetBrains s.r.o."
+      version: ""
+      ignore_version: true
+      installer: assets/pycharm-community-2024.2.3.exe
+
+  - name: Install IntelliJ IDEA
+    std.install:
+      name: "IntelliJ IDEA .*"
+      publisher: "JetBrains s.r.o."
+      version: ""
+      ignore_version: true
+      installer: assets/ideaIC-2024.2.3.exe
+
+  - name: Copy IDLE Shortcut  # Example of how files are copied
+    std.copy:
+      src: "C:/ProgramData/Microsoft/Windows/Start Menu/Programs/Python 3.13/IDLE (Python 3.13 64-bit).lnk"
+      dst: "{{SELECTED_USER_DIR}}\\Desktop\\IDLE.lnk"  # Don't forget to escape backslashes!
+  - name: Copy CodeBlocks Shortcut
+    std.copy:
+      src: "C:/ProgramData/Microsoft/Windows/Start Menu/Programs/CodeBlocks/CodeBlocks.lnk"
+      dst: "{{SELECTED_USER_DIR}}\\Desktop\\CodeBlocks.lnk"
+  - name: Copy IntelliJ Shortcut
+    std.copy:
+      src: "C:/ProgramData/Microsoft/Windows/Start Menu/Programs/JetBrains/IntelliJ IDEA Community Edition 2024.2.3.lnk"
+      dst: "{{SELECTED_USER_DIR}}\\Desktop\\IntelliJ IDEA.lnk"
+  - name: Copy PyCharm Shortcut
+    std.copy:
+      src: "C:/ProgramData/Microsoft/Windows/Start Menu/Programs/JetBrains/PyCharm Community Edition 2024.2.3.lnk"
+      dst: "{{SELECTED_USER_DIR}}\\Desktop\\PyCharm.lnk"
+  - name: Copy Kumir Shortcut
+    std.copy:
+      #src: "%AppData%/Microsoft/Windows/Start Menu/Programs/Кумир.lnk"
+      src: "C:/ProgramData/Microsoft/Windows/Start Menu/Programs/Кумир 2.1.0-rc11/Кумир-Стандарт.lnk"
+      dst: "{{SELECTED_USER_DIR}}\\Desktop\\Кумир-Стандарт.lnk"
+  - name: Copy PascalABC Shortcut
+    std.copy:
+      src: "%AppData%/Microsoft/Windows/Start Menu/Programs/PascalABC.NET/PascalABC.NET.lnk"
+      dst: "{{SELECTED_USER_DIR}}\\Desktop\\PascalABC.NET.lnk"

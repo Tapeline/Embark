@@ -2,7 +2,7 @@
 dist/
 build/
 poetry.lock
-playbook.yml
+test-playbook.yml
 vlc.exe
 htmlcov
 coverage.xml
