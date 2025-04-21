@@ -1,7 +1,9 @@
 name: Пакет КЕГЭ/ОГЭ по информатике
+variables:
+  SELECTED_USER_DIR: "%UserProfile%\\Desktop"
 tasks:
-  - name: Select user
-    user_select.dialog: {}
+  #- name: Select user
+  #  user_select.dialog: {}
 
   # An example of how installers could be downloaded
   # - name: Download Kumir
