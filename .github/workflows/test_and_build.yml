@@ -116,12 +116,14 @@ jobs:
           copy embark.exe tests/package/embark.exe
           cd tests/package/assets
           ./download_execs.ps1
+          ls
           cd ..
+          ls
           ./embark.exe run playbook.yml --report
       - name: Save logs and report artifact
         uses: actions/upload-artifact@v4
         with:
-          name: embark_win64
+          name: test_report
           path: |
             tests/package/embark.log
             tests/package/embark_report.tmp
