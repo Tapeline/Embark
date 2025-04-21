@@ -26,7 +26,9 @@ class WindowsInstallationsInterface(
             raise InstallationCommandNotProvidedException
         result = self.os_interface.run(installation.quiet_uninstaller)
         if not result.is_successful:
-            raise CannotUninstallQuietlyException
+            raise CannotUninstallQuietlyException(
+                result.return_code, result.stdout, result.stderr
+            )
 
     def uninstall(self, installation: WindowsInstallation) -> None:
         """Uninstall software."""
@@ -34,7 +36,9 @@ class WindowsInstallationsInterface(
             raise InstallationCommandNotProvidedException
         result = self.os_interface.run(installation.uninstaller)
         if not result.is_successful:
-            raise CannotUninstallException
+            raise CannotUninstallException(
+                result.return_code, result.stdout, result.stderr
+            )
 
     def install_quietly(
             self, installer_path: str, *, admin: bool = False
@@ -45,7 +49,9 @@ class WindowsInstallationsInterface(
             raise InstallationCommandNotProvidedException
         result = self.os_interface.run(cmd)
         if not result.is_successful:
-            raise CannotInstallQuietlyException
+            raise CannotInstallQuietlyException(
+                result.return_code, result.stdout, result.stderr
+            )
 
     def install(self, installer_path: str, *, admin: bool = False) -> None:
         """Install software."""
@@ -54,7 +60,9 @@ class WindowsInstallationsInterface(
             cmd = f"msiexec {('/a' if admin else '/i')} {installer_path}"
         result = self.os_interface.run(cmd)
         if not result.is_successful:
-            raise CannotInstallQuietlyException
+            raise CannotInstallQuietlyException(
+                result.return_code, result.stdout, result.stderr
+            )
 
     def get_all_installs(self) -> Sequence[WindowsInstallation]:
         """

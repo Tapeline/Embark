@@ -12,14 +12,24 @@ test_mode: bool = False  # do not insert time so tests are reproducible
 
 def log_format(message: str, *args: Any) -> str:
     """Format log message."""
+    if not args:  # pragma: no cover
+        args = tuple()
     if test_mode:  # pragma: no cover
         return message % args
-    return (  # pragma: no cover
-            "[" +
-            datetime.now().strftime("%H:%M:%S") +
-            "] " +
-            message % args
-    )
+    try:
+        return (  # pragma: no cover
+                "[" +
+                datetime.now().strftime("%H:%M:%S") +
+                "] " +
+                message % args
+        )
+    except TypeError:
+        return (  # pragma: no cover
+                "[" +
+                datetime.now().strftime("%H:%M:%S") +
+                "] " +
+                message % args
+        )
 
 
 class LogMessageComponent(CTkLabel):
