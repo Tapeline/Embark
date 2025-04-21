@@ -11,14 +11,14 @@ tasks:
   #     url: "https://www.niisi.ru/kumir/kumir2-2.1.0-rc11-install.exe"
   #     dst: assets/kumir-trunk-2237-win32-setup.exe
 
-  - name: Install Python
-    std.install:
-      name: "Python [\\d\\.]+ \\(...bit\\)"
-      publisher: Python Software Foundation
-      version: "3.13.1150.0"
-      installer: assets/python-3.13.1-amd64.exe
-      cmd_install: "\"$$installer$$\" /passive /log python-install.log InstallAllUsers=1 Include_dev=1 Include_exe=1 Include_doc=1 Include_pip=1 Include_tcltk=1 Shortcuts=1"
-      no_remove: true
+  #- name: Install Python
+  #  std.install:
+  #    name: "Python [\\d\\.]+ \\(...bit\\)"
+  #    publisher: Python Software Foundation
+  #    version: "3.13.1150.0"
+  #    installer: assets/python-3.13.1-amd64.exe
+  #    cmd_install: "\"$$installer$$\" /passive /log python-install.log InstallAllUsers=1 Include_dev=1 Include_exe=1 Include_doc=1 Include_pip=1 Include_tcltk=1 Shortcuts=1"
+  #    no_remove: true
 
   - name: Install Kumir
     std.install:
