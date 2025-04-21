@@ -110,16 +110,22 @@ jobs:
           name: embark_win64
           path: .
       - name: Test
+        id: test
+        continue-on-error: true
         run: |
-          cd tests/package
+          copy embark.exe tests/package/embark.exe
+          cd tests/package/assets
           ./download_execs.ps1
-          cd ../..
-          ./embark.exe run tests/package/playbook.yml --report
+          cd ..
+          ./embark.exe run playbook.yml --report
       - name: Save logs and report artifact
         uses: actions/upload-artifact@v4
         with:
           name: embark_win64
           path: |
-            embark.log
-            embark_report.tmp
+            tests/package/embark.log
+            tests/package/embark_report.tmp
           retention-days: 7
+      - name: Exit if tests failed
+        if: steps.test.outcome != 'success'
+        run: exit 1
