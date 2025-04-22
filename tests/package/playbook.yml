@@ -1,6 +1,6 @@
 name: Пакет КЕГЭ/ОГЭ по информатике
 variables:
-  SELECTED_USER_DIR: "%UserProfile%\\Desktop"
+  SELECTED_USER_DIR: "%UserProfile%"
 tasks:
   # We operate in console mode
   # - name: Select user

@@ -23,7 +23,7 @@ class CopyFileTarget(AbstractExecutionTarget):
         try:
             shutil.copy(src, dst)
         except Exception as exc:
-            context.task.logger.exception("File copy error", exc)
+            context.task.logger.exception("File copy error")
             raise TaskExecutionException(
                 context, "Failed to copy file"
             ) from exc
