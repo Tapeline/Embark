@@ -109,14 +109,26 @@ jobs:
         with:
           name: embark_win64
           path: .
-      - name: Test
-        id: test
-        continue-on-error: true
+      - name: Prepare assets
         run: |
           copy embark.exe tests/package/embark.exe
           cd tests/package/assets
           ./download_execs.ps1
-          cd ..
+      - name: Debug report
+        run: |
+          cd tests/package
+          echo "`n`n--- embark dli ---"
+          ./embark.exe dli
+          echo "`n`n--- ls package ---"
+          ls
+          cd assets
+          echo "`n`n--- ls assets ---"
+          ls
+      - name: Test
+        id: test
+        continue-on-error: true
+        run: |
+          cd tests/package
           ./embark.exe run playbook.yml --report
       - name: Save logs and report artifact
         uses: actions/upload-artifact@v4
