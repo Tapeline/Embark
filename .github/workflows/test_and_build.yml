@@ -124,12 +124,21 @@ jobs:
           cd assets
           echo "`n`n--- ls assets ---"
           ls
-      - name: Test
-        id: test
+      - name: Run playbook
+        id: run_playbook
         continue-on-error: true
         run: |
           cd tests/package
           ./embark.exe run playbook.yml --report
+      - name: Debug report
+        run: |
+          cd tests/package
+          echo "`n`n--- embark dli ---"
+          ./embark.exe dli
+      - name: Check installed
+        run: |
+          cd tests/package
+          ./assert_installed.ps1
       - name: Save logs and report artifact
         uses: actions/upload-artifact@v4
         with:
@@ -139,5 +148,5 @@ jobs:
             tests/package/embark_report.tmp
           retention-days: 7
       - name: Exit if tests failed
-        if: steps.test.outcome != 'success'
+        if: steps.run_playbook.outcome != 'success'
         run: exit 1
