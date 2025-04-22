@@ -72,6 +72,7 @@ tasks:
       version: "23.0.0.0"
       ignore_version: true
       installer: "assets\\jdk-23_windows-x64_bin.msi"
+      cmd_install: "msiexec /i $$installer$$"
 
   - name: Install PyCharm
     std.install:
