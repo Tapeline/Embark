@@ -91,7 +91,10 @@ def main() -> None:
         ui_main.main()
     else:
         args = _configure_arg_parser().parse_args()
-        args.func(args)
+        ret_code = args.func(args)
+        if ret_code is not None:
+            sys.exit(ret_code)
+        sys.exit(0)
 
 
 if __name__ == "__main__":

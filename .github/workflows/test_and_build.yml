@@ -13,61 +13,61 @@ permissions:
 
 
 jobs:
-  #test_minimal:
-  #  runs-on: windows-latest
-  #  strategy:
-  #    fail-fast: false
-  #  steps:
-  #    - uses: actions/checkout@v4
-  #      with:
-  #        persist-credentials: false
-  #    - name: Set up Python 3.13.2
-  #      uses: actions/setup-python@v5
-  #      with:
-  #        python-version: "3.13.2"
-  #    - name: Install poetry
-  #      run: |
-  #        pip install -U pip
-  #        pip install poetry
-  #    - name: Install dependencies
-  #      run: poetry install
-  #    - name: Set screen resolution
-  #      run: |
-  #        Set-DisplayResolution -Width 1920 -Height 1080 -Force
-  #        sleep 10
-  #    - name: Run tests
-  #      id: tests
-  #      run: poetry run coverage run -m pytest tests
-  #      continue-on-error: true
-  #    - name: Upload screenshot test artifacts for debugging purposes
-  #      if: steps.tests.outcome != 'success'
-  #      uses: actions/upload-artifact@v4
-  #      with:
-  #        name: screenshots
-  #        path: tests/captured
-  #        retention-days: 1
-  #    - name: Exit if tests failed
-  #      if: steps.tests.outcome != 'success'
-  #      run: exit 1
-  #    - name: Install types
-  #      run: poetry add types-PyYAML types-requests
-  #    - name: Check MyPy
-  #      run: poetry run mypy embark
-  #    - name: Check Ruff
-  #      run: poetry run ruff check
-  #    - name: Check WPS
-  #      run: poetry run flake8 embark tests
-  #    - name: Check imports
-  #      run: poetry run lint-imports
-  #    - name: Upload coverage reports to Codecov
-  #      uses: codecov/codecov-action@v5
-  #      with:
-  #        token: ${{ secrets.CODECOV_TOKEN }}
-  #        slug: Tapeline/Embark
+  test_minimal:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python 3.13.2
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13.2"
+      - name: Install poetry
+        run: |
+          pip install -U pip
+          pip install poetry
+      - name: Install dependencies
+        run: poetry install
+      - name: Set screen resolution
+        run: |
+          Set-DisplayResolution -Width 1920 -Height 1080 -Force
+          sleep 10
+      - name: Run tests
+        id: tests
+        run: poetry run coverage run -m pytest tests
+        continue-on-error: true
+      - name: Upload screenshot test artifacts for debugging purposes
+        if: steps.tests.outcome != 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: tests/captured
+          retention-days: 1
+      - name: Exit if tests failed
+        if: steps.tests.outcome != 'success'
+        run: exit 1
+      - name: Install types
+        run: poetry add types-PyYAML types-requests
+      - name: Check MyPy
+        run: poetry run mypy embark
+      - name: Check Ruff
+        run: poetry run ruff check
+      - name: Check WPS
+        run: poetry run flake8 embark tests
+      - name: Check imports
+        run: poetry run lint-imports
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: Tapeline/Embark
 
   build:
-    #needs:
-    #  - test_minimal
+    needs:
+      - test_minimal
     runs-on: windows-latest
     strategy:
       fail-fast: false

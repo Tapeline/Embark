@@ -1,6 +1,6 @@
 line-length = 79
 
-extend-exclude = ["stubs"]
+extend-exclude = ["stubs", "tests/package"]
 
 [lint]
 
