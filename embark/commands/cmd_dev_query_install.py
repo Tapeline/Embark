@@ -27,6 +27,7 @@ class DevQueryInstallCommand(AbstractCommand[DevQueryInstallCommandArgs]):
     def _run(self, args: DevQueryInstallCommandArgs) -> int:
         """Subcommand impl."""
         repo = self.os_interface.get_install_interface()
+        got_any = False
         for install in repo.get_all_installs():
             if install.matches(
                 args.name,
@@ -34,7 +35,8 @@ class DevQueryInstallCommand(AbstractCommand[DevQueryInstallCommandArgs]):
                 args.version,
                 ignore_version=args.ignore_version
             ):
+                got_any = True
                 write_out(f"Name:      {install.name}")
                 write_out(f"Version:   {install.version}")
                 write_out(f"Publisher: {install.publisher}")
-        return 0
+        return 0 if got_any else 1

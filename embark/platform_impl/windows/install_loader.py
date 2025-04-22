@@ -73,11 +73,11 @@ def get_installation_from_registry(
             software_uninstall, software_quiet_uninstall
         )
     return WindowsInstallation(
-        name=str(software_name),
-        version=str(software_version),
+        name=software_name,
+        version=software_version or "",
         major_version=software_major_version,
         minor_version=software_minor_version,
-        publisher=str(software_publisher),
+        publisher=software_publisher or "",
         quiet_uninstaller=software_quiet_uninstall,
         uninstaller=software_uninstall
     )
