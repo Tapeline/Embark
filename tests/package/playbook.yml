@@ -2,23 +2,18 @@ name: Пакет КЕГЭ/ОГЭ по информатике
 variables:
   SELECTED_USER_DIR: "%UserProfile%\\Desktop"
 tasks:
-  #- name: Select user
-  #  user_select.dialog: {}
-
-  # An example of how installers could be downloaded
-  # - name: Download Kumir
-  #   std.download:
-  #     url: "https://www.niisi.ru/kumir/kumir2-2.1.0-rc11-install.exe"
-  #     dst: assets/kumir-trunk-2237-win32-setup.exe
-
-  #- name: Install Python
-  #  std.install:
-  #    name: "Python [\\d\\.]+ \\(...bit\\)"
-  #    publisher: Python Software Foundation
-  #    version: "3.13.1150.0"
-  #    installer: assets/python-3.13.1-amd64.exe
-  #    cmd_install: "\"$$installer$$\" /passive /log python-install.log InstallAllUsers=1 Include_dev=1 Include_exe=1 Include_doc=1 Include_pip=1 Include_tcltk=1 Shortcuts=1"
-  #    no_remove: true
+  # We operate in console mode
+  # - name: Select user
+  #   user_select.dialog: {}
+  # GitHub runner already has Python.
+  # - name: Install Python
+  #   std.install:
+  #     name: "Python [\\d\\.]+ \\(...bit\\)"
+  #     publisher: Python Software Foundation
+  #     version: "3.13.1150.0"
+  #     installer: assets/python-3.13.1-amd64.exe
+  #     cmd_install: "\"$$installer$$\" /passive /log python-install.log InstallAllUsers=1 Include_dev=1 Include_exe=1 Include_doc=1 Include_pip=1 Include_tcltk=1 Shortcuts=1"
+  #     no_remove: true
 
   - name: Install Kumir
     std.install:
@@ -26,7 +21,6 @@ tasks:
       publisher: ""
       version: ""
       ignore_version: true
-      #installer: assets/kumir-trunk-2237-win32-setup.exe
       installer: assets/kumir2-2.1.0-rc11-install.exe
 
   - name: Install PascalABC.NET
@@ -65,14 +59,15 @@ tasks:
       installer: assets/chrome.exe
       cmd_install: "$$installer$$ /silent /install"
 
-  - name: Install JDK
-    std.install:
-      name: "Java .* 23 (64-bit)"
-      publisher: "Oracle Corporation"
-      version: "23.0.0.0"
-      ignore_version: true
-      installer: "assets\\jdk-23_windows-x64_bin.msi"
-      cmd_install: "msiexec /i $$installer$$"
+  # GitHub runner has problems installing it
+  # - name: Install JDK
+  #   std.install:
+  #     name: "Java .* 23 (64-bit)"
+  #     publisher: "Oracle Corporation"
+  #     version: "23.0.0.0"
+  #     ignore_version: true
+  #     installer: "assets\\jdk-23_windows-x64_bin.msi"
+  #     cmd_install: "msiexec /i $$installer$$"
 
   - name: Install PyCharm
     std.install:
@@ -108,7 +103,6 @@ tasks:
       dst: "{{SELECTED_USER_DIR}}\\Desktop\\PyCharm.lnk"
   - name: Copy Kumir Shortcut
     std.copy:
-      #src: "%AppData%/Microsoft/Windows/Start Menu/Programs/Кумир.lnk"
       src: "C:/ProgramData/Microsoft/Windows/Start Menu/Programs/Кумир 2.1.0-rc11/Кумир-Стандарт.lnk"
       dst: "{{SELECTED_USER_DIR}}\\Desktop\\Кумир-Стандарт.lnk"
   - name: Copy PascalABC Shortcut
