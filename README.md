@@ -10,7 +10,7 @@
 [![wemake-python-styleguide](https://img.shields.io/badge/style-wemake-000000.svg)](https://github.com/wemake-services/wemake-python-styleguide)
 ![type checked: mypy](https://img.shields.io/badge/mypy-type%20checked-green)
 
-[![test](https://github.com/Tapeline/Embark/actions/workflows/test.yml/badge.svg?branch=master&event=push)](https://github.com/Tapeline/Embark/actions/workflows/test.yml)
+[![test](https://github.com/Tapeline/Embark/actions/workflows/test_and_build.yml/badge.svg?branch=master&event=push)](https://github.com/Tapeline/Embark/actions/workflows/test.yml)
 [![test](https://github.com/Tapeline/Embark/actions/workflows/docs.yml/badge.svg?branch=master&event=push)](https://github.com/Tapeline/Embark/actions/workflows/docs.yml)
 
 
