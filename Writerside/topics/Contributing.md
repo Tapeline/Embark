@@ -40,6 +40,17 @@ make test
 make lint
 ```
 
+## Building
+
+To build Embark, use one of the following commands:
+```shell
+make build
+make clean build
+make build-onedir
+make clean build-onedir
+make clean build build-onedir
+```
+
 ## Guidelines and standards
 
 There should be 0 warnings and errors by any of tools listed above.

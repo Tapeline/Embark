@@ -7,6 +7,12 @@ build:
 	build.bat
 
 
+build-onedir:
+	build-onedir.bat
+	del /S /q dist\\embark-unpacked.zip
+	powershell Compress-Archive dist/embark dist/embark-unpacked.zip
+
+
 test:
 	poetry run coverage run -m pytest tests
 
@@ -21,4 +27,4 @@ lint:
 all: test lint clean build
 
 
-.PHONY: all test clean lint build
+.PHONY: all test clean lint build build-onedir
